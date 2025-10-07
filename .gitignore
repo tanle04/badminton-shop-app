@@ -1,15 +1,36 @@
+# --- Gradle / builds
+.gradle/
+**/build/
+.cxx/
+externalNativeBuild/
+captures/
+
+# --- IDE (Android Studio / IntelliJ)
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.ipr
+*.iws
+
+# --- Local machine configs
 local.properties
+/.settings/
+
+# --- Keystore & secrets
+*.jks
+*.keystore
+**/keystore/**
+google-services.json
+**/GoogleService-Info.plist
+
+# --- Logs & OS junk
+*.log
+.DS_Store
+Thumbs.db
+
+# --- Fastlane (nếu có)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+# --- Misc
+!gradle/wrapper/gradle-wrapper.jar
