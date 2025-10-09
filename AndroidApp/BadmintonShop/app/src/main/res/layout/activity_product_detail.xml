@@ -1,0 +1,61 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- Ảnh sản phẩm -->
+        <ImageView
+            android:id="@+id/imgProductDetail"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:scaleType="fitCenter"
+            android:background="#f6f6f6"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Tên sản phẩm -->
+        <TextView
+            android:id="@+id/txtProductNameDetail"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Giá -->
+        <TextView
+            android:id="@+id/txtProductPriceDetail"
+            android:textColor="#c62828"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Mô tả -->
+        <TextView
+            android:id="@+id/txtProductDescriptionDetail"
+            android:textColor="#444"
+            android:textSize="15sp"
+            android:layout_marginBottom="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Nút thêm vào giỏ -->
+        <Button
+            android:id="@+id/btnAddToCart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thêm vào giỏ hàng"
+            android:textAllCaps="false"
+            android:backgroundTint="#000"
+            android:textColor="#fff"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+</ScrollView>

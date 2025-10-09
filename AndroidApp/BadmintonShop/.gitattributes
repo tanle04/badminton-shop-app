@@ -1,0 +1,16 @@
+# Chuẩn hóa EOL: mặc định LF cho code
+* text=auto eol=lf
+
+# File nhị phân
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+
+# Windows scripts giữ CRLF
+*.bat eol=crlf
+*.cmd eol=crlf
+
+# Unix scripts giữ LF
+*.sh eol=lf
