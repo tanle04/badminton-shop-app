@@ -1,0 +1,105 @@
+# ============================================
+# 🔹 GLOBAL IGNORE SETTINGS (Windows + Editor)
+# ============================================
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+*.lnk
+*.tmp
+*.bak
+*.swp
+*.lock
+*.log
+
+# VS Code
+.vscode/
+.history/
+.idea/
+
+# ============================================
+# 🔹 ANDROID PROJECT (Android Studio)
+# ============================================
+.gradle/
+local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build/
+captures/
+.externalNativeBuild/
+.cxx/
+output.json
+
+# Android Studio build outputs
+**/build/
+**/captures/
+**/outputs/
+**/gradle/
+**/.gradle/
+
+# Keystore files (do not commit your signing keys)
+*.jks
+*.keystore
+*.pem
+
+# Gradle Wrapper (optional to ignore)
+.gradle/
+gradle-app.setting
+gradlew
+gradlew.bat
+
+# ============================================
+# 🔹 BACKEND API (PHP - XAMPP)
+# ============================================
+# Cache and temp files
+/vendor/
+node_modules/
+composer.lock
+package-lock.json
+.env
+.env.*
+*.log
+*.cache
+*.bak
+*.old
+*.sql
+*.zip
+*.rar
+
+# IDE & Debug files
+/.idea/
+/nbproject/
+/.vscode/
+
+# Upload or image folders (optional - keep local only)
+uploads/
+images/uploads/
+uploads/tmp/
+
+# ============================================
+# 🔹 SYSTEM FILES
+# ============================================
+# Windows
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============================================
+# 🔹 CUSTOM LOCAL TOOLS
+# ============================================
+# Batch scripts, optional sync tools
+BackendApi/xampp-sync.bat
+
+# ============================================
+# ✅ END OF FILE
+# ============================================
