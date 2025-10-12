@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/txtCategoryName"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textSize="14sp"
+    android:gravity="center_vertical"
+    android:background="@drawable/category_list_item_background"
+    android:textColor="@color/category_text_color_selector"
+    android:text="Category Name" />

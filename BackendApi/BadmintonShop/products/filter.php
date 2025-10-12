@@ -2,14 +2,20 @@
 header("Content-Type: application/json; charset=UTF-8");
 require_once("../bootstrap.php");
 
-$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+// Lấy tên danh mục
+$category = isset($_GET['category']) ? trim($_GET['category']) : "";
 
-if ($keyword === '') {
-    echo json_encode(["success" => false, "message" => "Thiếu từ khóa tìm kiếm"]);
+if ($category === "") {
+    echo json_encode(["success" => false, "message" => "Thiếu tham số category"]);
     exit;
 }
 
-// ✅ Giống list.php, có thêm LIKE để tìm kiếm
+// Phân trang
+$page  = max(1, (int)($_GET['page'] ?? 1));
+$limit = max(1, min(50, (int)($_GET['limit'] ?? 20)));
+$offset = ($page - 1) * $limit;
+
+// ✅ Giống list.php, chỉ khác có điều kiện lọc theo category
 $sql = "
 SELECT 
   p.productID, 
@@ -29,13 +35,13 @@ FROM products p
 LEFT JOIN product_variants v ON v.productID = p.productID
 LEFT JOIN brands b ON b.brandID = p.brandID
 LEFT JOIN categories c ON c.categoryID = p.categoryID
-WHERE p.productName LIKE CONCAT('%', ?, '%')
+WHERE c.categoryName = ?
 GROUP BY p.productID
 ORDER BY p.createdDate DESC
-LIMIT 50";
+LIMIT ? OFFSET ?";
 
 $stmt = $mysqli->prepare($sql);
-$stmt->bind_param("s", $keyword);
+$stmt->bind_param("sii", $category, $limit, $offset);
 $stmt->execute();
 $res = $stmt->get_result();
 
@@ -44,6 +50,7 @@ while ($row = $res->fetch_assoc()) {
     // ✅ Trả lại chỉ tên file ảnh
     $img = $row['imageUrl'] ?? "";
     if ($img && preg_match('/^http/', $img)) {
+        // Cắt bỏ prefix nếu backend cũ trả full URL
         $img = basename($img);
     }
     $row['imageUrl'] = $img ?: "no_image.png";
@@ -52,6 +59,7 @@ while ($row = $res->fetch_assoc()) {
 
 echo json_encode([
     "success" => true,
+    "page" => $page,
     "items" => $data
 ], JSON_UNESCAPED_UNICODE);
 
