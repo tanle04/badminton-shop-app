@@ -21,7 +21,7 @@ SELECT
         WHERE pi.productID = p.productID 
         ORDER BY pi.imageID ASC 
         LIMIT 1
-    ) AS thumbnail
+    ) AS imageUrl
 FROM wishlists w
 JOIN products p ON w.productID = p.productID
 LEFT JOIN brands b ON p.brandID = b.brandID
@@ -36,10 +36,18 @@ $res = $stmt->get_result();
 
 $wishlist = [];
 while ($row = $res->fetch_assoc()) {
-    // Chuẩn hóa URL ảnh 1
-    if (!empty($row["thumbnail"]) && !preg_match("/^http/", $row["thumbnail"])) {
-        $row["thumbnail"] = "http://10.0.2.2/api/BadmintonShop/uploads/" . $row["thumbnail"];
+    // Lấy giá trị ảnh và đặt tên là $img
+    $img = $row['imageUrl'] ?? "";
+    
+    // Loại bỏ logic nối URL, chỉ giữ lại tên file
+    if ($img && preg_match('/^http/', $img)) {
+        // Cắt bỏ prefix nếu backend cũ trả full URL
+        $img = basename($img); 
     }
+    
+    // Đảm bảo trả về tên file ảnh hoặc mặc định nếu không có
+    $row['imageUrl'] = $img ?: "no_image.png"; 
+
     $wishlist[] = $row;
 }
 

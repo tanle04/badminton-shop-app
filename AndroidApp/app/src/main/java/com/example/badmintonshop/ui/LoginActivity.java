@@ -23,8 +23,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://10.0.2.2/api/BadmintonShop/"; // đổi thành IP LAN nếu chạy máy thật
-
+    // 🚩 BỎ: không cần BASE_URL ở đây nữa
     private ApiService api;
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin;
@@ -35,7 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        api = ApiClient.get(BASE_URL).create(ApiService.class);
+        // 🚩 SỬA ĐỔI: Khởi tạo ApiService một cách nhất quán
+        api = ApiClient.getApiService();
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
@@ -64,22 +64,23 @@ public class LoginActivity extends AppCompatActivity {
         body.password = pass;
 
         api.login(body).enqueue(new Callback<AuthResponse>() {
-            @Override public void onResponse(Call<AuthResponse> call, Response<AuthResponse> resp) {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> resp) {
                 btnLogin.setEnabled(true);
 
                 if (!resp.isSuccessful() || resp.body() == null) {
                     String err = "";
-                    try { err = resp.errorBody() != null ? resp.errorBody().string() : ""; } catch (Exception ignored) {}
+                    try {
+                        err = resp.errorBody() != null ? resp.errorBody().string() : "Unknown error";
+                    } catch (Exception ignored) {}
                     toast("Lỗi server: " + err);
-                    Log.e("API", "errorBody=" + err);
+                    Log.e("API_LOGIN_ERROR", "errorBody=" + err);
                     return;
                 }
 
-
-
                 AuthResponse data = resp.body();
                 if ("ok".equalsIgnoreCase(data.getMessage()) && data.getUser() != null) {
-                    // Lưu session đơn giản
+                    // Lưu session với key "fullName" là chính xác
                     SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
                     sp.edit()
                             .putInt("customerID", data.getUser().getCustomerID())
@@ -88,23 +89,20 @@ public class LoginActivity extends AppCompatActivity {
                             .apply();
 
                     toast("Đăng nhập thành công!");
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                    SharedPreferences sharedPreferences = getSharedPreferences("auth", MODE_PRIVATE);
-                    sharedPreferences.edit()
-                            .putInt("customerID", data.getUser().getCustomerID())
-                            .putString("fullName", data.getUser().getFullName())
-                            .putString("email", data.getUser().getEmail())
-                            .apply();
-
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     finish();
                 } else {
                     toast("Sai email hoặc mật khẩu");
                 }
             }
 
-            @Override public void onFailure(Call<AuthResponse> call, Throwable t) {
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
                 btnLogin.setEnabled(true);
                 toast("Không kết nối được server");
+                Log.e("API_LOGIN_FAILURE", "Error: " + t.getMessage());
             }
         });
     }

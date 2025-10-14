@@ -18,7 +18,7 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String BASE_URL = "http://10.0.2.2/api/BadmintonShop/"; // Dùng IP LAN nếu chạy máy thật
+    // 🚩 BỎ: không cần BASE_URL ở đây nữa
     private ApiService api;
 
     @Override
@@ -26,9 +26,10 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        api = ApiClient.get(BASE_URL).create(ApiService.class);
+        // 🚩 SỬA ĐỔI: Khởi tạo ApiService một cách nhất quán
+        api = ApiClient.getApiService();
 
-        // 🧩 Liên kết view
+        // Liên kết view
         TextInputEditText etFullName = findViewById(R.id.etFullNameRegister);
         TextInputEditText etPhone = findViewById(R.id.etPhoneRegister);
         TextInputEditText etAddress = findViewById(R.id.etAddressRegister);
@@ -45,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
             String pass1 = String.valueOf(etPassword.getText()).trim();
             String pass2 = String.valueOf(etPassword2.getText()).trim();
 
-            // 🔍 Validate cơ bản
+            // Validate cơ bản
             if (fullName.isEmpty() || phone.isEmpty() || address.isEmpty() ||
                     email.isEmpty() || pass1.isEmpty() || pass2.isEmpty()) {
                 toast("Vui lòng điền đầy đủ thông tin");
@@ -67,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            // 📨 Gửi request
+            // Gửi request
             AuthRegisterBody body = new AuthRegisterBody(fullName, email, pass1, phone, address);
 
             api.register(body).enqueue(new Callback<AuthResponse>() {

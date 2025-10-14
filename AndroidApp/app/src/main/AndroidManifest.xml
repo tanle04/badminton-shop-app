@@ -16,6 +16,15 @@
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.WishlistActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.CategoryActivity"
             android:exported="false" />
         <activity

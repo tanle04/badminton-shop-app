@@ -34,10 +34,13 @@ $stmtImg->execute();
 $resImg = $stmtImg->get_result();
 $images = [];
 while ($row = $resImg->fetch_assoc()) {
+    // 🚩 BỎ ĐOẠN CODE THÊM BASE_URL NÀY ĐI
+    /*
     if (!preg_match('/^http/', $row['imageUrl'])) {
         $row['imageUrl'] = "http://10.0.2.2/api/BadmintonShop/uploads/" . $row['imageUrl'];
     }
-    $images[] = $row;
+    */
+    $images[] = $row; // Chỉ giữ lại tên file ảnh
 }
 $product['images'] = $images;
 

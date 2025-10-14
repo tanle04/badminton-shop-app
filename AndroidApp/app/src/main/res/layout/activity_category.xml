@@ -56,7 +56,14 @@
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         app:menu="@menu/menu_bottom"
-        app:labelVisibilityMode="labeled" />
+        app:labelVisibilityMode="labeled"
+
+        android:background="@color/semi_transparent_white"
+        app:elevation="0dp"
+
+        app:itemIconTint="@color/bottom_nav_item_color_selector"
+        app:itemTextColor="@color/bottom_nav_item_color_selector" />
 
 </LinearLayout>

@@ -1,12 +1,18 @@
 package com.example.badmintonshop.network;
 
+import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.AuthLoginBody;
 import com.example.badmintonshop.network.dto.AuthRegisterBody;
 import com.example.badmintonshop.network.dto.AuthResponse;
+import com.example.badmintonshop.network.dto.CartResponse;
 import com.example.badmintonshop.network.dto.CategoryListResponse;
 import com.example.badmintonshop.network.dto.ProductDto;
 import com.example.badmintonshop.network.dto.ProductListResponse;
 import com.example.badmintonshop.network.dto.SliderDto;
+import com.example.badmintonshop.network.dto.VariantListResponse;
+import com.example.badmintonshop.network.dto.WishlistAddRequest;
+import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
+import com.example.badmintonshop.network.dto.WishlistGetResponse;
 
 import java.util.List;
 
@@ -40,5 +46,45 @@ public interface ApiService {
 
     @GET("categories/list.php")
     Call<CategoryListResponse> getCategories();
+
+    // 1. Thêm vào Wishlist (SỬA: THÊM THƯ MỤC 'wishlist/')
+    @POST("wishlist/add.php")
+    Call<ApiResponse> addToWishlist(@Body WishlistAddRequest request);
+
+    // 2. Lấy danh sách Wishlist (SỬA: THÊM THƯ MỤC 'wishlist/')
+    @GET("wishlist/get.php")
+    Call<WishlistGetResponse> getWishlist(@Query("customerID") int customerId);
+    // Thêm phương thức xóa sản phẩm khỏi Wishlist
+    @POST("wishlist/remove.php")
+    Call<ApiResponse> deleteFromWishlist(@Body WishlistDeleteRequest request);
+    // SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
+    @GET("cart/get.php")
+    Call<CartResponse> getCartItems(@Query("customerID") int customerId);
+    @FormUrlEncoded
+    @POST("cart/add.php")
+    Call<ApiResponse> addToCart(
+            @Field("customerID") int customerId,
+            @Field("variantID") int variantId,
+            @Field("quantity") int quantity
+    );
+    @FormUrlEncoded
+    @POST("cart/update.php")
+    Call<ApiResponse> updateCartQuantity(
+            @Field("customerID") int customerId,
+            @Field("cartID") int cartId,
+            @Field("quantity") int quantity // Gửi 0 để xóa
+    );
+
+    @GET("cart/get_variants.php")
+    Call<VariantListResponse> getProductVariants(@Query("productID") int productId);
+
+    @FormUrlEncoded
+    @POST("cart/change_variant.php")
+    Call<ApiResponse> changeCartItemVariant(
+            @Field("customerID") int customerId,
+            @Field("cartID") int cartId,
+            @Field("newVariantID") int newVariantId,
+            @Field("quantity") int quantity
+    );
 
 }

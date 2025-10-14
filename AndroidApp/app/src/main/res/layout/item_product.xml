@@ -25,20 +25,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:background="#FFFFFF" />
+                android:scaleType="fitCenter" />
 
-            <!-- Icon trái tim (wishlist) -->
             <ImageView
-                android:id="@+id/btnFavorite"
+                android:id="@+id/btnWishlist"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_gravity="top|end"
                 android:layout_margin="6dp"
-                android:background="@drawable/bg_favorite_circle"
-                android:padding="4dp"
-                android:src="@drawable/ic_favorite_outline"
-                android:contentDescription="" />
+                android:src="@drawable/ic_favorite"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/add_to_wishlist" />
         </FrameLayout>
 
         <TextView

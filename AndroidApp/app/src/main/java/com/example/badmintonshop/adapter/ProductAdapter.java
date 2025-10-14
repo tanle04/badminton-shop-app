@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat; // Import cần thiết để lấy màu
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,17 +18,37 @@ import com.example.badmintonshop.R;
 import com.example.badmintonshop.network.dto.ProductDto;
 import com.example.badmintonshop.ui.ProductDetailActivity;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
+    // 1. Định nghĩa Interface Listener cho nút Wishlist
+    public interface OnWishlistClickListener {
+        void onWishlistClick(ProductDto product);
+    }
+
     private final Context ctx;
     private final List<ProductDto> items;
+    private final OnWishlistClickListener wishlistClickListener;
+    // 🚩 Biến lưu trữ ID sản phẩm yêu thích để kiểm tra trạng thái
+    private final Set<Integer> favoriteIds;
+
     private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
 
+    // Constructor CŨ (Giữ lại để tương thích)
     public ProductAdapter(Context ctx, List<ProductDto> items) {
+        // Mặc định list IDs rỗng nếu không truyền vào
+        this(ctx, items, null, Collections.emptySet());
+    }
+
+    // 3. Constructor MỚI để truyền Wishlist Listener VÀ List ID yêu thích
+    public ProductAdapter(Context ctx, List<ProductDto> items, OnWishlistClickListener listener, Set<Integer> favoriteIds) {
         this.ctx = ctx;
         this.items = items;
+        this.wishlistClickListener = listener;
+        this.favoriteIds = favoriteIds != null ? favoriteIds : Collections.emptySet(); // 🚩 Lưu Set ID
     }
 
     @NonNull
@@ -41,16 +62,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         ProductDto p = items.get(pos);
 
-        // ✅ Tên sản phẩm
+        // ✅ Tên sản phẩm, Giá, Thương hiệu, Ảnh (giữ nguyên)
         h.tvName.setText(p.getProductName());
-
-        // ✅ Giá
         h.tvPrice.setText(String.format("%,.0f ₫", p.getPrice()));
-
-        // ✅ Thương hiệu
         h.tvBrand.setText(p.getBrandName() != null ? p.getBrandName() : "Unknown");
 
-        // ✅ Ảnh sản phẩm
         String imgUrl = p.getImageUrl();
         if (imgUrl != null && !imgUrl.isEmpty()) {
             Glide.with(ctx)
@@ -63,7 +79,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             h.img.setImageResource(R.drawable.ic_badminton_logo);
         }
 
-        // ✅ Sự kiện click -> mở ProductDetailActivity
+        // 🚩 LOGIC CẬP NHẬT MÀU NÚT WISHLIST
+        if (favoriteIds.contains(p.getProductID())) {
+            // Đã yêu thích: Dùng trái tim đầy (Đỏ)
+            // (Bạn cần đảm bảo R.drawable.ic_favorite_filled tồn tại trong drawable)
+            h.btnWishlist.setImageResource(R.drawable.ic_favorite_filled);
+        } else {
+            // Chưa yêu thích: Dùng trái tim rỗng (Trắng/Xám)
+            h.btnWishlist.setImageResource(R.drawable.ic_favorite);
+        }
+
+        // Sự kiện click nút Wishlist (giữ nguyên, gọi toggleWishlist)
+        h.btnWishlist.setOnClickListener(v -> {
+            if (wishlistClickListener != null) {
+                wishlistClickListener.onWishlistClick(p);
+            }
+        });
+
+
+        // ✅ Sự kiện click item -> mở ProductDetailActivity (giữ nguyên)
         h.itemView.setOnClickListener(v -> {
             Intent i = new Intent(ctx, ProductDetailActivity.class);
             i.putExtra("productID", p.getProductID());
@@ -80,10 +114,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public int getItemCount() {
         return items != null ? items.size() : 0;
     }
-
+    // 🚩 NEW: Thêm phương thức này vào cuối lớp
+    public void updateData(List<ProductDto> newItems) {
+        this.items.clear(); // Xóa dữ liệu cũ
+        if (newItems != null) {
+            this.items.addAll(newItems); // Thêm dữ liệu mới
+        }
+        notifyDataSetChanged(); // Báo cho Adapter biết dữ liệu đã thay đổi
+    }
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         TextView tvName, tvPrice, tvBrand;
+        ImageView btnWishlist;
 
         ViewHolder(View v) {
             super(v);
@@ -91,6 +133,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tvName = v.findViewById(R.id.tvName);
             tvPrice = v.findViewById(R.id.tvPrice);
             tvBrand = v.findViewById(R.id.tvBrand);
+            btnWishlist = v.findViewById(R.id.btnWishlist);
         }
     }
 }
