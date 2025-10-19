@@ -2,6 +2,7 @@ package com.example.badmintonshop.ui;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log; // Thêm Log
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.example.badmintonshop.network.dto.WishlistGetResponse;
 import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
 import com.example.badmintonshop.network.dto.ProductDto;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,10 +31,9 @@ import retrofit2.Response;
 
 public class WishlistActivity extends AppCompatActivity {
 
+    private static final String TAG = "WishlistActivityDebug";
     private ApiService api;
     private RecyclerView recyclerViewWishlist;
-
-    // 🚩 BỎ: không cần BASE_URL ở đây nữa
 
     private int getCurrentCustomerId() {
         SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
@@ -44,9 +45,9 @@ public class WishlistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wishlist);
 
-        // 🚩 SỬA ĐỔI: Khởi tạo ApiService một cách nhất quán
         api = ApiClient.getApiService();
 
+        // Thiết lập Toolbar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Sản phẩm yêu thích");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -57,6 +58,13 @@ public class WishlistActivity extends AppCompatActivity {
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         );
 
+        loadWishlist();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Tải lại danh sách mỗi khi quay lại màn hình
         loadWishlist();
     }
 
@@ -76,19 +84,24 @@ public class WishlistActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(WishlistActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                     if (response.body().isSuccess()) {
-                        // Tải lại danh sách để cập nhật UI
-                        loadWishlist();
+                        Toast.makeText(WishlistActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                        loadWishlist(); // Tải lại danh sách để cập nhật UI
+                    } else {
+                        String msg = response.body().getMessage();
+                        Toast.makeText(WishlistActivity.this, "Lỗi khi xóa: " + msg, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Delete failed (Logic): " + msg);
                     }
                 } else {
-                    Toast.makeText(WishlistActivity.this, "Lỗi khi xóa", Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Delete failed (HTTP): " + response.code());
+                    Toast.makeText(WishlistActivity.this, "Lỗi phản hồi từ server.", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Toast.makeText(WishlistActivity.this, "Lỗi kết nối khi xóa: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Delete network error: ", t);
+                Toast.makeText(WishlistActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -97,7 +110,8 @@ public class WishlistActivity extends AppCompatActivity {
         int customerId = getCurrentCustomerId();
 
         if (customerId == -1) {
-            Toast.makeText(this, "Bạn chưa đăng nhập.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Vui lòng đăng nhập để xem Wishlist.", Toast.LENGTH_LONG).show();
+            recyclerViewWishlist.setAdapter(null);
             return;
         }
 
@@ -105,9 +119,14 @@ public class WishlistActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<WishlistGetResponse> call, Response<WishlistGetResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    // ⭐ Sửa: Đảm bảo không bị null
                     List<ProductDto> wishlist = response.body().getWishlist();
+                    if (wishlist == null) {
+                        wishlist = new ArrayList<>();
+                    }
 
-                    if (wishlist != null && !wishlist.isEmpty()) {
+                    if (!wishlist.isEmpty()) {
+                        // Tạo Set chứa tất cả ID trong danh sách này (tất cả đều là yêu thích)
                         Set<Integer> currentFavoriteIds = new HashSet<>();
                         for (ProductDto p : wishlist) {
                             currentFavoriteIds.add(p.getProductID());
@@ -130,13 +149,17 @@ public class WishlistActivity extends AppCompatActivity {
                         recyclerViewWishlist.setAdapter(null); // Xóa danh sách cũ
                     }
                 } else {
+                    Log.e(TAG, "Load failed (Logic/HTTP): " + response.code());
                     Toast.makeText(WishlistActivity.this, "Không tải được wishlist.", Toast.LENGTH_SHORT).show();
+                    recyclerViewWishlist.setAdapter(null);
                 }
             }
 
             @Override
             public void onFailure(Call<WishlistGetResponse> call, Throwable t) {
-                Toast.makeText(WishlistActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Load network error: ", t);
+                Toast.makeText(WishlistActivity.this, "Lỗi kết nối mạng.", Toast.LENGTH_LONG).show();
+                recyclerViewWishlist.setAdapter(null);
             }
         });
     }

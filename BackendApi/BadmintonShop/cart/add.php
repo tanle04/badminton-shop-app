@@ -1,44 +1,96 @@
 <?php
-// Set headers for JSON response
+// File: cart/add.php
+
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 
-// Include database connection (Đường dẫn ../ là chính xác)
-require_once '../bootstrap.php';
+require_once '../bootstrap.php'; // Giả định chứa hàm respond() và kết nối $mysqli
 
-// Get data from the POST request body
-$customerID = (int)($_POST['customerID'] ?? 0);
-$variantID = (int)($_POST['variantID'] ?? 0);
-$quantity = (int)($_POST['quantity'] ?? 1);
-
-// --- 1. Validate Input ---
-if ($customerID <= 0 || $variantID <= 0 || $quantity <= 0) {
-    http_response_code(400); // Bad Request
-    echo json_encode(["success" => false, "message" => "Dữ liệu không hợp lệ (customerID, variantID, quantity)."]);
-    exit();
-}
-
-// --- 2. Use INSERT ... ON DUPLICATE KEY UPDATE ---
-$sql = "INSERT INTO shopping_cart (customerID, variantID, quantity) 
-        VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
-
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("iii", $customerID, $variantID, $quantity);
-
-// --- 3. Execute and check result ---
-if ($stmt->execute()) {
-    if ($stmt->affected_rows >= 1) {
-        echo json_encode(["success" => true, "message" => "Đã cập nhật giỏ hàng"]);
-    } else {
-        echo json_encode(["success" => false, "message" => "Không có gì thay đổi trong giỏ hàng"]);
+try {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
     }
-} else {
-    http_response_code(500); // Internal Server Error
-    echo json_encode(["success" => false, "message" => "Lỗi thực thi câu lệnh SQL"]);
-}
+    
+    // Lấy dữ liệu từ POST request
+    $customerID = (int)($_POST['customerID'] ?? 0);
+    $variantID = (int)($_POST['variantID'] ?? 0);
+    $quantityToAdd = (int)($_POST['quantity'] ?? 1); // Số lượng mới cần thêm
 
-// --- 4. Cleanup ---
-$stmt->close();
-$mysqli->close();
-?>
+    // --- 1. Validate Input ---
+    if ($customerID <= 0 || $variantID <= 0 || $quantityToAdd <= 0) {
+        respond(['isSuccess' => false, 'message' => 'Dữ liệu không hợp lệ (ID/Số lượng).'], 400);
+    }
+
+    // --- BƯỚC 2: TÍNH TOÁN TỔNG SỐ LƯỢNG YÊU CẦU VÀ KIỂM TRA TỒN KHO ---
+
+    // Lấy tồn kho hiện tại (stock) và số lượng đã có trong giỏ (cartQuantity)
+    $sql_check = "
+        SELECT 
+            pv.stock, 
+            COALESCE(sc.quantity, 0) AS cartQuantity,
+            p.productName
+        FROM product_variants pv
+        LEFT JOIN shopping_cart sc ON sc.variantID = pv.variantID AND sc.customerID = ?
+        JOIN products p ON p.productID = pv.productID
+        WHERE pv.variantID = ?
+    ";
+    
+    $stmt_check = $mysqli->prepare($sql_check);
+    if (!$stmt_check) {
+        throw new Exception("Lỗi chuẩn bị SQL kiểm tra tồn kho: " . $mysqli->error);
+    }
+    
+    $stmt_check->bind_param("ii", $customerID, $variantID);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result()->fetch_assoc();
+    $stmt_check->close();
+
+    if (!$result_check) {
+        respond(['isSuccess' => false, 'message' => 'VariantID không tồn tại.'], 404);
+    }
+    
+    $currentStock = (int)$result_check['stock'];
+    $currentCartQuantity = (int)$result_check['cartQuantity'];
+    $productName = $result_check['productName'] ?? 'Sản phẩm';
+    
+    $newTotalQuantity = $currentCartQuantity + $quantityToAdd;
+
+    if ($newTotalQuantity > $currentStock) {
+        // Hoàn trả lỗi nếu tổng số lượng vượt quá tồn kho
+        $message = $currentStock > 0 
+                 ? "Chỉ còn $currentStock sản phẩm ($productName) trong kho."
+                 : "Sản phẩm ($productName) đã hết hàng.";
+        respond(['isSuccess' => false, 'message' => $message], 409); // 409 Conflict
+    }
+
+
+    // --- BƯỚC 3: THỰC THI INSERT ... ON DUPLICATE KEY UPDATE ---
+
+    $sql = "INSERT INTO shopping_cart (customerID, variantID, quantity) 
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)";
+
+    $stmt = $mysqli->prepare($sql);
+    if (!$stmt) {
+        throw new Exception("Lỗi chuẩn bị SQL thêm giỏ hàng: " . $mysqli->error);
+    }
+    
+    $stmt->bind_param("iii", $customerID, $variantID, $quantityToAdd);
+
+    if ($stmt->execute()) {
+        $message = ($currentCartQuantity > 0) 
+                 ? "Đã thêm $quantityToAdd vào giỏ hàng. Tổng số lượng: $newTotalQuantity"
+                 : "Đã thêm $quantityToAdd vào giỏ hàng.";
+                 
+        respond(['isSuccess' => true, 'message' => $message], 200);
+    } else {
+        throw new Exception("Lỗi thực thi câu lệnh SQL: " . $stmt->error);
+    }
+
+    $stmt->close();
+
+} catch (Throwable $e) {
+    error_log("Cart Add API Error: " . $e->getMessage());
+    respond(['isSuccess' => false, 'message' => 'Lỗi Server: ' . $e->getMessage()], 500);
+}
+// Lưu ý: Thẻ đóng ?> bị loại bỏ.

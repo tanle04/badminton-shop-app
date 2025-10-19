@@ -16,6 +16,25 @@
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.YourOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.VoucherSelectionActivity"
+            android:exported="false"
+            android:label="Chọn Voucher" />
+        <activity
+            android:name=".ui.AddEditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AddressActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.ProfileActivity"
             android:exported="false" />
         <activity
@@ -47,7 +66,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.RegisterActivity"
-            android:exported="true" /> <!-- LoginActivity là màn hình chính -->
+            android:exported="true" />
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true" />

@@ -5,12 +5,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager; // Thêm import
 
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.ProductAdapter;
@@ -34,6 +36,7 @@ import retrofit2.Response;
 
 public class SearchActivity extends AppCompatActivity {
 
+    private static final String TAG = "SearchActivityDebug";
     private EditText edtSearch;
     private RecyclerView recyclerSearch;
     private ApiService api;
@@ -58,11 +61,12 @@ public class SearchActivity extends AppCompatActivity {
 
         edtSearch = findViewById(R.id.edtSearch);
         recyclerSearch = findViewById(R.id.recyclerSearch);
-        recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
+
+        // ⭐ SỬA ĐỔI: Chuyển sang StaggeredGridLayoutManager (2 cột)
+        recyclerSearch.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         api = ApiClient.getApiService();
 
-        // 🚩 SỬA ĐỔI: Khởi tạo adapter rỗng ngay từ đầu
         adapter = new ProductAdapter(
                 this,
                 new ArrayList<>(),
@@ -80,38 +84,43 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String keyword = s.toString().trim();
-                // 🚩 SỬA ĐỔI: Logic gọn hơn
-                if (keyword.length() >= 2) {
+
+                if (keyword.length() >= 2) { // ⭐ TÌM KIẾM TỪ KHI TỪ KHÓA ĐỦ DÀI
                     searchProducts(keyword);
                 } else {
-                    // Nếu người dùng xóa hết chữ, xóa kết quả tìm kiếm
+                    // Xóa kết quả nếu từ khóa quá ngắn hoặc rỗng
                     adapter.updateData(new ArrayList<>());
                 }
             }
         });
+
+
     }
 
     private void searchProducts(String keyword) {
         api.searchProducts(keyword).enqueue(new Callback<ProductListResponse>() {
             @Override
             public void onResponse(Call<ProductListResponse> call, Response<ProductListResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // 🚩 SỬA ĐỔI: Chỉ cần gọi updateData thay vì tạo adapter mới
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     adapter.updateData(response.body().getItems());
                 } else {
-                    Toast.makeText(SearchActivity.this, "Không tìm thấy kết quả", Toast.LENGTH_SHORT).show();
-                    adapter.updateData(new ArrayList<>()); // Xóa kết quả nếu lỗi
+                    // Lỗi HTTP hoặc lỗi logic (isSuccess=false)
+                    Log.e(TAG, "Search failed. Code: " + response.code());
+                    Toast.makeText(SearchActivity.this, "Không tìm thấy kết quả phù hợp", Toast.LENGTH_SHORT).show();
+                    adapter.updateData(new ArrayList<>());
                 }
             }
 
             @Override
             public void onFailure(Call<ProductListResponse> call, Throwable t) {
-                Toast.makeText(SearchActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Search network error: ", t);
+                Toast.makeText(SearchActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
+                adapter.updateData(new ArrayList<>());
             }
         });
     }
 
-    // Các hàm wishlist giữ nguyên...
+    // --- LOGIC WISHLIST ---
     private void loadFavoriteIds() {
         if (!isLoggedIn()) {
             favoriteProductIds.clear();
@@ -130,12 +139,15 @@ public class SearchActivity extends AppCompatActivity {
                     }
                 }
             }
-            @Override public void onFailure(Call<WishlistGetResponse> call, Throwable t) {}
+            @Override public void onFailure(Call<WishlistGetResponse> call, Throwable t) {
+                Log.e(TAG, "Failed to load wishlist IDs: ", t);
+            }
         });
     }
 
     private void toggleWishlist(int productId) {
         if (!isLoggedIn()) {
+            Toast.makeText(this, "Vui lòng đăng nhập để sử dụng wishlist", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             return;
         }
@@ -156,7 +168,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 Toast.makeText(SearchActivity.this, response.body() != null ? response.body().getMessage() : "Thêm thất bại", Toast.LENGTH_SHORT).show();
             }
-            @Override public void onFailure(Call<ApiResponse> call, Throwable t) { /* ... */ }
+            @Override public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(SearchActivity.this, "Lỗi kết nối khi thêm SP yêu thích", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -170,7 +184,9 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 Toast.makeText(SearchActivity.this, response.body() != null ? response.body().getMessage() : "Xóa thất bại", Toast.LENGTH_SHORT).show();
             }
-            @Override public void onFailure(Call<ApiResponse> call, Throwable t) { /* ... */ }
+            @Override public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(SearchActivity.this, "Lỗi kết nối khi xóa SP yêu thích", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

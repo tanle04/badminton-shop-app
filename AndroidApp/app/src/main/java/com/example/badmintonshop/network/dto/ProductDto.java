@@ -1,6 +1,7 @@
 package com.example.badmintonshop.network.dto;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList; // Thêm import
 import java.util.List;
 
 public class ProductDto {
@@ -40,6 +41,10 @@ public class ProductDto {
     @SerializedName("variants")
     private List<VariantDto> variants;
 
+    // ⭐ THÊM: Constructor mặc định (cần thiết cho Gson)
+    public ProductDto() {
+    }
+
     // ====== GETTER / SETTER ======
     public int getProductID() { return productID; }
     public void setProductID(int productID) { this.productID = productID; }
@@ -65,10 +70,12 @@ public class ProductDto {
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public List<ImageDto> getImages() { return images; }
+    // ⭐ Cải tiến: Đảm bảo trả về ArrayList rỗng thay vì null
+    public List<ImageDto> getImages() { return images != null ? images : new ArrayList<>(); }
     public void setImages(List<ImageDto> images) { this.images = images; }
 
-    public List<VariantDto> getVariants() { return variants; }
+    // ⭐ Cải tiến: Đảm bảo trả về ArrayList rỗng thay vì null
+    public List<VariantDto> getVariants() { return variants != null ? variants : new ArrayList<>(); }
     public void setVariants(List<VariantDto> variants) { this.variants = variants; }
 
     // ====== Lớp con cho danh sách ảnh ======
@@ -82,6 +89,9 @@ public class ProductDto {
         @SerializedName("sortOrder")
         private int sortOrder;
 
+        // ⭐ THÊM: Constructor mặc định
+        public ImageDto() {}
+
         public String getImageUrl() { return imageUrl; }
         public String getImageType() { return imageType; }
         public int getSortOrder() { return sortOrder; }
@@ -91,6 +101,10 @@ public class ProductDto {
     public static class VariantDto {
         @SerializedName("variantID")
         private int variantID;
+
+        // ⭐ THÊM TRƯỜNG productID VÀO VARIANT ĐỂ DỄ DÀNG LẤY ID SẢN PHẨM CHA
+        @SerializedName("productID")
+        private int productID;
 
         @SerializedName("sku")
         private String sku;
@@ -104,8 +118,15 @@ public class ProductDto {
         @SerializedName("attributes")
         private String attributes; // Ví dụ: "3U, G5" hoặc "L", "XL"
 
+        // ⭐ THÊM: Constructor mặc định
+        public VariantDto() {}
+
         // Getter
         public int getVariantID() { return variantID; }
+        // ⭐ THÊM GETTER VÀ SETTER CHO PRODUCTID
+        public int getProductID() { return productID; }
+        public void setProductID(int productID) { this.productID = productID; }
+
         public String getSku() { return sku; }
         public double getPrice() { return price; }
         public int getStock() { return stock; }

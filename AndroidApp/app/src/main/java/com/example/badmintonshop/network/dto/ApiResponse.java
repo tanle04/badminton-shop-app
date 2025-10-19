@@ -4,11 +4,10 @@ import com.google.gson.annotations.SerializedName;
 
 public class ApiResponse {
 
-    // Phản ánh trường "success" từ JSON
-    @SerializedName("success")
-    private boolean success;
+    // SỬA LỖI: Phải sử dụng tên trường "isSuccess" để khớp chính xác với JSON từ PHP
+    @SerializedName("isSuccess")
+    private boolean isSuccess;
 
-    // Phản ánh trường "message" từ JSON
     @SerializedName("message")
     private String message;
 
@@ -18,10 +17,14 @@ public class ApiResponse {
 
     // Getters để truy cập dữ liệu phản hồi
     public boolean isSuccess() {
-        return success;
+        return isSuccess;
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

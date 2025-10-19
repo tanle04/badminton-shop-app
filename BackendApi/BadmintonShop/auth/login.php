@@ -1,50 +1,67 @@
 <?php
-require_once __DIR__ . '/../bootstrap.php';
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: POST");
+require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond()
 
 try {
-  if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(['error' => 'method_not_allowed'], 405);
-  }
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
+        respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
+    }
 
-  // JSON hoặc form
-  $in = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-  $email = isset($in['email']) ? trim($in['email']) : '';
-  $pass  = isset($in['password']) ? (string)$in['password'] : '';
+    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $email = isset($input['email']) ? trim($input['email']) : '';
+    $password = isset($input['password']) ? (string)$input['password'] : '';
 
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $pass === '') {
-    respond(['error' => 'invalid_input'], 400);
-  }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
+        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
+        respond(['isSuccess' => false, 'message' => 'Email hoặc mật khẩu không hợp lệ.'], 400);
+    }
 
-  // lấy user
-  $stmt = $mysqli->prepare(
-    "SELECT customerID, fullName, email, password_hash, phone, address, createdDate
-     FROM customers WHERE email = ? LIMIT 1"
-  );
-  $stmt->bind_param("s", $email);
-  $stmt->execute();
-  $user = $stmt->get_result()->fetch_assoc();
-  $stmt->close();
+    // Câu lệnh SELECT đã bỏ cột 'address'
+    $stmt = $mysqli->prepare(
+        "SELECT customerID, fullName, email, password_hash, phone, createdDate
+         FROM customers WHERE email = ? LIMIT 1"
+    );
+    
+    if (!$stmt) {
+        throw new Exception("Lỗi chuẩn bị SQL: " . $mysqli->error);
+    }
+    
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 
-  if (!$user || !password_verify($pass, $user['password_hash'])) {
-    // usleep(300000); // chống brute force (tùy chọn)
-    respond(['error' => 'invalid_credentials'], 401);
-  }
+    if (!$user || !password_verify($password, $user['password_hash'])) {
+        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
+        respond(['isSuccess' => false, 'message' => 'Sai email hoặc mật khẩu.'], 401);
+    }
 
-  // rehash nếu cần
-  if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
-    $newHash = password_hash($pass, PASSWORD_DEFAULT);
-    $up = $mysqli->prepare("UPDATE customers SET password_hash=? WHERE customerID=?");
-    $cid = (int)$user['customerID'];
-    $up->bind_param("si", $newHash, $cid);
-    $up->execute(); 
-    $up->close();
-  }
+    // Rehash mật khẩu nếu cần
+    if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT)) {
+        $newHash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt_update = $mysqli->prepare("UPDATE customers SET password_hash = ? WHERE customerID = ?");
+        if ($stmt_update) {
+            $stmt_update->bind_param("si", $newHash, $user['customerID']);
+            $stmt_update->execute();
+            $stmt_update->close();
+        }
+    }
 
-  unset($user['password_hash']);
-  respond(['message' => 'ok', 'user' => $user]);
+    // Không bao giờ gửi password_hash về cho client
+    unset($user['password_hash']);
+    
+    // ⭐ PHẢN HỒI THÀNH CÔNG: Sử dụng cấu trúc DTO nhất quán (isSuccess)
+    respond([
+        'isSuccess' => true,
+        'message' => 'ok', 
+        'user' => $user
+    ]);
 
 } catch (Throwable $e) {
-  respond(['error' => $e->getMessage()], 500);
+    error_log("Login API Error: " . $e->getMessage());
+    // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
+    respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// error_log($e->getMessage());
-// respond(['error' => 'server_error'], 500);
+// Lưu ý: Thẻ đóng ?> bị loại bỏ.

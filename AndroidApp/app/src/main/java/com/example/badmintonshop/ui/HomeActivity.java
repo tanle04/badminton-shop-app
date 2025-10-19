@@ -3,10 +3,12 @@ package com.example.badmintonshop.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.badmintonshop.ui.CartActivity;
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.BannerAdapter;
 import com.example.badmintonshop.adapter.ProductAdapter;
@@ -27,7 +28,6 @@ import com.example.badmintonshop.network.dto.SliderDto;
 import com.example.badmintonshop.network.dto.WishlistAddRequest;
 import com.example.badmintonshop.network.dto.WishlistGetResponse;
 import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
-
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -45,9 +45,11 @@ import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
-    // 🚩 BỎ: không cần BASE_URL ở đây nữa, ApiClient sẽ quản lý việc này
-    private ApiService api;
+    private static final String TAG = "HomeActivityDebug";
+    private static final long BANNER_DELAY_MS = 3000;
+    private static final long BANNER_PERIOD_MS = 4000;
 
+    private ApiService api;
     private RecyclerView recyclerMainGrid;
     private TabLayout tabLayout;
     private ViewPager2 bannerSlider;
@@ -56,6 +58,9 @@ public class HomeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
 
     private final Set<Integer> favoriteProductIds = new HashSet<>();
+    private Timer timer;
+    private final Handler handler = new Handler();
+
 
     private boolean isLoggedIn() {
         SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
@@ -71,8 +76,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Log.d(TAG, "onCreate: HomeActivity started.");
 
-        // 🚩 SỬA ĐỔI: Khởi tạo ApiService một cách nhất quán
         api = ApiClient.getApiService();
 
         // Ánh xạ view
@@ -81,11 +86,15 @@ public class HomeActivity extends AppCompatActivity {
         bannerSlider = findViewById(R.id.bannerSlider);
         tvSearchBar = findViewById(R.id.tvSearchBar);
         bottomNav = findViewById(R.id.bottomNav);
-        bottomNav.setSelectedItemId(R.id.nav_home);
+
+        // Đảm bảo mục 'Home' luôn được chọn khi Activity khởi tạo
+        if (bottomNav.getSelectedItemId() != R.id.nav_home) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        }
 
         AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
         ViewGroup toolbarContainer = (ViewGroup) appBarLayout.getChildAt(0);
-        btnFavoriteToolbar = toolbarContainer.findViewById(R.id.btnFavoriteToolbar); // Dùng ID sẽ an toàn hơn
+        btnFavoriteToolbar = toolbarContainer.findViewById(R.id.btnFavoriteToolbar);
 
         btnFavoriteToolbar.setOnClickListener(v -> {
             if (isLoggedIn()) {
@@ -99,9 +108,10 @@ public class HomeActivity extends AppCompatActivity {
         recyclerMainGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         setupTabs();
-        loadFavoriteIdsAndProducts();
         loadBanners();
         updateBottomNavLabel();
+        // Lần tải đầu tiên
+        loadFavoriteIdsAndProducts();
 
         tvSearchBar.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, SearchActivity.class)));
 
@@ -113,13 +123,12 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, CategoryActivity.class));
                 return true;
             } else if (id == R.id.nav_you) {
-                // 🚩 SỬA ĐỔI: Chuyển sang ProfileActivity thay vì đăng xuất
                 if (isLoggedIn()) {
                     startActivity(new Intent(this, ProfileActivity.class));
                 } else {
                     startActivity(new Intent(this, LoginActivity.class));
                 }
-                return true; // Giữ lại return true để mục được chọn
+                return true;
             } else if (id == R.id.nav_cart) {
                 startActivity(new Intent(this, CartActivity.class));
                 return true;
@@ -131,50 +140,107 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: Activity resumed. Reloading data.");
+        // Đảm bảo mục 'Home' vẫn được chọn khi quay lại
+        bottomNav.setSelectedItemId(R.id.nav_home);
         updateBottomNavLabel();
-        loadFavoriteIdsAndProducts(); // Tải lại để cập nhật trạng thái yêu thích
+        loadFavoriteIdsAndProducts();
+        startBannerAutoScroll(); // Bắt đầu lại auto-scroll
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopBannerAutoScroll(); // Dừng auto-scroll khi Activity không hiển thị
+    }
+
+    // Hàm khởi tạo/dừng Auto-scroll
+    private void startBannerAutoScroll() {
+        if (timer != null) return;
+        Log.d(TAG, "startBannerAutoScroll: Starting auto-scroll.");
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(() -> {
+                    if (bannerSlider.getAdapter() == null || bannerSlider.getAdapter().getItemCount() == 0) return;
+
+                    int currentItem = bannerSlider.getCurrentItem();
+                    int nextItem = (currentItem + 1) % bannerSlider.getAdapter().getItemCount();
+                    bannerSlider.setCurrentItem(nextItem, true);
+                });
+            }
+        }, BANNER_DELAY_MS, BANNER_PERIOD_MS);
+    }
+
+    private void stopBannerAutoScroll() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            Log.d(TAG, "stopBannerAutoScroll: Timer cancelled.");
+        }
+    }
+
 
     private void updateBottomNavLabel() {
         SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
-        // 🚩 SỬA ĐỔI: Lấy tên người dùng với key "fullName" cho đúng
         String customerName = sp.getString("fullName", null);
 
         if (customerName != null && !customerName.isEmpty()) {
             String shortName = customerName.split(" ")[0];
             bottomNav.getMenu().findItem(R.id.nav_you).setTitle(shortName);
+            Log.d(TAG, "BottomNav label updated to: " + shortName);
         } else {
             bottomNav.getMenu().findItem(R.id.nav_you).setTitle("You");
+            Log.d(TAG, "BottomNav label set to 'You' (Logged out).");
         }
     }
 
+    // ⭐ SỬA ĐỔI: Tách biệt tải ID yêu thích và tải sản phẩm
     private void loadFavoriteIdsAndProducts() {
+        Log.d(TAG, "loadFavoriteIdsAndProducts: Starting fetch. LoggedIn: " + isLoggedIn());
         if (!isLoggedIn()) {
             favoriteProductIds.clear();
-            loadProducts("All"); // Tải tất cả sản phẩm
+            loadProducts("All");
             return;
         }
 
-        api.getWishlist(getCurrentCustomerId()).enqueue(new Callback<WishlistGetResponse>() {
+        int customerId = getCurrentCustomerId();
+        Log.d(TAG, "loadFavoriteIdsAndProducts: Fetching wishlist for CustomerID: " + customerId);
+
+        api.getWishlist(customerId).enqueue(new Callback<WishlistGetResponse>() {
             @Override
             public void onResponse(Call<WishlistGetResponse> call, Response<WishlistGetResponse> response) {
+                Log.d(TAG, "Wishlist API Response Code: " + response.code());
+
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     favoriteProductIds.clear();
                     List<ProductDto> wishlist = response.body().getWishlist();
+                    int count = wishlist != null ? wishlist.size() : 0;
+                    Log.i(TAG, "Wishlist fetched successfully. Found " + count + " items.");
+
                     if (wishlist != null) {
                         for (ProductDto p : wishlist) {
                             favoriteProductIds.add(p.getProductID());
                         }
                     }
+                } else {
+                    String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
+                    Log.e(TAG, "Failed to load wishlist IDs: " + msg);
+                    favoriteProductIds.clear();
                 }
-                // Sau khi tải xong IDs, tải sản phẩm cho tab đang được chọn
+                // Sau khi tải xong IDs (dù thành công hay thất bại), tải sản phẩm
                 int selectedTabPosition = tabLayout.getSelectedTabPosition();
                 String category = tabLayout.getTabAt(selectedTabPosition).getText().toString();
+                Log.d(TAG, "Calling loadProducts after wishlist check for category: " + category);
                 loadProducts(category);
             }
             @Override
             public void onFailure(Call<WishlistGetResponse> call, Throwable t) {
-                loadProducts("All"); // Nếu lỗi, vẫn tải sản phẩm
+                Log.e(TAG, "Wishlist fetch network error: " + t.getMessage(), t);
+                favoriteProductIds.clear(); // Mất kết nối thì không có ID yêu thích
+                loadProducts("All");
             }
         });
     }
@@ -185,10 +251,12 @@ public class HomeActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("Giày cầu lông"));
         tabLayout.addTab(tabLayout.newTab().setText("Quần áo cầu lông"));
         tabLayout.addTab(tabLayout.newTab().setText("Phụ kiện"));
+        Log.d(TAG, "setupTabs: Tabs initialized.");
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                Log.d(TAG, "onTabSelected: Loading products for category: " + tab.getText());
                 loadProducts(tab.getText().toString());
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
@@ -196,38 +264,52 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    // 🚩 SỬA ĐỔI: Gộp logic tải sản phẩm vào một hàm duy nhất
     private void loadProducts(String category) {
         Call<ProductListResponse> call;
+
+        Log.d(TAG, "loadProducts: Preparing to fetch for category: " + category);
+
         if (category.equalsIgnoreCase("All")) {
             call = api.getProducts(1, 40);
+            Log.d(TAG, "loadProducts: Calling API getProducts(page=1, limit=40)");
         } else {
             call = api.getProductsByCategory(category);
+            Log.d(TAG, "loadProducts: Calling API getProductsByCategory(category=" + category + ")");
         }
 
         call.enqueue(new Callback<ProductListResponse>() {
             @Override
             public void onResponse(Call<ProductListResponse> call, Response<ProductListResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                Log.d(TAG, "Products API Response Code: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     List<ProductDto> products = response.body().getItems();
+                    int count = products != null ? products.size() : 0;
+                    Log.i(TAG, "Products fetched successfully. Count: " + count);
+
                     updateProductGrid(products);
                 } else {
+                    String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
+                    Log.e(TAG, "Failed to load products for category " + category + ". Message: " + msg);
                     Toast.makeText(HomeActivity.this, "Không tải được sản phẩm", Toast.LENGTH_SHORT).show();
-                    updateProductGrid(new ArrayList<>()); // Hiển thị lưới rỗng
+                    updateProductGrid(new ArrayList<>());
                 }
             }
             @Override
             public void onFailure(Call<ProductListResponse> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Product fetch network error: " + t.getMessage(), t);
+                Toast.makeText(HomeActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_LONG).show();
+                updateProductGrid(new ArrayList<>());
             }
         });
     }
 
-    // 🚩 NEW: Hàm riêng để cập nhật lưới sản phẩm, tránh lặp code
     private void updateProductGrid(List<ProductDto> products) {
+        int count = products != null ? products.size() : 0;
+        Log.d(TAG, "updateProductGrid: Displaying " + count + " products.");
+
         if (products == null || products.isEmpty()) {
-            Toast.makeText(this, "Không có sản phẩm nào", Toast.LENGTH_SHORT).show();
-            recyclerMainGrid.setAdapter(null); // Xóa adapter cũ
+            recyclerMainGrid.setAdapter(null);
             return;
         }
 
@@ -241,14 +323,18 @@ public class HomeActivity extends AppCompatActivity {
         api.getSliders().enqueue(new Callback<List<SliderDto>>() {
             @Override
             public void onResponse(Call<List<SliderDto>> call, Response<List<SliderDto>> response) {
+                Log.d(TAG, "Banner API Response Code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
                     List<SliderDto> banners = response.body();
-                    bannerSlider.setAdapter(new BannerAdapter(HomeActivity.this, banners));
+                    Log.i(TAG, "Banners loaded. Count: " + banners.size());
 
-                    // Auto-scroll logic... (giữ nguyên)
+                    bannerSlider.setAdapter(new BannerAdapter(HomeActivity.this, banners));
+                    startBannerAutoScroll();
                 }
             }
-            @Override public void onFailure(Call<List<SliderDto>> call, Throwable t) {}
+            @Override public void onFailure(Call<List<SliderDto>> call, Throwable t) {
+                Log.e(TAG, "Banner fetch error: " + t.getMessage(), t);
+            }
         });
     }
 
@@ -260,8 +346,10 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if (favoriteProductIds.contains(productId)) {
+            Log.d(TAG, "toggleWishlist: Deleting productID " + productId);
             deleteFromWishlist(getCurrentCustomerId(), productId);
         } else {
+            Log.d(TAG, "toggleWishlist: Adding productID " + productId);
             addToWishlist(getCurrentCustomerId(), productId);
         }
     }
@@ -270,6 +358,7 @@ public class HomeActivity extends AppCompatActivity {
         api.addToWishlist(new WishlistAddRequest(customerId, productId)).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                Log.d(TAG, "Add Wishlist Response Code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
                         favoriteProductIds.add(productId);
@@ -280,7 +369,10 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override public void onFailure(Call<ApiResponse> call, Throwable t) { /* ... */ }
+            @Override public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e(TAG, "Add Wishlist network error: " + t.getMessage());
+                Toast.makeText(HomeActivity.this, "Lỗi kết nối khi thêm SP yêu thích", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -288,6 +380,7 @@ public class HomeActivity extends AppCompatActivity {
         api.deleteFromWishlist(new WishlistDeleteRequest(customerId, productId)).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                Log.d(TAG, "Delete Wishlist Response Code: " + response.code());
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
                         favoriteProductIds.remove(productId);
@@ -298,11 +391,13 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override public void onFailure(Call<ApiResponse> call, Throwable t) { /* ... */ }
+            @Override public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e(TAG, "Delete Wishlist network error: " + t.getMessage());
+                Toast.makeText(HomeActivity.this, "Lỗi kết nối khi xóa SP yêu thích", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    // Các hàm showLogoutConfirmDialog() và logout() giữ nguyên
     private void showLogoutConfirmDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận đăng xuất")

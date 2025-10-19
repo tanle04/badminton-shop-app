@@ -19,4 +19,16 @@
     <color name="colorPrimaryDark">#E65100</color>
     <color name="colorAccent">#FF6700</color>
     <color name="light_gray">#F5F5F5</color>
+    <color name="temu_orange">#FF6700</color>
+    <color name="temu_orange_dark">#E65100</color>
+    <!-- Các màu cơ bản khác -->
+    <color name="orange_800">#FF6F00</color> <color name="green_700">#4CAF50</color>
+    <!-- Màu văn bản chính -->
+    <color name="colorTextPrimary">#333333</color>
+    <color name="red_700">#D32F2F</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_600">#757575</color>
+    <!-- Màu văn bản phụ, thường là màu xám nhạt -->
+    <color name="colorTextSecondary">#757575</color>
+    <color name="colorSelectionBackground">#FFF3F0</color> <!-- Màu nền khi chọn item -->
 </resources>

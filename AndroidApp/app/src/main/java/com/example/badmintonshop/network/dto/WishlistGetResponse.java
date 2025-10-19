@@ -1,11 +1,18 @@
 package com.example.badmintonshop.network.dto;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WishlistGetResponse {
-    @SerializedName("success")
-    private boolean success;
+
+    // ⭐ SỬA: Dùng @SerializedName("isSuccess") để nhất quán (Hoặc giữ "success" nếu API thực sự dùng "success")
+    @SerializedName("isSuccess")
+    private boolean isSuccess;
+
+    // ⭐ THÊM: Trường message để xử lý thông báo lỗi từ server
+    @SerializedName("message")
+    private String message;
 
     @SerializedName("count")
     private int count;
@@ -14,8 +21,15 @@ public class WishlistGetResponse {
     @SerializedName("wishlist")
     private List<ProductDto> wishlist;
 
+    // --- Getters ---
+
     public boolean isSuccess() {
-        return success;
+        return isSuccess;
+    }
+
+    // ⭐ THÊM: Getter cho message
+    public String getMessage() {
+        return message;
     }
 
     public int getCount() {
@@ -23,6 +37,7 @@ public class WishlistGetResponse {
     }
 
     public List<ProductDto> getWishlist() {
-        return wishlist;
+        // ⭐ Cải tiến: Trả về ArrayList rỗng thay vì null để tránh NullPointerException ở lớp UI.
+        return wishlist != null ? wishlist : new ArrayList<>();
     }
 }

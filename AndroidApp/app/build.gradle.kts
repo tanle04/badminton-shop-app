@@ -40,7 +40,8 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("me.relex:circleindicator:2.1.6")
-
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+// (Hoặc phiên bản mới nhất)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
