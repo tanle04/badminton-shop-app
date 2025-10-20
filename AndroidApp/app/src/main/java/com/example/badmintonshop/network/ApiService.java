@@ -8,10 +8,12 @@ import com.example.badmintonshop.network.dto.AuthRegisterBody;
 import com.example.badmintonshop.network.dto.AuthResponse;
 import com.example.badmintonshop.network.dto.CartResponse;
 import com.example.badmintonshop.network.dto.CategoryListResponse;
+import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
 import com.example.badmintonshop.network.dto.OrderListResponse;
 import com.example.badmintonshop.network.dto.ProductDetailResponse; // ⭐ IMPORT MỚI
 import com.example.badmintonshop.network.dto.ProductDto;
 import com.example.badmintonshop.network.dto.ProductListResponse;
+import com.example.badmintonshop.network.dto.ReviewSubmitRequest;
 import com.example.badmintonshop.network.dto.SliderDto;
 import com.example.badmintonshop.network.dto.VariantListResponse;
 import com.example.badmintonshop.network.dto.VoucherListResponse;
@@ -21,6 +23,8 @@ import com.example.badmintonshop.network.dto.WishlistGetResponse;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -182,5 +186,26 @@ public interface ApiService {
     );
     @GET("orders/get_by_customer.php")
     Call<OrderListResponse> getCustomerOrders(@Query("customerID") int customerId, @Query("status") String statusFilter);
+    // ⭐ PHƯƠNG THỨC MỚI: Lấy chi tiết sản phẩm cần review
+    @GET("orders/get_details.php")
+    Call<OrderDetailsListResponse> getOrderDetails(@Query("orderID") int orderId);
 
+    // ⭐ PHƯƠNG THỨC MỚI: Gửi đánh giá
+    @Multipart
+    @POST("reviews/submit_reviews.php") // Đường dẫn API mới
+    Call<ApiResponse> submitReviewsMultipart(
+            @Part("review_data") RequestBody reviewDataJson,
+            @Part List<MultipartBody.Part> photos,          // Tên field: photos
+            @Part MultipartBody.Part video                  // Tên field: video
+    );
+
+
+    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng
+    @FormUrlEncoded // Sử dụng khi gửi dữ liệu form qua POST
+    @POST("cart/add.php")
+    Call<ApiResponse> addVariantToCart(
+            @Field("customerID") int customerID,
+            @Field("variantID") int variantID,
+            @Field("quantity") int quantity
+    );
 }

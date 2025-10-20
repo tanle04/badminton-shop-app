@@ -1,7 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 require_once '../bootstrap.php';
-error_reporting(E_ALL); // Bật báo cáo lỗi để ghi vào log
+error_reporting(E_ALL);
 
 // Hàm trả về phản hồi JSON (sử dụng isSuccess)
 function return_response($isSuccess, $message, $orderID = null)
@@ -124,7 +124,7 @@ try {
 
             if ($isPrivate) {
                 // ⭐ LOGIC A: VOUCHER CÁ NHÂN/RIÊNG TƯ
-                // ⭐ SỬA: Bỏ cột dateUsed khỏi UPDATE (hoặc thêm cột này vào DB)
+                // ⭐ ĐÃ SỬA: Cập nhật status mà không cần cột dateUsed
                 $stmt_update_cust_voucher = $mysqli->prepare(
                     "UPDATE customer_vouchers SET status = 'used' WHERE customerID = ? AND voucherID = ? AND status = 'available'"
                 );
@@ -132,12 +132,10 @@ try {
                 $stmt_update_cust_voucher->execute();
                 
                 if ($stmt_update_cust_voucher->affected_rows == 0) {
+                     // Nếu không cập nhật được, đó là lỗi logic nghiêm trọng vì mã được áp dụng hợp lệ
                      throw new Exception("Voucher cá nhân đã được sử dụng hoặc không hợp lệ (VoucherID: {$voucherID}).");
                 }
                 $stmt_update_cust_voucher->close();
-                
-                // KHÔNG CẦN TĂNG usedCount TRONG BẢNG VOUCHERS (đã tăng trong redeem.php)
-
             } else {
                 // ⭐ LOGIC B: VOUCHER CHUNG
                 $stmt_update_global_voucher = $mysqli->prepare(

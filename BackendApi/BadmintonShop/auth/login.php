@@ -18,9 +18,9 @@ try {
         respond(['isSuccess' => false, 'message' => 'Email hoặc mật khẩu không hợp lệ.'], 400);
     }
 
-    // Câu lệnh SELECT đã bỏ cột 'address'
+    // ⭐ THAY ĐỔI 1: THÊM CỘT `isEmailVerified` VÀO CÂU LỆNH SELECT
     $stmt = $mysqli->prepare(
-        "SELECT customerID, fullName, email, password_hash, phone, createdDate
+        "SELECT customerID, fullName, email, password_hash, phone, createdDate, isEmailVerified
          FROM customers WHERE email = ? LIMIT 1"
     );
     
@@ -33,9 +33,21 @@ try {
     $user = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
+    // 1. Kiểm tra tồn tại user và mật khẩu
     if (!$user || !password_verify($password, $user['password_hash'])) {
         // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
         respond(['isSuccess' => false, 'message' => 'Sai email hoặc mật khẩu.'], 401);
+    }
+    
+    // ⭐ THAY ĐỔI 2: KIỂM TRA TRẠNG THÁI XÁC NHẬN EMAIL
+    if ($user['isEmailVerified'] == 0) {
+        // Trả về lỗi nếu tài khoản chưa được xác nhận
+        respond([
+            'isSuccess' => false,
+            // Sử dụng một message cụ thể để client (Android) có thể hiển thị
+            'message' => 'unverified_email', 
+            'error' => 'Tài khoản chưa được xác nhận email. Vui lòng kiểm tra hộp thư của bạn.'
+        ], 403); // HTTP 403 Forbidden
     }
 
     // Rehash mật khẩu nếu cần
@@ -56,7 +68,7 @@ try {
     respond([
         'isSuccess' => true,
         'message' => 'ok', 
-        'user' => $user
+        'user' => $user // Bây giờ user cũng bao gồm isEmailVerified = 1
     ]);
 
 } catch (Throwable $e) {

@@ -1,11 +1,20 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
-require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond()
+
+// ⭐ THAY ĐỔI 1: Tải tất cả các thư viện (PHPMailer) qua Composer Autoload
+// Đường dẫn: /auth/ -> /vendor/autoload.php
+require_once __DIR__ . '/../vendor/autoload.php'; 
+
+require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
+require_once __DIR__ . '/../utils/email_helper.php'; // Chứa hàm sendVerificationEmail()
+
+// ⭐⭐ CHỈ ĐỊNH ĐƯỜNG DẪN CƠ SỞ CHO EMAIL CONFIRMATION ⭐⭐
+// BẠN PHẢI THAY THẾ yourdomain.com BẰNG ĐỊA CHỈ API THỰC TẾ
+const VERIFICATION_URL_BASE = "https://yourdomain.com/api/auth/verify.php?token="; 
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        // ⭐ SỬA: Đảm bảo phản hồi lỗi sử dụng cấu trúc isSuccess
         respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
     }
 
@@ -15,10 +24,10 @@ try {
     $email = trim($input['email'] ?? '');
     $password = (string)($input['password'] ?? '');
     $phone = trim($input['phone'] ?? '');
-    
+    $address = trim($input['address'] ?? ''); // Giữ lại address từ input dù không lưu vào customers
+
     // --- Validation ---
     if ($fullName === '' || $password === '' || $phone === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        // ⭐ SỬA: Bổ sung phone vào kiểm tra lỗi
         respond(['isSuccess' => false, 'message' => 'Vui lòng điền đầy đủ họ tên, email hợp lệ, mật khẩu và số điện thoại.'], 400);
     }
     if (strlen($password) < 6) {
@@ -36,23 +45,27 @@ try {
 
     if ($stmt_check->num_rows > 0) {
         $stmt_check->close();
-        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
         respond(['isSuccess' => false, 'message' => 'Email này đã được sử dụng.'], 409);
     }
     $stmt_check->close();
 
+    // --- Tạo Token và Thời gian hết hạn ---
+    $verificationToken = bin2hex(random_bytes(32)); // Tạo token 64 ký tự hex
+    $tokenExpiry = date('Y-m-d H:i:s', strtotime('+1 day'));
+    
     // --- Thực hiện đăng ký ---
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
     
+    // SQL: Thêm 3 cột mới (isEmailVerified, verificationToken, tokenExpiry)
     $stmt_insert = $mysqli->prepare(
-        "INSERT INTO customers (fullName, email, password_hash, phone)
-         VALUES (?, ?, ?, ?)"
+        "INSERT INTO customers (fullName, email, password_hash, phone, isEmailVerified, verificationToken, tokenExpiry)
+         VALUES (?, ?, ?, ?, 0, ?, ?)" // isEmailVerified mặc định là 0
     );
     if (!$stmt_insert) {
         throw new Exception("Lỗi chuẩn bị SQL đăng ký: " . $mysqli->error);
     }
     
-    $stmt_insert->bind_param("ssss", $fullName, $email, $password_hash, $phone);
+    $stmt_insert->bind_param("ssssss", $fullName, $email, $password_hash, $phone, $verificationToken, $tokenExpiry);
     $stmt_insert->execute();
     
     $newId = $mysqli->insert_id;
@@ -62,23 +75,37 @@ try {
         throw new Exception("Không thể tạo bản ghi khách hàng.");
     }
 
-    // ⭐ PHẢN HỒI THÀNH CÔNG: Sử dụng cấu trúc DTO nhất quán
+    // ⭐ SỬA LỖI: Bọc hàm gửi email trong try-catch để ngăn lỗi 500 do PHPMailer
+    try {
+        $verificationLink = VERIFICATION_URL_BASE . $verificationToken;
+        $emailSent = sendVerificationEmail($email, $fullName, $verificationLink); 
+
+        if (!$emailSent) {
+            // Ghi log nếu hàm gửi email báo thất bại (return false)
+            error_log("Failed to send verification email (returned false) to: " . $email);
+        }
+    } catch (\Throwable $emailException) {
+        // Bắt bất kỳ lỗi nghiêm trọng nào (ví dụ: Fatal Error do thiếu Class PHPMailer)
+        error_log("Email sending system exception: " . $emailException->getMessage());
+        // Cho phép luồng đăng ký thành công tiếp tục
+    }
+
+    // PHẢN HỒI THÀNH CÔNG: Thông báo rằng cần xác nhận email
     respond([
         'isSuccess' => true,
-        'message' => 'registered', // Giữ lại message 'registered' cho code Android
+        'message' => 'registered_pending_verification', // Message cho client Android xử lý
         'customerID' => $newId,
         'user' => [
             'customerID' => $newId,
             'fullName' => $fullName,
             'email' => $email,
-            'phone' => $phone
+            'phone' => $phone,
+            'isEmailVerified' => 0 
         ]
     ], 201); // 201 Created
 
 } catch (Throwable $e) {
-    // Ghi log lỗi để debug
+    // Đây là khối catch cho các lỗi SQL hoặc logic chính
     error_log("Register API Error: " . $e->getMessage());
-    // ⭐ SỬA: Đảm bảo phản hồi lỗi sử dụng cấu trúc isSuccess
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

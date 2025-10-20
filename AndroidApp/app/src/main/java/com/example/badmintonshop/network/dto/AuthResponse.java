@@ -1,5 +1,6 @@
 package com.example.badmintonshop.network.dto;
 
+import com.example.badmintonshop.model.Customer; // ⭐ 1. IMPORT LỚP CUSTOMER ĐÃ ĐỊNH NGHĨA
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -13,8 +14,9 @@ public class AuthResponse {
     @SerializedName("error")
     private String error;
 
+    // ⭐ 2. SỬ DỤNG LỚP CUSTOMER ĐÃ CẬP NHẬT TRẠNG THÁI XÁC NHẬN
     @SerializedName("user")
-    private User user;
+    private Customer user; // Đổi từ User sang Customer
 
     // Getter & Setter
     public String getMessage() { return message; }
@@ -23,43 +25,14 @@ public class AuthResponse {
     public String getError() { return error; }
     public void setError(String error) { this.error = error; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    // Đổi kiểu trả về của getUser()
+    public Customer getUser() { return user; }
+    public void setUser(Customer user) { this.user = user; }
 
-    // Lớp con đại diện cho user object
-    public static class User {
-        @SerializedName("customerID")
-        private int customerID;
-
-        @SerializedName("fullName")
-        private String fullName;
-
-        @SerializedName("email")
-        private String email;
-
-        @SerializedName("phone")
-        private String phone;
-
-        @SerializedName("address")
-        private String address;
-
-        public int getCustomerID() { return customerID; }
-        public String getFullName() { return fullName; }
-        public String getEmail() { return email; }
-        public String getPhone() { return phone; }
-        public String getAddress() { return address; }
-
-        @Override
-        public String toString() {
-            return "User{" +
-                    "customerID=" + customerID +
-                    ", fullName='" + fullName + '\'' +
-                    ", email='" + email + '\'' +
-                    ", phone='" + phone + '\'' +
-                    ", address='" + address + '\'' +
-                    '}';
-        }
-    }
+    /*
+     * ⭐ Lớp con "public static class User" ĐÃ BỊ LOẠI BỎ
+     * và được thay thế bằng lớp Customer độc lập.
+     */
 
     @Override
     public String toString() {

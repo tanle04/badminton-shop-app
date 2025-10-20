@@ -8,7 +8,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast; // Thêm Toast
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,7 +31,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private List<CartItem> cartItems;
     private final Context context;
     private final CartAdapterListener listener;
-    // ⭐ BASE URL CẦN ĐƯỢC ĐỊNH NGHĨA HOẶC LẤY TỪ API CLIENT
     private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
 
     public CartAdapter(Context context, List<CartItem> cartItems, CartAdapterListener listener) {
@@ -43,6 +42,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     @NonNull
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // ⭐ Giả định layout file là R.layout.item_cart (thay vì cart_item_layout)
         View view = LayoutInflater.from(context).inflate(R.layout.cart_item_layout, parent, false);
         return new CartViewHolder(view);
     }
@@ -51,12 +51,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         CartItem item = cartItems.get(position);
         int currentQuantity = item.getQuantity();
-        int maxStock = item.getStock(); // ⭐ GIẢ ĐỊNH CartItem có phương thức getStock()
+        int maxStock = item.getStock();
 
         // Gán dữ liệu
         holder.name.setText(item.getProductName());
         holder.variant.setText(item.getVariantDetails());
-        holder.price.setText(String.format(Locale.GERMAN, "%,.0f đ", Double.parseDouble(item.getVariantPrice())));
+
+        // Giá sản phẩm (đảm bảo price là float/double)
+        try {
+            holder.price.setText(String.format(Locale.GERMAN, "%,.0f đ", Double.parseDouble(item.getVariantPrice())));
+        } catch (NumberFormatException e) {
+            holder.price.setText("Giá không hợp lệ");
+        }
+
         holder.quantity.setText(String.valueOf(currentQuantity));
         holder.checkbox.setChecked(item.isSelected());
 
@@ -70,7 +77,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         // ⭐ Ràng buộc nút tăng/giảm số lượng
         holder.btnIncrease.setEnabled(currentQuantity < maxStock);
-        holder.btnDecrease.setEnabled(currentQuantity > 1);
+        holder.btnDecrease.setEnabled(true); // Luôn bật nút giảm (dù số lượng là 1)
+
 
         // --- XỬ LÝ SỰ KIỆN CLICK ---
 
@@ -87,9 +95,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         // Nút giảm số lượng
         holder.btnDecrease.setOnClickListener(v -> {
             if (currentQuantity > 1) {
+                // Giảm số lượng nếu > 1
                 listener.onUpdateQuantity(item.getCartID(), currentQuantity - 1);
             } else {
-                // Nếu số lượng là 1, báo cho Activity hiển thị dialog xác nhận xóa
+                // Nếu số lượng là 1, gọi Activity để hiển thị dialog xác nhận xóa
                 listener.onRemoveItem(item.getCartID(), item.getProductName());
             }
         });
@@ -107,6 +116,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.rootLayout.setOnClickListener(v -> {
             listener.onItemEditClicked(item);
         });
+
+        // Sự kiện click vào nút Remove (để hiển thị icon Xóa)
+        holder.btnRemove.setOnClickListener(v -> {
+            listener.onRemoveItem(item.getCartID(), item.getProductName());
+        });
     }
 
     @Override
@@ -123,7 +137,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         CheckBox checkbox;
         ImageView image;
         TextView name, variant, price, quantity;
-        ImageButton btnIncrease, btnDecrease;
+        ImageButton btnIncrease, btnDecrease, btnRemove; // ⭐ Thêm btnRemove
         ConstraintLayout rootLayout;
 
         public CartViewHolder(@NonNull View itemView) {
@@ -137,6 +151,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             btnIncrease = itemView.findViewById(R.id.button_increase);
             btnDecrease = itemView.findViewById(R.id.button_decrease);
             rootLayout = itemView.findViewById(R.id.root_layout);
+            btnRemove = itemView.findViewById(R.id.button_remove); // ⭐ Ánh xạ nút xóa nếu có
         }
     }
 }

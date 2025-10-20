@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -69,7 +70,24 @@
             android:exported="true" />
         <activity
             android:name=".ui.LoginActivity"
-            android:exported="true" />
+            android:exported="true">
+            <!-- ⭐ KHỐI THÊM VÀO ĐỂ BẮT DEEP LINK XÁC NHẬN EMAIL ⭐ -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Bắt liên kết thành công: badmintonshop://verify/success -->
+                <data android:scheme="badmintonshop"
+                    android:host="verify"
+                    android:pathPrefix="/success" />
+
+                <!-- Bắt liên kết thất bại: badmintonshop://verify/failure -->
+                <data android:scheme="badmintonshop"
+                    android:host="verify"
+                    android:pathPrefix="/failure" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

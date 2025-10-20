@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+// ⭐ Import mới để xử lý Deep Link
+import android.net.Uri;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -49,6 +51,55 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
+    // ⭐ PHƯƠNG THỨC MỚI: Xử lý Deep Link khi Activity được mở hoặc quay lại
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleDeepLink(getIntent());
+    }
+
+    // ⭐ PHƯƠNG THỨC MỚI: Logic xử lý Deep Link
+    private void handleDeepLink(Intent intent) {
+        String action = intent.getAction();
+        Uri data = intent.getData();
+
+        if (Intent.ACTION_VIEW.equals(action) && data != null) {
+            String scheme = data.getScheme(); // badmintonshop
+            String host = data.getHost();     // verify
+            String path = data.getPath();     // /success hoặc /failure
+
+            // Chỉ xử lý nếu scheme và host khớp với Intent Filter
+            if ("badmintonshop".equals(scheme) && "verify".equals(host)) {
+
+                if ("/success".equals(path)) {
+                    // ⭐ THÀNH CÔNG: Hiển thị thông báo và khuyến khích đăng nhập
+                    toast("Kích hoạt tài khoản thành công! Bạn đã có thể đăng nhập.");
+                    Log.i(TAG, "Deep Link: Verification SUCCESS.");
+
+                } else if ("/failure".equals(path)) {
+                    // ⭐ THẤT BẠI: Hiển thị lỗi
+                    String error = data.getQueryParameter("error");
+                    String msg = "Xác nhận thất bại. Vui lòng kiểm tra lại email hoặc đăng ký lại.";
+
+                    if (error != null) {
+                        if (error.equals("expired_or_used")) {
+                            msg = "Liên kết đã hết hạn hoặc đã được sử dụng. Vui lòng đăng ký lại.";
+                        } else if (error.equals("invalid_token")) {
+                            msg = "Mã xác nhận không hợp lệ.";
+                        }
+                    }
+                    toast(msg);
+                    Log.w(TAG, "Deep Link: Verification FAILURE. Error: " + error);
+                }
+
+                // ⭐ QUAN TRỌNG: Xóa dữ liệu Intent để không gọi lại logic này lần nữa
+                // khi người dùng chuyển hướng nội bộ.
+                intent.setData(null);
+                setIntent(new Intent());
+            }
+        }
+    }
+
     private void doLogin() {
         // ⭐ Cải tiến: Sử dụng .toString() an toàn hơn trên đối tượng Editable
         String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
@@ -70,7 +121,29 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> resp) {
                 btnLogin.setEnabled(true);
 
+                // ⭐ THAY ĐỔI LỚN: Xử lý lỗi HTTP 403 (Forbidden)
                 if (!resp.isSuccessful()) {
+
+                    if (resp.code() == 403) {
+                        // Xử lý lỗi tài khoản chưa xác nhận (từ login.php đã sửa)
+                        String errorBodyString = null;
+                        try {
+                            // Cố gắng đọc thông báo lỗi từ body
+                            if (resp.errorBody() != null) {
+                                errorBodyString = resp.errorBody().string();
+                                Log.e(TAG, "Error 403 Body: " + errorBodyString);
+                                // Dù không parse JSON, ta có thể log để debug
+                            }
+                        } catch (IOException e) {
+                            Log.e(TAG, "Error reading errorBody: ", e);
+                        }
+
+                        // Hiển thị thông báo yêu cầu xác nhận email
+                        toast("Đăng nhập thất bại: Tài khoản chưa được xác nhận email. Vui lòng kiểm tra hộp thư.");
+                        return;
+                    }
+
+                    // Xử lý các lỗi HTTP khác (400, 401, 500...)
                     String errorMessage = "Lỗi HTTP " + resp.code();
                     try {
                         // Cố gắng đọc thông báo lỗi từ body
@@ -92,14 +165,17 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                // ⭐ Cải tiến: Kiểm tra thông báo thành công từ server
+                // ⭐ Logic thành công: Đã được đảm bảo là đã xác nhận (isEmailVerified=1) do API 403 đã lọc
                 if ("ok".equalsIgnoreCase(data.getMessage()) && data.getUser() != null) {
+
                     // Lưu session
                     SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
                     sp.edit()
                             .putInt("customerID", data.getUser().getCustomerID())
                             .putString("fullName", data.getUser().getFullName())
                             .putString("email", data.getUser().getEmail())
+                            // Thêm trạng thái xác nhận (giá trị 1 nếu thành công)
+                            .putInt("isEmailVerified", data.getUser().getIsEmailVerified())
                             .apply();
 
                     Log.i(TAG, "Login successful. User: " + data.getUser().getFullName() + ", ID: " + data.getUser().getCustomerID());

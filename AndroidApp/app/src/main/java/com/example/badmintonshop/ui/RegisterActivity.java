@@ -1,5 +1,6 @@
 package com.example.badmintonshop.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -82,6 +83,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setEnabled(false); // Vô hiệu hóa nút
 
         // Gửi request
+        // Lưu ý: Trường address không còn trong DB ban đầu, nhưng vẫn gửi trong body
         AuthRegisterBody body = new AuthRegisterBody(fullName, email, pass1, phone, address);
 
         api.register(body).enqueue(new Callback<AuthResponse>() {
@@ -111,13 +113,20 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                // ⭐ Xử lý các trường hợp thành công/thất bại theo message
-                if ("registered".equalsIgnoreCase(res.getMessage()) ||
-                        "ok".equalsIgnoreCase(res.getMessage())) {
-                    toast("Đăng ký thành công! Vui lòng đăng nhập.");
+                // ⭐ THAY ĐỔI: Xử lý message mới từ server
+                if ("registered_pending_verification".equalsIgnoreCase(res.getMessage())) {
+                    // Xử lý khi API trả về thông báo yêu cầu xác nhận email
+                    toast("Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.");
                     finish(); // Quay về LoginActivity
+                }
+                // Giữ lại logic cũ cho các trường hợp khác (ví dụ: lỗi trùng email)
+                else if ("registered".equalsIgnoreCase(res.getMessage()) ||
+                        "ok".equalsIgnoreCase(res.getMessage())) {
+                    // Nếu API cũ vẫn trả về "registered" mà không cần xác nhận
+                    toast("Đăng ký thành công! Vui lòng đăng nhập.");
+                    finish();
                 } else if ("email_exists".equalsIgnoreCase(res.getMessage()) ||
-                        "email_exists".equalsIgnoreCase(res.getError())) {
+                        "Email này đã được sử dụng.".equalsIgnoreCase(res.getMessage())) { // Giả sử server có thể trả về lỗi chi tiết này
                     toast("Email đã tồn tại. Vui lòng sử dụng email khác.");
                 } else {
                     // Trường hợp lỗi khác từ server (ví dụ: lỗi validate chi tiết)

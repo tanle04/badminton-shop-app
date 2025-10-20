@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.badmintonshop.R;
-import com.example.badmintonshop.network.ApiClient;
 import com.example.badmintonshop.network.dto.OrderDto;
 import com.example.badmintonshop.network.dto.OrderDetailDto;
 
@@ -26,11 +24,13 @@ import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
-    // 1. Định nghĩa Interface Listener (cho các hành động)
+    // 1. ĐỊNH NGHĨA INTERFACE LISTENER
     public interface OrderAdapterListener {
         void onReviewClicked(int orderId);
         void onRefundClicked(int orderId);
         void onTrackClicked(int orderId);
+        // Chỉ truyền OrderID
+        void onBuyAgainClicked(int orderId);
     }
 
     private final Context context;
@@ -63,26 +63,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvDate.setText(formatDate(order.getOrderDate()));
         holder.tvTotal.setText(String.format(Locale.GERMAN, "%,.0f đ", order.getTotal()));
 
-        // ⭐ SỬA LỖI: Tính và hiển thị số lượng mục (Total Item Count)
-        int totalItemsInOrder = items != null ? items.size() : 0; // Lấy số lượng loại sản phẩm
-        // Tuy nhiên, để tính tổng số lượng *sản phẩm* (ví dụ: 2 vợt + 3 giày = 5 items),
-        // ta cần dùng getTotalItemsCount() (giả sử đã được thêm vào OrderDto)
-        // HOẶC tính tổng quantity trong adapter:
+        // Tính tổng số lượng sản phẩm
         int totalQuantity = 0;
         if (items != null) {
             for (OrderDetailDto item : items) {
                 totalQuantity += item.getQuantity();
             }
         }
-
         holder.tvItemCount.setText(String.format(Locale.getDefault(), " (%d items)", totalQuantity));
 
 
         // 2. Hiển thị danh sách sản phẩm (tối đa 4 ảnh)
-        // ⭐ SỬA LỖI: Bỏ tham số thứ ba (totalCount)
         displayOrderItems(holder.llItemPreviews, items);
 
-        // 3. Xử lý các nút hành động
+        // ⭐ 3. XỬ LÝ NÚT HÀNH ĐỘNG
         setupActionButtons(holder, order);
     }
 
@@ -91,7 +85,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return orderList != null ? orderList.size() : 0;
     }
 
-    // Cập nhật danh sách (dùng trong OrderFragment)
     public void updateData(List<OrderDto> newOrders) {
         this.orderList = newOrders;
         notifyDataSetChanged();
@@ -99,20 +92,29 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     // --- PRIVATE HELPER METHODS ---
 
-    // ⭐ SỬA LỖI: Loại bỏ tham số totalCount
+    // HÀM HELPER: KIỂM TRA TẤT CẢ SẢN PHẨM TRONG ĐƠN HÀNG ĐÃ ĐƯỢC ĐÁNH GIÁ CHƯA
+    private boolean isOrderFullyReviewed(List<OrderDetailDto> items) {
+        if (items == null || items.isEmpty()) {
+            return false;
+        }
+        for (OrderDetailDto item : items) {
+            if (!item.isReviewed()) {
+                return false; // Chỉ cần 1 mục chưa đánh giá là coi như CHƯA xong
+            }
+        }
+        return true; // Tất cả mục đều đã được đánh giá
+    }
+
     private void displayOrderItems(LinearLayout container, List<OrderDetailDto> items) {
         container.removeAllViews();
         int maxDisplay = 4;
 
         if (items == null) return;
 
-        // Hiển thị tối đa maxDisplay ảnh sản phẩm
         for (int i = 0; i < items.size() && i < maxDisplay; i++) {
             OrderDetailDto item = items.get(i);
-            // ⭐ SỬA: Phải inflate layout chứa ImageView tóm tắt (include_order_item_preview.xml)
-            // Thay vì cố gắng cast View sang ImageView, ta inflate nó an toàn hơn.
             View previewView = LayoutInflater.from(context).inflate(R.layout.include_order_item_preview, container, false);
-            ImageView imageView = (ImageView) previewView; // Giả định include_order_item_preview là một ImageView
+            ImageView imageView = (ImageView) previewView;
 
             String imageUrl = BASE_IMAGE_URL + item.getImageUrl();
             Glide.with(context)
@@ -131,24 +133,71 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.btnReview.setVisibility(View.GONE);
         holder.btnReturnRefund.setVisibility(View.GONE);
 
+        List<OrderDetailDto> items = order.getItems();
+        OrderDetailDto firstDetail = (items != null && !items.isEmpty()) ? items.get(0) : null;
+
         // Logic hiển thị nút dựa trên trạng thái
         if (status.equals("Processing") || status.equals("Shipped")) {
             holder.btnTrack.setVisibility(View.VISIBLE);
-        } else if (status.equals("Delivered")) {
-            holder.btnReview.setVisibility(View.VISIBLE);
-            holder.btnReturnRefund.setVisibility(View.VISIBLE);
         }
 
-        // Gán sự kiện click
+        // ⭐ LOGIC 1: ĐƠN HÀNG ĐÃ GIAO (DELIVERED)
+        else if (status.equals("Delivered") && firstDetail != null) {
+
+            holder.btnReturnRefund.setVisibility(View.VISIBLE);
+            holder.btnReview.setVisibility(View.VISIBLE);
+
+            boolean fullyReviewed = isOrderFullyReviewed(items);
+
+            if (fullyReviewed) {
+                // ĐÃ ĐÁNH GIÁ HẾT -> HIỆN MUA LẠI
+                holder.btnReview.setText("Mua lại");
+                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800));
+
+                holder.btnReview.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onBuyAgainClicked(order.getOrderID());
+                    }
+                });
+
+            } else {
+                // CÒN SẢN PHẨM CHƯA ĐÁNH GIÁ -> HIỆN ĐÁNH GIÁ
+                holder.btnReview.setText("Leave a review");
+                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.red_700));
+
+                holder.btnReview.setOnClickListener(v -> {
+                    if (listener != null) {
+                        listener.onReviewClicked(order.getOrderID());
+                    }
+                });
+            }
+        }
+
+        // ⭐ LOGIC 2: ĐƠN HÀNG ĐÃ HỦY HOẶC HOÀN TIỀN
+        else if ((status.equals("Cancelled") || status.equals("Refunded")) && firstDetail != null) {
+
+            holder.btnReview.setVisibility(View.VISIBLE); // Chỉ hiện nút Mua lại
+            holder.btnReturnRefund.setVisibility(View.GONE); // Ẩn hoàn tiền (vì đã hủy/hoàn)
+
+            holder.btnReview.setText("Mua lại");
+            holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800));
+
+            holder.btnReview.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onBuyAgainClicked(order.getOrderID());
+                }
+            });
+        }
+
+
+        // Gán sự kiện cho các nút còn lại
         if (listener != null) {
-            holder.btnReview.setOnClickListener(v -> listener.onReviewClicked(order.getOrderID()));
             holder.btnReturnRefund.setOnClickListener(v -> listener.onRefundClicked(order.getOrderID()));
             holder.btnTrack.setOnClickListener(v -> listener.onTrackClicked(order.getOrderID()));
         }
     }
 
     private int getStatusColor(String status) {
-        // ⭐ LƯU Ý: Phải đảm bảo các màu này đã được định nghĩa trong colors.xml
         switch (status) {
             case "Delivered":
                 return ContextCompat.getColor(context, R.color.green_700);
@@ -176,9 +225,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     private String formatDate(String isoDate) {
-        // Tùy biến: Giả sử orderDate là ISO string (2025-10-17 17:34:34)
         if (isoDate == null || isoDate.length() < 10) return "N/A";
-        // Lấy ngày tháng (ví dụ: "17 Oct 2025")
         return isoDate.substring(0, 10).replace('-', '/');
     }
 
@@ -187,7 +234,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderId, tvStatus, tvDate, tvTotal, tvItemCount;
         LinearLayout llItemPreviews;
-        Button btnReview, btnReturnRefund, btnTrack;
+        Button btnReview, btnReturnRefund, btnTrack; // Giả định btnReview là nút Leave a review
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);

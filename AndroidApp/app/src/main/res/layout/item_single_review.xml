@@ -83,31 +83,41 @@
             android:padding="8dp"
             android:textSize="14sp" />
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_media_preview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:visibility="visible"
+            android:visibility="gone" /> <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:text="Photo"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:textAllCaps="false"
-                android:drawableTop="@drawable/ic_photo_camera" />
+        <Button
+            android:id="@+id/btn_photo"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="Photo"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textAllCaps="false"
+            android:drawableTop="@drawable/ic_photo_camera" />
 
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:text="Video"
-                android:layout_marginStart="12dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:textAllCaps="false"
-                android:drawableTop="@drawable/ic_video_camera" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/btn_video"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:text="Video"
+            android:layout_marginStart="12dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textAllCaps="false"
+            android:drawableTop="@drawable/ic_video_camera" />
+    </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
