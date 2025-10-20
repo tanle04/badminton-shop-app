@@ -200,7 +200,7 @@ public interface ApiService {
     );
 
 
-    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng
+    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng  o day co thay doi 
     @FormUrlEncoded // Sử dụng khi gửi dữ liệu form qua POST
     @POST("cart/add.php")
     Call<ApiResponse> addVariantToCart(
