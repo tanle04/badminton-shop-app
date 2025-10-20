@@ -2,18 +2,60 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="Badminton Shop"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BadmintonShop">
+        android:theme="@style/Theme.BadmintonShop"
+        android:usesCleartextTraffic="true">
         <activity
-            android:name=".HomeActivity"
-            android:exported="true" >
+            android:name=".ui.ReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.YourOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.VoucherSelectionActivity"
+            android:exported="false"
+            android:label="Chọn Voucher" />
+        <activity
+            android:name=".ui.AddEditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.AddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.WishlistActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CategoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.SearchActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ui.HomeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,15 +63,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
-            android:exported="true" /> <!-- LoginActivity là màn hình chính -->
+            android:name=".ui.RegisterActivity"
+            android:exported="true" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
+            <!-- ⭐ KHỐI THÊM VÀO ĐỂ BẮT DEEP LINK XÁC NHẬN EMAIL ⭐ -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
+                <!-- Bắt liên kết thành công: badmintonshop://verify/success -->
+                <data android:scheme="badmintonshop"
+                    android:host="verify"
+                    android:pathPrefix="/success" />
+
+                <!-- Bắt liên kết thất bại: badmintonshop://verify/failure -->
+                <data android:scheme="badmintonshop"
+                    android:host="verify"
+                    android:pathPrefix="/failure" />
+            </intent-filter>
         </activity>
     </application>
 

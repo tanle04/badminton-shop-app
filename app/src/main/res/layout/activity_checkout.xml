@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    tools:context=".ui.CheckoutActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="Thanh toán"
+        app:navigationIcon="@drawable/ic_arrow_back" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:layout_above="@+id/bottom_bar_checkout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView style="@style/CheckoutCard">
+                <LinearLayout
+                    android:id="@+id/address_section_container"
+                    style="@style/CheckoutSection"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/tv_change_address"
+                        style="@style/CheckoutSectionHeader"
+                        android:text="Địa chỉ nhận hàng" />
+
+                    <TextView
+                        android:id="@+id/tv_recipient_info"
+                        style="@style/CheckoutText.Primary"
+                        android:layout_marginTop="8dp"
+                        tools:text="Lê Trọng Tốn | (+84) 817 112 004" />
+
+                    <TextView
+                        android:id="@+id/tv_address_details"
+                        style="@style/CheckoutText.Secondary"
+                        tools:text="46 Đường Làng Tố, Xã Liên Hồng, Huyện Đan Phượng, Hà Nội" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_checkout_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <androidx.cardview.widget.CardView style="@style/CheckoutCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/voucher_section_container"
+                        style="@style/CheckoutSection"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <TextView
+                            android:id="@+id/tv_voucher_header"
+                            style="@style/CheckoutSectionHeader"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Shop Voucher"
+                            android:textColor="@color/colorPrimary"
+                            app:drawableStartCompat="@drawable/ic_voucher_primary"
+                            android:drawablePadding="8dp"
+                            android:drawableEnd="@null"/>
+
+                        <TextView
+                            android:id="@+id/tv_voucher_code"
+                            style="@style/CheckoutText.Secondary.Right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="Chọn mã giảm giá >"
+                            tools:text="SALE15 >"/>
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView style="@style/CheckoutCard">
+                <LinearLayout style="@style/CheckoutSection">
+                    <TextView
+                        style="@style/CheckoutSectionHeader"
+                        android:drawableEnd="@null"
+                        android:text="Phương thức vận chuyển" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_shipping_methods"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false" />
+
+                    <TextView
+                        style="@style/CheckoutText.Secondary"
+                        android:layout_marginTop="8dp"
+                        android:text="Thời gian giao hàng dự kiến có thể bị ảnh hưởng bởi những yếu tố khác."
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView style="@style/CheckoutCard">
+                <LinearLayout style="@style/CheckoutSection">
+
+                    <TextView
+                        style="@style/CheckoutSectionHeader"
+                        android:drawableEnd="@null"
+                        android:text="Phương thức thanh toán" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_payment_methods"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+
+                        <RadioButton
+                            android:id="@+id/rb_cod"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Thanh toán khi nhận hàng (COD)"
+                            android:checked="true"/>
+
+                        <RadioButton
+                            android:id="@+id/rb_vnpay"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Thanh toán qua VNPay" />
+                    </RadioGroup>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView style="@style/CheckoutCard">
+                <LinearLayout style="@style/CheckoutSection">
+                    <TextView
+                        style="@style/CheckoutSectionHeader"
+                        android:drawableEnd="@null"
+                        android:text="Chi tiết thanh toán"/>
+
+                    <RelativeLayout style="@style/SummaryRow">
+                        <TextView style="@style/CheckoutText.Secondary" android:text="Tổng tiền hàng" />
+                        <TextView android:id="@+id/tv_subtotal" style="@style/CheckoutText.Secondary.Right" tools:text="14.500đ"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout style="@style/SummaryRow">
+                        <TextView style="@style/CheckoutText.Secondary" android:text="Tổng tiền phí vận chuyển" />
+                        <TextView android:id="@+id/tv_shipping_fee" style="@style/CheckoutText.Secondary.Right" tools:text="22.200đ"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout style="@style/SummaryRow">
+                        <TextView style="@style/CheckoutText.Secondary" android:text="Giảm giá Voucher" />
+                        <TextView android:id="@+id/tv_voucher_discount" style="@style/CheckoutText.Secondary.Right" tools:text="-0đ" android:textColor="@color/colorPrimary"/>
+                    </RelativeLayout>
+
+                    <RelativeLayout style="@style/SummaryRow">
+                        <TextView style="@style/CheckoutText.Primary" android:text="Tổng thanh toán" />
+                        <TextView android:id="@+id/tv_total_payment" style="@style/CheckoutText.Primary.Right" tools:text="36.700đ"/>
+                    </RelativeLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom_bar_checkout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:cardElevation="8dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_place_order"
+                android:layout_width="150dp"
+                android:layout_height="60dp"
+                android:layout_alignParentEnd="true"
+                android:text="Đặt hàng"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:cornerRadius="0dp"/>
+            <TextView
+                android:id="@+id/tv_bottom_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/btn_place_order"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                tools:text="36.700đ"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/tv_bottom_total"
+                android:layout_centerVertical="true"
+                android:text="Tổng cộng:"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
