@@ -19,9 +19,9 @@ import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.OrderAdapter;
 import com.example.badmintonshop.network.ApiClient;
 import com.example.badmintonshop.network.ApiService;
-import com.example.badmintonshop.network.dto.ApiResponse; // ⭐ Import ApiResponse
+import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.OrderDto;
-import com.example.badmintonshop.network.dto.OrderDetailDto; // ⭐ Import OrderDetailDto
+import com.example.badmintonshop.network.dto.OrderDetailDto;
 import com.example.badmintonshop.network.dto.OrderListResponse;
 
 import java.util.ArrayList;
@@ -102,8 +102,18 @@ public class OrderFragment extends Fragment {
                 @Override public void onReviewClicked(int orderId) {}
                 @Override public void onRefundClicked(int orderId) {}
                 @Override public void onTrackClicked(int orderId) {}
-                // Cần phải triển khai cả onBuyAgainClicked với đúng chữ ký
                 @Override public void onBuyAgainClicked(int orderId) {}
+
+                // ⭐ ĐÃ SỬA: TRIỂN KHAI PHƯƠNG THỨC MỚI
+                @Override
+                public void onOrderClicked(OrderDto order) {
+                    // Nếu Listener là Fragment (trường hợp giả), chuyển ủy quyền lên Activity
+                    if (getActivity() instanceof OrderAdapter.OrderAdapterListener) {
+                        ((OrderAdapter.OrderAdapterListener) getActivity()).onOrderClicked(order);
+                    } else {
+                        Log.e(TAG, "Activity does not implement OrderAdapterListener for OrderClicked.");
+                    }
+                }
             };
         }
 
@@ -226,7 +236,8 @@ public class OrderFragment extends Fragment {
         }
     }
 
-    private void updateUIState() {
+    // Xóa hàm updateUIState() không tham số để tránh nhầm lẫn
+    /* private void updateUIState() {
         updateUIState(false, null);
-    }
+    } */
 }

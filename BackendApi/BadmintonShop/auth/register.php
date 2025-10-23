@@ -9,9 +9,19 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
 require_once __DIR__ . '/../utils/email_helper.php'; // Chứa hàm sendVerificationEmail()
 
-// ⭐⭐ CHỈ ĐỊNH ĐƯỜNG DẪN CƠ SỞ CHO EMAIL CONFIRMATION ⭐⭐
-// BẠN PHẢI THAY THẾ yourdomain.com BẰNG ĐỊA CHỈ API THỰC TẾ
-const VERIFICATION_URL_BASE = "https://yourdomain.com/api/auth/verify.php?token="; 
+// ======================================================================
+// ⭐⭐ CẤU HÌNH ĐƯỜNG DẪN XÁC MINH (BẮT BUỘC SỬA) ⭐⭐
+// ======================================================================
+
+// Phương án 1 (Production/Hosting): Sử dụng domain thật của bạn
+// const VERIFICATION_URL_BASE = "https://mybadmintonshop.com/api/auth/verify.php?token=";
+
+// Phương án 2 (Local Testing/Máy ảo Android): 
+// 10.0.2.2 là địa chỉ đặc biệt để máy ảo Android truy cập máy tính chủ (Localhost)
+// ĐƯỜNG DẪN ĐÃ SỬA để khớp với cấu trúc thư mục C:\xampp\htdocs\api\BadmintonShop\auth
+const VERIFICATION_URL_BASE = "http://10.0.2.2/api/BadmintonShop/auth/verify.php?token="; 
+
+// ======================================================================
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -75,7 +85,7 @@ try {
         throw new Exception("Không thể tạo bản ghi khách hàng.");
     }
 
-    // ⭐ SỬA LỖI: Bọc hàm gửi email trong try-catch để ngăn lỗi 500 do PHPMailer
+    // ⭐ Gửi email và xử lý lỗi ⭐
     try {
         $verificationLink = VERIFICATION_URL_BASE . $verificationToken;
         $emailSent = sendVerificationEmail($email, $fullName, $verificationLink); 
@@ -85,7 +95,7 @@ try {
             error_log("Failed to send verification email (returned false) to: " . $email);
         }
     } catch (\Throwable $emailException) {
-        // Bắt bất kỳ lỗi nghiêm trọng nào (ví dụ: Fatal Error do thiếu Class PHPMailer)
+        // Bắt bất kỳ lỗi nghiêm trọng nào
         error_log("Email sending system exception: " . $emailException->getMessage());
         // Cho phép luồng đăng ký thành công tiếp tục
     }

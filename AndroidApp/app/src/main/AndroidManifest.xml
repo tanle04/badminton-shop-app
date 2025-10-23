@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,11 +22,25 @@
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.OrderDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.ReviewActivity"
             android:exported="false" />
         <activity
             android:name=".ui.YourOrdersActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="yourorders"
+                    android:scheme="badmintonshop" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.CheckoutActivity"
             android:exported="false" />
@@ -71,21 +90,20 @@
         <activity
             android:name=".ui.LoginActivity"
             android:exported="true">
-            <!-- ⭐ KHỐI THÊM VÀO ĐỂ BẮT DEEP LINK XÁC NHẬN EMAIL ⭐ -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Bắt liên kết thành công: badmintonshop://verify/success -->
-                <data android:scheme="badmintonshop"
+                <data
                     android:host="verify"
-                    android:pathPrefix="/success" />
-
-                <!-- Bắt liên kết thất bại: badmintonshop://verify/failure -->
-                <data android:scheme="badmintonshop"
+                    android:pathPrefix="/success"
+                    android:scheme="badmintonshop" />
+                <data
                     android:host="verify"
-                    android:pathPrefix="/failure" />
+                    android:pathPrefix="/failure"
+                    android:scheme="badmintonshop" />
             </intent-filter>
         </activity>
     </application>

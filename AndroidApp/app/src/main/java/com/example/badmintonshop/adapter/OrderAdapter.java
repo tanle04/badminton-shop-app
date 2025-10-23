@@ -29,8 +29,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         void onReviewClicked(int orderId);
         void onRefundClicked(int orderId);
         void onTrackClicked(int orderId);
-        // Chỉ truyền OrderID
         void onBuyAgainClicked(int orderId);
+
+        // ⭐ ĐÃ SỬA: Thêm phương thức click vào toàn bộ đơn hàng
+        void onOrderClicked(OrderDto order);
     }
 
     private final Context context;
@@ -56,14 +58,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         OrderDto order = orderList.get(position);
         List<OrderDetailDto> items = order.getItems();
 
-        // 1. Cập nhật thông tin tiêu đề đơn hàng
+        // 1. Cập nhật thông tin tiêu đề đơn hàng (Giữ nguyên)
         holder.tvOrderId.setText(String.format("Order #%d", order.getOrderID()));
         holder.tvStatus.setText(getStatusDisplayName(order.getStatus()));
         holder.tvStatus.setTextColor(getStatusColor(order.getStatus()));
         holder.tvDate.setText(formatDate(order.getOrderDate()));
         holder.tvTotal.setText(String.format(Locale.GERMAN, "%,.0f đ", order.getTotal()));
 
-        // Tính tổng số lượng sản phẩm
+        // Tính tổng số lượng sản phẩm (Giữ nguyên)
         int totalQuantity = 0;
         if (items != null) {
             for (OrderDetailDto item : items) {
@@ -73,11 +75,18 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         holder.tvItemCount.setText(String.format(Locale.getDefault(), " (%d items)", totalQuantity));
 
 
-        // 2. Hiển thị danh sách sản phẩm (tối đa 4 ảnh)
+        // 2. Hiển thị danh sách sản phẩm (Giữ nguyên)
         displayOrderItems(holder.llItemPreviews, items);
 
-        // ⭐ 3. XỬ LÝ NÚT HÀNH ĐỘNG
+        // ⭐ 3. XỬ LÝ NÚT HÀNH ĐỘNG (Giữ nguyên)
         setupActionButtons(holder, order);
+
+        // ⭐ 4. XỬ LÝ CLICK VÀO TOÀN BỘ ĐƠN HÀNG
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onOrderClicked(order);
+            }
+        });
     }
 
     @Override
@@ -92,7 +101,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     // --- PRIVATE HELPER METHODS ---
 
-    // HÀM HELPER: KIỂM TRA TẤT CẢ SẢN PHẨM TRONG ĐƠN HÀNG ĐÃ ĐƯỢC ĐÁNH GIÁ CHƯA
+    // HÀM HELPER: KIỂM TRA TẤT CẢ SẢN PHẨM TRONG ĐƠN HÀNG ĐÃ ĐƯỢC ĐÁNH GIÁ CHƯA (Giữ nguyên)
     private boolean isOrderFullyReviewed(List<OrderDetailDto> items) {
         if (items == null || items.isEmpty()) {
             return false;
@@ -105,6 +114,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         return true; // Tất cả mục đều đã được đánh giá
     }
 
+    // HÀM HELPER: HIỂN THỊ ẢNH SẢN PHẨM (Giữ nguyên)
     private void displayOrderItems(LinearLayout container, List<OrderDetailDto> items) {
         container.removeAllViews();
         int maxDisplay = 4;
@@ -127,6 +137,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    // HÀM HELPER: XỬ LÝ NÚT HÀNH ĐỘNG (Giữ nguyên)
     private void setupActionButtons(OrderViewHolder holder, OrderDto order) {
         String status = order.getStatus();
         holder.btnTrack.setVisibility(View.GONE);
@@ -197,6 +208,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    // HÀM HELPER: LẤY MÀU TRẠNG THÁI (Giữ nguyên)
     private int getStatusColor(String status) {
         switch (status) {
             case "Delivered":
@@ -212,6 +224,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    // HÀM HELPER: LẤY TÊN HIỂN THỊ TRẠNG THÁI (Giữ nguyên)
     private String getStatusDisplayName(String status) {
         switch (status) {
             case "Pending": return "Chờ xác nhận";
@@ -224,6 +237,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    // HÀM HELPER: FORMAT NGÀY (Giữ nguyên)
     private String formatDate(String isoDate) {
         if (isoDate == null || isoDate.length() < 10) return "N/A";
         return isoDate.substring(0, 10).replace('-', '/');
@@ -234,7 +248,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderId, tvStatus, tvDate, tvTotal, tvItemCount;
         LinearLayout llItemPreviews;
-        Button btnReview, btnReturnRefund, btnTrack; // Giả định btnReview là nút Leave a review
+        Button btnReview, btnReturnRefund, btnTrack;
 
         public OrderViewHolder(@NonNull View itemView) {
             super(itemView);

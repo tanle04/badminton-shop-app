@@ -200,12 +200,19 @@ public interface ApiService {
     );
 
 
-    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng  o day co thay doi 
+    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng
     @FormUrlEncoded // Sử dụng khi gửi dữ liệu form qua POST
     @POST("cart/add.php")
     Call<ApiResponse> addVariantToCart(
             @Field("customerID") int customerID,
             @Field("variantID") int variantID,
             @Field("quantity") int quantity
+    );
+    // Phương thức HỦY đơn hàng
+    @FormUrlEncoded
+    @POST("orders/cancel.php")
+    Call<ApiResponse> cancelOrder(
+            @Field("customerID") int customerId,
+            @Field("orderID") int orderId
     );
 }

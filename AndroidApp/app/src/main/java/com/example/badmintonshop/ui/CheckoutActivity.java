@@ -8,6 +8,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+// ⭐ MỚI: Thêm Uri để mở trình duyệt
+import android.net.Uri;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,6 +43,8 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private static final int SELECT_ADDRESS_REQUEST_CODE = 102;
     private static final int SELECT_VOUCHER_REQUEST_CODE = 103;
+    // ⭐ ĐÃ THÊM: Request code cho VNPay
+    private static final int VNPAY_REQUEST_CODE = 104;
     private static final String TAG = "CHECKOUT_DEBUG";
 
     private ArrayList<CartItem> selectedItems;
@@ -300,13 +304,33 @@ public class CheckoutActivity extends AppCompatActivity {
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.body().isSuccess()) {
-                        Log.i(TAG, "Order placed successfully! Message: " + response.body().getMessage());
-                        Toast.makeText(CheckoutActivity.this, "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
-                        // Chuyển hướng về trang chủ và xóa hết stack
-                        Intent intent = new Intent(CheckoutActivity.this, HomeActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
+                        // ⭐ START VNPAY INTEGRATION ⭐
+                        if ("VNPAY_REDIRECT".equalsIgnoreCase(response.body().getMessage())) {
+                            String vnpayUrl = response.body().  getVnpayUrl(); // Cần thêm getVnpayUrl() vào ApiResponse DTO
+
+                            if (vnpayUrl != null && !vnpayUrl.isEmpty()) {
+                                Log.i(TAG, "Redirecting to VNPAY: " + vnpayUrl);
+
+                                // Mở URL VNPay trong trình duyệt (sẽ trả về kết quả qua vnpay_return.php)
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(vnpayUrl));
+                                startActivityForResult(browserIntent, VNPAY_REQUEST_CODE);
+
+                            } else {
+                                Toast.makeText(CheckoutActivity.this, "Lỗi tạo link thanh toán VNPay.", Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            // Xử lý COD (Đặt hàng thành công, email đã gửi)
+                            Log.i(TAG, "Order placed successfully! Message: " + response.body().getMessage());
+                            Toast.makeText(CheckoutActivity.this, "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
+                            // Chuyển hướng về trang chủ và xóa hết stack
+                            Intent intent = new Intent(CheckoutActivity.this, HomeActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                        // ⭐ END VNPAY INTEGRATION ⭐
+
                     } else {
                         // LOG LỖI TỪ SERVER
                         String errorMessage = response.body().getMessage();
@@ -345,6 +369,21 @@ public class CheckoutActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // ⭐ XỬ LÝ KẾT QUẢ VNPAY ⭐
+        if (requestCode == VNPAY_REQUEST_CODE) {
+            // Sau khi người dùng thoát khỏi trình duyệt/WebView VNPay (dù thành công hay thất bại)
+            Toast.makeText(this, "Hoàn tất thanh toán. Vui lòng kiểm tra trạng thái đơn hàng.", Toast.LENGTH_LONG).show();
+
+            // Chuyển hướng về trang đơn hàng của tôi
+            Intent intent = new Intent(this, YourOrdersActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
+        // --- Xử lý Address và Voucher (Giữ nguyên) ---
         if (resultCode != RESULT_OK || data == null) {
             // Nếu người dùng đóng màn hình chọn voucher/địa chỉ mà không chọn gì,
             // nếu đó là màn hình voucher, cần hủy chọn voucher nếu có.

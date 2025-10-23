@@ -5,14 +5,13 @@ import java.io.Serializable;
 
 public class OrderDetailDto implements Serializable {
 
+    // --- Fields ---
     @SerializedName("orderDetailID")
     private int orderDetailID;
 
-    // ⭐ BỔ SUNG: ID biến thể (Khóa ngoại trực tiếp trong DB)
     @SerializedName("variantID")
     private int variantID;
 
-    // ⭐ BỔ SUNG: ID sản phẩm (Rất quan trọng cho logic đánh giá)
     @SerializedName("productID")
     private int productID;
 
@@ -20,35 +19,38 @@ public class OrderDetailDto implements Serializable {
     private String productName;
 
     @SerializedName("imageUrl")
-    private String imageUrl; // Ảnh sản phẩm
+    private String imageUrl;
 
     @SerializedName("quantity")
     private int quantity;
 
-    // Trường chi tiết biến thể (ví dụ: Size: L, Màu: Đỏ)
+    @SerializedName("price")
+    private double price;
+
     @SerializedName("variantDetails")
     private String variantDetails;
 
-    // Trạng thái đã được đánh giá
     @SerializedName("isReviewed")
     private boolean isReviewed;
 
     // --------------------------------------------------
-    // 1. Constructors (Phương thức khởi tạo)
+    // 1. Constructors
     // --------------------------------------------------
 
     // Constructor không tham số (Bắt buộc cho Gson/Retrofit)
     public OrderDetailDto() {
     }
 
-    // Constructor đầy đủ tham số (Cập nhật để bao gồm các ID mới)
-    public OrderDetailDto(int orderDetailID, int variantID, int productID, String productName, String imageUrl, int quantity, String variantDetails, boolean isReviewed) {
+    // Constructor đầy đủ tham số
+    public OrderDetailDto(int orderDetailID, int variantID, int productID, String productName,
+                          String imageUrl, int quantity, double price, String variantDetails, boolean isReviewed) {
         this.orderDetailID = orderDetailID;
         this.variantID = variantID;
         this.productID = productID;
         this.productName = productName;
         this.imageUrl = imageUrl;
         this.quantity = quantity;
+        this.price = price;
         this.variantDetails = variantDetails;
         this.isReviewed = isReviewed;
     }
@@ -65,7 +67,6 @@ public class OrderDetailDto implements Serializable {
         this.orderDetailID = orderDetailID;
     }
 
-    // ⭐ GETTER/SETTER mới cho VariantID
     public int getVariantID() {
         return variantID;
     }
@@ -74,7 +75,6 @@ public class OrderDetailDto implements Serializable {
         this.variantID = variantID;
     }
 
-    // ⭐ GETTER/SETTER mới cho ProductID
     public int getProductID() {
         return productID;
     }
@@ -105,6 +105,14 @@ public class OrderDetailDto implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getVariantDetails() {

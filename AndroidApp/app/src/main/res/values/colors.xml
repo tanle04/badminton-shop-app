@@ -31,4 +31,8 @@
     <!-- Màu văn bản phụ, thường là màu xám nhạt -->
     <color name="colorTextSecondary">#757575</color>
     <color name="colorSelectionBackground">#FFF3F0</color> <!-- Màu nền khi chọn item -->
+    <color name="text_primary">#212121</color>  <color name="text_secondary">#757575</color> <color name="grey_100">#F5F5F5</color>
+    <color name="grey_600">#757575</color>
+    <color name="orange_500">#FF9800</color>
+
 </resources>

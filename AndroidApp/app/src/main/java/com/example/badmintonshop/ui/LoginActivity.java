@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
-// ⭐ Import mới để xử lý Deep Link
-import android.net.Uri;
+import android.net.Uri; // Import mới để xử lý Deep Link
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -49,26 +48,31 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister.setOnClickListener(v ->
                 startActivity(new Intent(this, RegisterActivity.class))
         );
-    }
 
-    // ⭐ PHƯƠNG THỨC MỚI: Xử lý Deep Link khi Activity được mở hoặc quay lại
-    @Override
-    protected void onResume() {
-        super.onResume();
+        // ⭐ Xử lý Deep Link khi Activity được tạo lần đầu (từ bên ngoài)
         handleDeepLink(getIntent());
     }
 
-    // ⭐ PHƯƠNG THỨC MỚI: Logic xử lý Deep Link
+    // ⭐ PHƯƠNG THỨC MỚI: Xử lý Deep Link khi Activity đã chạy và nhận Intent mới
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // Cập nhật Intent hiện tại
+        handleDeepLink(intent);
+    }
+
+    // ⭐ LOGIC XỬ LÝ DEEP LINK ⭐
     private void handleDeepLink(Intent intent) {
         String action = intent.getAction();
         Uri data = intent.getData();
 
+        // 1. Chỉ xử lý nếu Intent là ACTION_VIEW và có dữ liệu URI
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             String scheme = data.getScheme(); // badmintonshop
             String host = data.getHost();     // verify
             String path = data.getPath();     // /success hoặc /failure
 
-            // Chỉ xử lý nếu scheme và host khớp với Intent Filter
+            // 2. Chỉ xử lý nếu scheme và host khớp với Intent Filter đã cấu hình trong Manifest
             if ("badmintonshop".equals(scheme) && "verify".equals(host)) {
 
                 if ("/success".equals(path)) {
@@ -77,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.i(TAG, "Deep Link: Verification SUCCESS.");
 
                 } else if ("/failure".equals(path)) {
-                    // ⭐ THẤT BẠI: Hiển thị lỗi
+                    // ⭐ THẤT BẠI: Hiển thị lỗi chi tiết
                     String error = data.getQueryParameter("error");
                     String msg = "Xác nhận thất bại. Vui lòng kiểm tra lại email hoặc đăng ký lại.";
 
@@ -92,8 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                     Log.w(TAG, "Deep Link: Verification FAILURE. Error: " + error);
                 }
 
-                // ⭐ QUAN TRỌNG: Xóa dữ liệu Intent để không gọi lại logic này lần nữa
-                // khi người dùng chuyển hướng nội bộ.
+                // ⭐ QUAN TRỌNG: Xóa dữ liệu Intent sau khi xử lý ⭐
+                // Điều này ngăn chặn logic Deep Link chạy lại nếu người dùng chuyển hướng nội bộ.
                 intent.setData(null);
                 setIntent(new Intent());
             }
@@ -121,24 +125,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> resp) {
                 btnLogin.setEnabled(true);
 
-                // ⭐ THAY ĐỔI LỚN: Xử lý lỗi HTTP 403 (Forbidden)
+                // ⭐ Xử lý lỗi HTTP 403 (Forbidden) - Tài khoản chưa xác nhận
                 if (!resp.isSuccessful()) {
 
                     if (resp.code() == 403) {
-                        // Xử lý lỗi tài khoản chưa xác nhận (từ login.php đã sửa)
-                        String errorBodyString = null;
-                        try {
-                            // Cố gắng đọc thông báo lỗi từ body
-                            if (resp.errorBody() != null) {
-                                errorBodyString = resp.errorBody().string();
-                                Log.e(TAG, "Error 403 Body: " + errorBodyString);
-                                // Dù không parse JSON, ta có thể log để debug
-                            }
-                        } catch (IOException e) {
-                            Log.e(TAG, "Error reading errorBody: ", e);
-                        }
-
-                        // Hiển thị thông báo yêu cầu xác nhận email
+                        // Lỗi từ server cho biết tài khoản chưa xác nhận
                         toast("Đăng nhập thất bại: Tài khoản chưa được xác nhận email. Vui lòng kiểm tra hộp thư.");
                         return;
                     }
@@ -146,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
                     // Xử lý các lỗi HTTP khác (400, 401, 500...)
                     String errorMessage = "Lỗi HTTP " + resp.code();
                     try {
-                        // Cố gắng đọc thông báo lỗi từ body
                         if (resp.errorBody() != null) {
                             errorMessage += ": " + resp.errorBody().string();
                         }
@@ -159,13 +149,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 AuthResponse data = resp.body();
-                // ⭐ SỬA: Kiểm tra data có null không trước
                 if (data == null) {
                     toast("Phản hồi server không hợp lệ.");
                     return;
                 }
 
-                // ⭐ Logic thành công: Đã được đảm bảo là đã xác nhận (isEmailVerified=1) do API 403 đã lọc
+                // ⭐ Logic thành công
                 if ("ok".equalsIgnoreCase(data.getMessage()) && data.getUser() != null) {
 
                     // Lưu session
@@ -174,7 +163,6 @@ public class LoginActivity extends AppCompatActivity {
                             .putInt("customerID", data.getUser().getCustomerID())
                             .putString("fullName", data.getUser().getFullName())
                             .putString("email", data.getUser().getEmail())
-                            // Thêm trạng thái xác nhận (giá trị 1 nếu thành công)
                             .putInt("isEmailVerified", data.getUser().getIsEmailVerified())
                             .apply();
 
@@ -182,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     toast("Đăng nhập thành công!");
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    // Dùng cờ để xóa hết các màn hình cũ, tránh quay lại màn hình Login
+                    // Dùng cờ để xóa hết các màn hình cũ
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
