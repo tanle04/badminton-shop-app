@@ -27,7 +27,7 @@ try {
     }
     
     $data = [];
-    $base_url_path = '/api/BadmintonShop/images/sliders/'; // ⭐ Đảm bảo đường dẫn này đúng
+    $base_url_path = '/api/BadmintonShop/images/'; // ⭐ Đảm bảo đường dẫn này đúng
     
     while ($row = $res->fetch_assoc()) {
         // ⭐ SỬA: Sử dụng BASE_URL cố định 10.0.2.2 cho emulator hoặc URL thực

@@ -10,9 +10,9 @@ import com.example.badmintonshop.network.dto.CartResponse;
 import com.example.badmintonshop.network.dto.CategoryListResponse;
 import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
 import com.example.badmintonshop.network.dto.OrderListResponse;
-import com.example.badmintonshop.network.dto.ProductDetailResponse; // ⭐ IMPORT MỚI
-import com.example.badmintonshop.network.dto.ProductDto;
+import com.example.badmintonshop.network.dto.ProductDetailResponse;
 import com.example.badmintonshop.network.dto.ProductListResponse;
+import com.example.badmintonshop.network.dto.ReviewListResponse;
 import com.example.badmintonshop.network.dto.ReviewSubmitRequest;
 import com.example.badmintonshop.network.dto.SliderDto;
 import com.example.badmintonshop.network.dto.VariantListResponse;
@@ -45,7 +45,6 @@ public interface ApiService {
     @GET("sliders/list.php")
     Call<List<SliderDto>> getSliders();
 
-    // ⭐ SỬA LỖI KIỂU DỮ LIỆU: Phải trả về ProductDetailResponse để khớp với Callback trong Activity
     @GET("products/detail.php")
     Call<ProductDetailResponse> getProductDetail(@Query("productID") int productID);
 
@@ -69,21 +68,48 @@ public interface ApiService {
     Call<CategoryListResponse> getCategories();
 
 
-    // 1. Thêm vào Wishlist
+    // --- WISHLIST API ---
+
+    // 1. Thêm vào Wishlist (Dùng Request Body)
     @POST("wishlist/add.php")
     Call<ApiResponse> addToWishlist(@Body WishlistAddRequest request);
+
+    // ⭐ 1.1. Thêm vào Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
+    @FormUrlEncoded
+    @POST("wishlist/add.php")
+    Call<ApiResponse> addToWishlist(
+            @Field("customerID") int customerId,
+            @Field("productID") int productId
+    );
 
     // 2. Lấy danh sách Wishlist
     @GET("wishlist/get.php")
     Call<WishlistGetResponse> getWishlist(@Query("customerID") int customerId);
 
-    // Thêm phương thức xóa sản phẩm khỏi Wishlist
+    // 3. Xóa sản phẩm khỏi Wishlist (Dùng Request Body)
     @POST("wishlist/remove.php")
     Call<ApiResponse> deleteFromWishlist(@Body WishlistDeleteRequest request);
 
-    // Giỏ hàng
+    // ⭐ 3.1. Xóa sản phẩm khỏi Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
+    @FormUrlEncoded
+    @POST("wishlist/remove.php")
+    Call<ApiResponse> removeFromWishlist(
+            @Field("customerID") int customerId,
+            @Field("productID") int productId
+    );
+
+    // ⭐ 4. Kiểm tra Trạng thái Wishlist (Phương thức bị thiếu - cho ProductDetailActivity)
+    @GET("wishlist/check.php")
+    Call<ApiResponse> checkWishlistStatus(
+            @Query("customerID") int customerId,
+            @Query("productID") int productId
+    );
+
+    // --- GIỎ HÀNG API ---
+
     @GET("cart/get.php")
     Call<CartResponse> getCartItems(@Query("customerID") int customerId);
+
     @FormUrlEncoded
     @POST("cart/add.php")
     Call<ApiResponse> addToCart(
@@ -91,6 +117,16 @@ public interface ApiService {
             @Field("variantID") int variantId,
             @Field("quantity") int quantity
     );
+
+    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng (Duplication with addToCart, but kept for consistency)
+    @FormUrlEncoded
+    @POST("cart/add.php")
+    Call<ApiResponse> addVariantToCart(
+            @Field("customerID") int customerID,
+            @Field("variantID") int variantID,
+            @Field("quantity") int quantity
+    );
+
     @FormUrlEncoded
     @POST("cart/update.php")
     Call<ApiResponse> updateCartQuantity(
@@ -111,7 +147,8 @@ public interface ApiService {
             @Field("quantity") int quantity
     );
 
-    // Địa chỉ
+    // --- ĐỊA CHỈ API ---
+
     @GET("addresses/get.php")
     Call<AddressListResponse> getAddresses(@Query("customerID") int customerId);
 
@@ -154,7 +191,7 @@ public interface ApiService {
             @Field("customerID") int customerId
     );
 
-    // --- CÁC PHƯƠNG THỨC CHO CHECKOUT ---
+    // --- CÁC PHƯƠNG THỨC CHO CHECKOUT & ORDERS ---
 
     // 1. Lấy danh sách Voucher
     @GET("voucher/get_vouchers.php")
@@ -186,33 +223,33 @@ public interface ApiService {
     );
     @GET("orders/get_by_customer.php")
     Call<OrderListResponse> getCustomerOrders(@Query("customerID") int customerId, @Query("status") String statusFilter);
-    // ⭐ PHƯƠNG THỨC MỚI: Lấy chi tiết sản phẩm cần review
+
+    // Lấy chi tiết sản phẩm cần review
     @GET("orders/get_details.php")
     Call<OrderDetailsListResponse> getOrderDetails(@Query("orderID") int orderId);
 
-    // ⭐ PHƯƠNG THỨC MỚI: Gửi đánh giá
-    @Multipart
-    @POST("reviews/submit_reviews.php") // Đường dẫn API mới
-    Call<ApiResponse> submitReviewsMultipart(
-            @Part("review_data") RequestBody reviewDataJson,
-            @Part List<MultipartBody.Part> photos,          // Tên field: photos
-            @Part MultipartBody.Part video                  // Tên field: video
-    );
-
-
-    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng
-    @FormUrlEncoded // Sử dụng khi gửi dữ liệu form qua POST
-    @POST("cart/add.php")
-    Call<ApiResponse> addVariantToCart(
-            @Field("customerID") int customerID,
-            @Field("variantID") int variantID,
-            @Field("quantity") int quantity
-    );
     // Phương thức HỦY đơn hàng
     @FormUrlEncoded
     @POST("orders/cancel.php")
     Call<ApiResponse> cancelOrder(
             @Field("customerID") int customerId,
             @Field("orderID") int orderId
+    );
+
+
+    // --- REVIEW API ---
+
+    @Multipart
+    @POST("reviews/submit_reviews.php")
+    Call<ApiResponse> submitReviewsMultipart(
+            @Part("review_data") RequestBody reviewDataJson,
+            @Part List<MultipartBody.Part> photos,
+            @Part List<MultipartBody.Part> videos
+    );
+
+    @GET("reviews/get_by_product.php")
+    Call<ReviewListResponse> getReviewsByProduct(
+            @Query("productID") int productID,
+            @Query("rating") int ratingFilter // ratingFilter = 0 cho tất cả
     );
 }

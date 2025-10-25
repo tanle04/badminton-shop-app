@@ -82,15 +82,32 @@
                         android:textStyle="bold"
                         tools:text="3,500,000 ₫" />
 
-                    <TextView
-                        android:id="@+id/txtRating"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:gravity="end"
-                        android:text="4.9 ★★★★★"
-                        android:textColor="#FFC107"
-                        android:textSize="14sp" />
+                        android:gravity="end|center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvRatingScore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFC107"
+                            android:textSize="14sp"
+                            android:layout_marginEnd="4dp"
+                            tools:text="4.9" />
+
+                        <RatingBar
+                            android:id="@+id/ratingBarProductDetail"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"
+                            android:rating="4.9"
+                            android:stepSize="0.1"
+                            android:theme="@style/RatingBarYellow" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <TextView
@@ -158,8 +175,75 @@
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="4dp"
                     android:textColor="#555"
+                    android:layout_marginBottom="16dp"
                     tools:text="Vợt cao cấp cho tuyển thủ, được thiết kế với công nghệ mới nhất..." />
 
+                <View style="@style/Divider" />
+
+                <TextView style="@style/SectionTitle" android:text="Customer Reviews" />
+
+                <LinearLayout
+                    android:id="@+id/reviewSectionContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="8dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvAverageRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4.9"
+                            android:textColor="@color/black"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:ignore="HardcodedText" />
+
+                        <RatingBar
+                            android:id="@+id/ratingBarSummary"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"
+                            android:rating="4.9"
+                            android:stepSize="0.1"
+                            android:theme="@style/RatingBarYellow"
+                            android:layout_marginStart="8dp"/>
+
+                        <TextView
+                            android:id="@+id/tvTotalReviews"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="(2 Reviews)"
+                            android:textColor="#888"
+                            android:textSize="14sp"
+                            tools:ignore="HardcodedText" />
+                    </LinearLayout>
+
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#eee" android:layout_marginVertical="12dp" />
+
+                    <TextView
+                        android:id="@+id/btnViewAllReviews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:drawablePadding="4dp"
+                        android:text="Xem tất cả đánh giá"
+                        android:textColor="@color/purple_700"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:drawableEndCompat="@drawable/ic_arrow_forward" />
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

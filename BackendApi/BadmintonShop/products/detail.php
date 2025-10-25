@@ -15,12 +15,21 @@ try {
 
     $productID = intval($_GET['productID']);
 
-    // 1. Lấy thông tin sản phẩm chính
-    $sqlProduct = "SELECT p.*, b.brandName, c.categoryName
-                   FROM products p
-                   LEFT JOIN brands b ON p.brandID = b.brandID
-                   LEFT JOIN categories c ON p.categoryID = c.categoryID
-                   WHERE p.productID = ?";
+    // 1. Lấy thông tin sản phẩm chính VÀ Tóm tắt Đánh giá
+    $sqlProduct = "
+        SELECT 
+            p.*, 
+            b.brandName, 
+            c.categoryName,
+            COALESCE(AVG(r.rating), 0) AS averageRating,       /* ⭐ Thêm: Tính điểm trung bình */
+            COUNT(r.reviewID) AS totalReviews                  /* ⭐ Thêm: Đếm tổng số đánh giá đã duyệt */
+        FROM products p
+        LEFT JOIN brands b ON p.brandID = b.brandID
+        LEFT JOIN categories c ON p.categoryID = c.categoryID
+        LEFT JOIN reviews r ON r.productID = p.productID AND r.status = 'published' /* ⭐ JOIN với Reviews đã duyệt */
+        WHERE p.productID = ? AND p.is_active = 1
+        GROUP BY p.productID, p.productName, p.description, p.price, p.stock, p.categoryID, p.brandID, p.createdDate, p.is_active, b.brandName, c.categoryName
+    "; 
     
     $stmt = $mysqli->prepare($sqlProduct);
     if (!$stmt) {
@@ -31,11 +40,17 @@ try {
     $stmt->execute();
     $res = $stmt->get_result();
     $product = $res->fetch_assoc();
-    $stmt->close(); // Đóng stmt sau khi fetch
+    $stmt->close();
 
+    // Nếu không tìm thấy sản phẩm HOẶC sản phẩm không active, trả về 404
     if (!$product) {
         respond(['isSuccess' => false, 'message' => 'Không tìm thấy sản phẩm.'], 404);
     }
+    
+    // ⭐ Ép kiểu dữ liệu mới
+    $product['averageRating'] = round((float)$product['averageRating'], 1);
+    $product['totalReviews'] = (int)$product['totalReviews'];
+
 
     // 2. Lấy Ảnh sản phẩm
     $sqlImg = "SELECT imageUrl FROM productimages WHERE productID = ? ORDER BY imageID ASC";
@@ -45,14 +60,14 @@ try {
     $resImg = $stmtImg->get_result();
     $images = $resImg->fetch_all(MYSQLI_ASSOC);
     $product['images'] = $images;
-    $stmtImg->close(); // Đóng stmtImg
+    $stmtImg->close();
 
     // 3. Lấy danh sách biến thể (size, giá, tồn kho)
     $sqlVariants = "
-        SELECT v.variantID, v.sku, v.price, v.stock, p.productID, -- ⭐ THÊM productID vào biến thể
+        SELECT v.variantID, v.sku, v.price, v.stock, p.productID, 
                GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
         FROM product_variants v
-        LEFT JOIN products p ON p.productID = v.productID -- Join products để lấy p.productID
+        INNER JOIN products p ON p.productID = v.productID 
         LEFT JOIN variant_attribute_values vv ON v.variantID = vv.variantID
         LEFT JOIN product_attribute_values pav ON vv.valueID = pav.valueID
         WHERE v.productID = ?
@@ -65,7 +80,7 @@ try {
     $resVar = $stmtVar->get_result();
     $variants = $resVar->fetch_all(MYSQLI_ASSOC);
     $product['variants'] = $variants;
-    $stmtVar->close(); // Đóng stmtVar
+    $stmtVar->close();
 
     // 4. Trả về phản hồi THÀNH CÔNG (cấu trúc ProductDetailResponse)
     respond([
@@ -74,11 +89,8 @@ try {
         'product' => $product // Dữ liệu sản phẩm được gói trong key 'product'
     ]);
 
-    // Không cần đóng $mysqli ở đây nếu nó được đóng trong respond() hoặc bootstrap.php
-
 } catch (Throwable $e) {
     // Xử lý lỗi toàn cục
     error_log("Product Detail API Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

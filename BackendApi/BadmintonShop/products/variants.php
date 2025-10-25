@@ -21,6 +21,7 @@ try {
         LEFT JOIN product_attribute_values pav ON pav.valueID = vav.valueID
         LEFT JOIN product_attributes a ON a.attributeID = pav.attributeID
         WHERE v.productID = ?
+        AND p.is_active = 1 /* ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
         GROUP BY v.variantID, v.sku, v.price, v.stock
         ORDER BY v.price ASC";
         

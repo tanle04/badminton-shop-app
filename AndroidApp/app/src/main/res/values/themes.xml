@@ -13,4 +13,8 @@
 
         <item name="colorAccent">@color/temu_orange</item>
         <item name="android:windowBackground">#F5F5F5</item> </style>
+    <style name="RatingBarYellow" parent="@android:style/Widget.RatingBar">
+        <item name="colorControlNormal">#9E9E9E</item>
+        <item name="colorControlActivated">#FFC107</item>
+    </style>
 </resources>

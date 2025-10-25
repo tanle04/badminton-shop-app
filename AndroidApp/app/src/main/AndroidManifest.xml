@@ -21,6 +21,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
+
+
+        <activity
+            android:name=".ui.FullScreenImageActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ReviewListActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.OrderDetailActivity"
             android:exported="false" />

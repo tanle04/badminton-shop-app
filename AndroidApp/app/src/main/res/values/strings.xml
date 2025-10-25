@@ -5,5 +5,7 @@
     <string name="product_image">Product image</string>
     <string name="add_to_wishlist">Thêm vào danh sách yêu thích</string>
     <string name="remove_from_wishlist">Xóa khỏi danh sách yêu thích</string>
-
+    <string name="back_button">Nút quay lại</string>
+    <string name="full_screen_image">Ảnh toàn màn hình</string>
+    <string name="close_button">Nút đóng</string>
 </resources>

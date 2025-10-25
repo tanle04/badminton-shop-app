@@ -11,7 +11,7 @@ function get_multipart_data() {
     return null;
 }
 
-$uploaded_file_paths = []; // ⭐ KHAI BÁO BIẾN TOÀN CỤC: Lưu trữ đường dẫn tệp vật lý
+$uploaded_file_paths = []; // KHAI BÁO BIẾN TOÀN CỤC: Lưu trữ đường dẫn tệp vật lý
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -24,23 +24,25 @@ try {
     $orderID = (int)($input['orderID'] ?? 0);
     $customerID = (int)($input['customerID'] ?? 0);
     $reviews_data = $input['reviews'] ?? []; 
-    $successfully_submitted_detail_ids = []; // ⭐ Mảng mới: Lưu OrderDetailID đã chèn thành công
+    $successfully_submitted_detail_ids = []; 
 
     // Validation cơ bản
     if ($orderID <= 0 || $customerID <= 0 || empty($reviews_data) || !is_array($reviews_data)) {
         respond(['isSuccess' => false, 'message' => 'Dữ liệu đánh giá không hợp lệ.'], 400);
     }
 
-    $upload_dir = __DIR__ . '/../../uploads/reviews/';
+    $upload_dir = __DIR__ . '/../../uploads/reviews/'; // Đường dẫn vật lý đến /uploads/reviews/
+    $db_prefix = 'reviews/'; // Tiền tố tương đối mong muốn trong DB
+    
     if (!is_dir($upload_dir)) {
         mkdir($upload_dir, 0777, true);
     }
     
     $media_urls = []; // Mảng lưu trữ URL/Type của các tệp đã tải lên
 
-    // ⭐ BẮT ĐẦU: XỬ LÝ UPLOAD TỆP (Giữ nguyên)
+    // ⭐ BẮT ĐẦU: XỬ LÝ UPLOAD TỆP (Sửa để ghi chuẩn vào DB)
     
-    // Xử lý Ảnh
+    // Xử lý Ảnh (photos[])
     if (isset($_FILES['photos'])) {
         $count = count($_FILES['photos']['tmp_name']);
         for ($i = 0; $i < $count; $i++) {
@@ -51,23 +53,30 @@ try {
                 $file_path = $upload_dir . $file_name;
 
                 if (move_uploaded_file($tmp_name, $file_path)) {
-                    $media_urls[] = ['url' => '/api/uploads/reviews/' . $file_name, 'type' => 'photo'];
+                    // ⭐ SỬA: Ghi đường dẫn tương đối chuẩn vào DB (reviews/filename.jpg)
+                    $media_urls[] = ['url' => $db_prefix . $file_name, 'type' => 'photo']; 
                     $uploaded_file_paths[] = $file_path;
                 }
             }
         }
     }
 
-    // Xử lý Video
-    if (isset($_FILES['video']) && $_FILES['video']['error'] == UPLOAD_ERR_OK) {
-        $tmp_name = $_FILES['video']['tmp_name'];
-        $original_name = $_FILES['video']['name'];
-        $file_name = uniqid() . '-' . basename($original_name);
-        $file_path = $upload_dir . $file_name;
-        
-        if (move_uploaded_file($tmp_name, $file_path)) {
-            $media_urls[] = ['url' => '/api/uploads/reviews/' . $file_name, 'type' => 'video'];
-            $uploaded_file_paths[] = $file_path;
+    // Xử lý Video (videos[])
+    if (isset($_FILES['videos'])) {
+        $count = count($_FILES['videos']['tmp_name']);
+        for ($i = 0; $i < $count; $i++) {
+            if ($_FILES['videos']['error'][$i] == UPLOAD_ERR_OK) {
+                $tmp_name = $_FILES['videos']['tmp_name'][$i];
+                $original_name = $_FILES['videos']['name'][$i];
+                $file_name = uniqid() . '-' . basename($original_name);
+                $file_path = $upload_dir . $file_name;
+                
+                if (move_uploaded_file($tmp_name, $file_path)) {
+                    // ⭐ SỬA: Ghi đường dẫn tương đối chuẩn vào DB (reviews/filename.mp4)
+                    $media_urls[] = ['url' => $db_prefix . $file_name, 'type' => 'video']; 
+                    $uploaded_file_paths[] = $file_path;
+                }
+            }
         }
     }
     // ⭐ KẾT THÚC: XỬ LÝ UPLOAD TỆP
@@ -86,7 +95,6 @@ try {
         INSERT INTO review_media (reviewID, mediaUrl, mediaType) 
         VALUES (?, ?, ?)
     ";
-    // ⭐ STATEMENT MỚI: Cập nhật cờ isReviewed
     $sql_update_order_detail = "
         UPDATE orderdetails 
         SET isReviewed = 1 
@@ -95,7 +103,7 @@ try {
     
     $stmt_review = $mysqli->prepare($sql_insert_review);
     $stmt_media = $mysqli->prepare($sql_insert_media);
-    $stmt_update_detail = $mysqli->prepare($sql_update_order_detail); // ⭐ Chuẩn bị statement mới
+    $stmt_update_detail = $mysqli->prepare($sql_update_order_detail); 
 
     if (!$stmt_review || !$stmt_media || !$stmt_update_detail) {
         throw new Exception("Lỗi chuẩn bị SQL: " . $mysqli->error);
@@ -121,7 +129,7 @@ try {
         if ($new_review_id > 0) {
             $totalSubmitted++;
             $submitted_review_ids[] = $new_review_id;
-            $successfully_submitted_detail_ids[] = $orderDetailID; // ⭐ Lưu ID chi tiết đã chèn
+            $successfully_submitted_detail_ids[] = $orderDetailID; 
         }
     }
     
@@ -138,7 +146,7 @@ try {
         }
     }
     
-    // ⭐ 4. CẬP NHẬT TRẠNG THÁI ĐÃ ĐÁNH GIÁ (isReviewed = 1)
+    // 4. CẬP NHẬT TRẠNG THÁI ĐÃ ĐÁNH GIÁ (isReviewed = 1)
     if (!empty($successfully_submitted_detail_ids)) {
         foreach ($successfully_submitted_detail_ids as $detailID) {
             $stmt_update_detail->bind_param("i", $detailID);
@@ -148,7 +156,7 @@ try {
     
     $stmt_review->close();
     $stmt_media->close();
-    $stmt_update_detail->close(); // ⭐ Đóng statement mới
+    $stmt_update_detail->close(); 
     
     if ($totalSubmitted > 0) {
         $mysqli->commit();

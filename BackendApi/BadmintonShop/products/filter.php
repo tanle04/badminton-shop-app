@@ -15,7 +15,7 @@ try {
     $price_min = isset($_GET['price_min']) && is_numeric($_GET['price_min']) ? (float)$_GET['price_min'] : null;
     $price_max = isset($_GET['price_max']) && is_numeric($_GET['price_max']) ? (float)$_GET['price_max'] : null;
 
-    // Phân trang (Mặc dù lọc thường không cần phân trang, nhưng giữ nguyên)
+    // Phân trang
     $page = max(1, (int)($_GET['page'] ?? 1));
     $limit = max(1, min(50, (int)($_GET['limit'] ?? 20)));
     $offset = ($page - 1) * $limit;
@@ -23,11 +23,11 @@ try {
     // --- Bắt đầu xây dựng câu lệnh SQL một cách linh hoạt ---
     $sql = "
         SELECT 
-          p.productID, p.productName, p.description,
-          COALESCE(MIN(v.price), p.price) AS priceMin,
-          b.brandName, c.categoryName,
-          (SELECT pi.imageUrl FROM productimages pi 
-           WHERE pi.productID = p.productID ORDER BY pi.imageType ASC, pi.imageID ASC LIMIT 1) AS imageUrl
+            p.productID, p.productName, p.description,
+            COALESCE(MIN(v.price), p.price) AS priceMin,
+            b.brandName, c.categoryName,
+            (SELECT pi.imageUrl FROM productimages pi 
+               WHERE pi.productID = p.productID ORDER BY pi.imageType ASC, pi.imageID ASC LIMIT 1) AS imageUrl
         FROM products p
         LEFT JOIN product_variants v ON v.productID = p.productID
         LEFT JOIN brands b ON b.brandID = p.brandID
@@ -37,6 +37,9 @@ try {
     $whereClauses = []; 
     $params = []; 
     $types = ""; 
+
+    // 0. ĐIỀU KIỆN CỐ ĐỊNH: Chỉ lấy sản phẩm đang hoạt động (p.is_active = 1)
+    $whereClauses[] = "p.is_active = 1"; // ⭐ ĐÃ THÊM
 
     // 1. Thêm điều kiện lọc theo Danh mục (nếu có)
     if ($categoryName && strtolower($categoryName) !== 'featured' && strtolower($categoryName) !== 'all') {
@@ -52,8 +55,7 @@ try {
         $types .= "s";
     }
 
-    // 3. Thêm điều kiện lọc theo Giá (Giá được tính từ giá sản phẩm cơ bản hoặc giá biến thể thấp nhất)
-    // Lưu ý: Giá ở đây phải lọc theo giá trị trong cột p.price nếu không có biến thể
+    // 3. Thêm điều kiện lọc theo Giá
     if ($price_min !== null) {
         $whereClauses[] = "p.price >= ?";
         $params[] = $price_min;
@@ -64,8 +66,6 @@ try {
         $params[] = $price_max;
         $types .= "d";
     }
-    // GÓP Ý: Để lọc theo giá biến thể MIN, bạn cần sử dụng subquery cho giá đó trong điều kiện WHERE, 
-    // nhưng để đơn giản, hiện tại ta chỉ lọc theo p.price như bạn đã làm.
 
     // --- Ghép các điều kiện WHERE lại ---
     if (!empty($whereClauses)) {
@@ -103,7 +103,7 @@ try {
     $result = $stmt->get_result();
     $data = $result->fetch_all(MYSQLI_ASSOC);
 
-    // ⭐ SỬA: Sử dụng hàm respond() với cấu trúc DTO thành công
+    // Trả về phản hồi THÀNH CÔNG
     respond([
         "isSuccess" => true,
         "message" => "Products filtered successfully.",
@@ -111,12 +111,10 @@ try {
         "items" => $data
     ]);
 
-    // Các dòng $stmt->close() và $mysqli->close() không cần thiết vì respond() sẽ exit.
-
 } catch (Throwable $e) {
-    // Xử lý lỗi bất ngờ (ví dụ: lỗi kết nối database, lỗi PHP nghiêm trọng)
+    // Xử lý lỗi bất ngờ 
     error_log("Filter API Error: " . $e->getMessage());
-    // ⭐ SỬA: Sử dụng hàm respond() với cấu trúc DTO thất bại
+    // Trả về phản hồi THẤT BẠI
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
 // Lưu ý: Thẻ đóng ?> bị loại bỏ.

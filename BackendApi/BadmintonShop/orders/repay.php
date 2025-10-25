@@ -24,9 +24,10 @@ $mysqli->begin_transaction();
 
 try {
     // 1. Lấy thông tin đơn hàng, khóa nó và kiểm tra trạng thái
+    // ⭐ SỬA: Thêm paymentToken vào SELECT
     $stmt = $mysqli->prepare("
         SELECT 
-            o.total, o.paymentExpiry, o.paymentStatus, o.status, c.email
+            o.total, o.paymentExpiry, o.paymentStatus, o.status, o.paymentToken, c.email
         FROM orders o 
         JOIN customers c ON o.customerID = c.customerID 
         WHERE o.orderID = ? AND o.customerID = ? FOR UPDATE
@@ -53,10 +54,12 @@ try {
     }
 
     // Kiểm tra thời gian hết hạn (Nếu đã hết hạn, cần hủy đơn hàng)
-    if ($currentExpiry && $now > new DateTime($currentExpiry)) {
-        // Có thể thực hiện rollback ở đây, nhưng Cron Job sẽ xử lý hủy chính thức
-        throw new Exception("Đơn hàng đã hết thời gian chờ thanh toán.");
-    }
+    // Nếu đơn hàng đang pending, nhưng hết hạn, ta vẫn cho phép thanh toán lại (sẽ bỏ qua bước hủy của Cron Job).
+    // Tuy nhiên, việc kiểm tra này thường chỉ mang tính thông báo cho người dùng.
+    // Logic cho phép thanh toán lại sẽ làm mới thời gian hết hạn.
+    // if ($currentExpiry && $now > new DateTime($currentExpiry)) {
+    //     throw new Exception("Đơn hàng đã hết thời gian chờ thanh toán.");
+    // }
 
     // --- 2. Xử lý logic theo Phương thức mới ---
     
@@ -80,10 +83,14 @@ try {
         // THANH TOÁN LẠI VNPay: Gia hạn và tạo link mới
         
         $newExpiry = date('Y-m-d H:i:s', strtotime('+1 hour'));
-        $txnRef = "ORDER_" . $orderID . "_" . time(); 
+        $txnRef = "ORDER_" . $orderID . "_" . time(); // Tạo TxnRef mới cho giao dịch mới
         
-        // Cập nhật lại paymentExpiry và paymentToken mới
-        $stmt_update = $mysqli->prepare("UPDATE orders SET paymentExpiry = ?, paymentToken = ?, paymentStatus = 'Pending' WHERE orderID = ?");
+        // ⭐ SỬA SQL: Cập nhật lại paymentExpiry và paymentToken mới
+        $stmt_update = $mysqli->prepare("
+            UPDATE orders 
+            SET paymentMethod = 'VNPay', paymentExpiry = ?, paymentToken = ?, paymentStatus = 'Pending' 
+            WHERE orderID = ?
+        ");
         $stmt_update->bind_param("ssi", $newExpiry, $txnRef, $orderID);
         $stmt_update->execute();
         $stmt_update->close();
@@ -106,4 +113,3 @@ try {
     error_log("[REPAY_API] Transaction Rollback. Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Lỗi xử lý yêu cầu: ' . $e->getMessage()], 500); 
 }
-?>

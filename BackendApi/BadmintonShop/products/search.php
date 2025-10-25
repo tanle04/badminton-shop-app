@@ -34,6 +34,7 @@ try {
     LEFT JOIN brands b ON b.brandID = p.brandID
     LEFT JOIN categories c ON c.categoryID = p.categoryID
     WHERE p.productName LIKE CONCAT('%', ?, '%')
+    AND p.is_active = 1 /* ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
     GROUP BY p.productID
     ORDER BY p.createdDate DESC
     LIMIT 50";

@@ -25,16 +25,17 @@ $offset = ($page-1)*$limit;
 
 $sql = "
 SELECT 
-  p.productID, p.productName, p.description,
-  COALESCE(MIN(v.price), p.price) AS priceMin,
-  COALESCE(SUM(v.stock), p.stock) AS stockTotal,
-  b.brandName, c.categoryName,
-  (SELECT pi.imageUrl FROM productimages pi 
-      WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl
+    p.productID, p.productName, p.description,
+    COALESCE(MIN(v.price), p.price) AS priceMin,
+    COALESCE(SUM(v.stock), p.stock) AS stockTotal,
+    b.brandName, c.categoryName,
+    (SELECT pi.imageUrl FROM productimages pi 
+        WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl
 FROM products p
 LEFT JOIN product_variants v ON v.productID = p.productID
 LEFT JOIN brands b ON b.brandID = p.brandID
 LEFT JOIN categories c ON c.categoryID = p.categoryID
+WHERE p.is_active = 1  /* ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
 GROUP BY p.productID
 ORDER BY p.createdDate DESC
 LIMIT ? OFFSET ?";
@@ -68,4 +69,3 @@ try {
     // XỬ LÝ LỖI DB VÀ TRẢ VỀ isSuccess: false
     json_response(false, "Database Error: " . $e->getMessage());
 }
-// Lưu ý: Thẻ đóng ?> đã được loại bỏ.

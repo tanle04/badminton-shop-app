@@ -9,12 +9,12 @@ import android.widget.Toast;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.content.Intent;
-import android.content.pm.PackageManager; // ⭐ Import mới
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat; // ⭐ Import mới
-import androidx.core.content.ContextCompat; // ⭐ Import mới
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +34,7 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -46,14 +47,14 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
 
     private static final String TAG = "ReviewActivityDebug";
     private static final int MAX_PHOTOS = 5;
+    private static final int MAX_VIDEOS = 1;
 
     private static final int REQUEST_CODE_PICK_PHOTO = 1001;
     private static final int REQUEST_CODE_PICK_VIDEO = 1002;
-    // ⭐ Hằng số mới cho quyền
     private static final int PERMISSION_REQUEST_CODE = 1003;
 
     private int currentReviewItemPosition = -1;
-    private boolean isAwaitingPhotoPermission = false; // Theo dõi loại hành động chờ quyền
+    private boolean isAwaitingPhotoPermission = false;
 
     private RecyclerView recyclerView;
     private MaterialButton btnSubmitAllReviews;
@@ -109,7 +110,6 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Lưu trạng thái đang chờ
             currentReviewItemPosition = position;
             isAwaitingPhotoPermission = isPhoto;
 
@@ -117,7 +117,6 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                     new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
                     PERMISSION_REQUEST_CODE);
         } else {
-            // Đã có quyền, tiến hành mở thư viện ngay lập tức
             if (isPhoto) {
                 onPhotoIntent(position);
             } else {
@@ -133,7 +132,6 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
 
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Quyền được cấp, gọi lại hành động chọn tệp
                 if (currentReviewItemPosition != -1) {
                     if (isAwaitingPhotoPermission) {
                         onPhotoIntent(currentReviewItemPosition);
@@ -176,27 +174,33 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         startActivityForResult(Intent.createChooser(intent, "Chọn video sản phẩm"), REQUEST_CODE_PICK_VIDEO);
     }
 
-    // ... (Các phương thức khác giữ nguyên)
-
+    // Logic onMediaDeleted (Đã sửa)
     @Override
     public void onMediaDeleted(int reviewPosition, int mediaPosition) {
         if (reviewPosition >= 0 && reviewPosition < reviewItemsList.size()) {
             ReviewItemModel model = reviewItemsList.get(reviewPosition);
 
-            if (model.getVideoUri() != null) {
-                model.setVideoUri(null);
-                Toast.makeText(this, "Đã xóa video.", Toast.LENGTH_SHORT).show();
+            List<Uri> allMedia = new ArrayList<>();
+            allMedia.addAll(model.getPhotoUris());
+            allMedia.addAll(model.getVideoUris());
 
-            } else if (model.getPhotoUris() != null && mediaPosition < model.getPhotoUris().size()) {
-                model.getPhotoUris().remove(mediaPosition);
-                Toast.makeText(this, "Đã xóa ảnh.", Toast.LENGTH_SHORT).show();
+            if (mediaPosition >= 0 && mediaPosition < allMedia.size()) {
+                Uri deletedUri = allMedia.get(mediaPosition);
+
+                if (model.getVideoUris().contains(deletedUri)) {
+                    model.getVideoUris().remove(deletedUri);
+                    Toast.makeText(this, "Đã xóa video.", Toast.LENGTH_SHORT).show();
+                } else if (model.getPhotoUris().contains(deletedUri)) {
+                    model.getPhotoUris().remove(deletedUri);
+                    Toast.makeText(this, "Đã xóa ảnh.", Toast.LENGTH_SHORT).show();
+                }
             }
-
             reviewAdapter.notifyItemChanged(reviewPosition);
         }
     }
 
 
+    // Logic onActivityResult (Đã sửa)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -206,7 +210,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
 
             if (requestCode == REQUEST_CODE_PICK_PHOTO) {
                 List<Uri> newUris = new ArrayList<>();
-
+                // Lấy nhiều ảnh
                 if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount();
                     for (int i = 0; i < count; i++) {
@@ -219,10 +223,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                 if (!newUris.isEmpty()) {
                     List<Uri> currentPhotos = currentModel.getPhotoUris();
 
-                    if (currentPhotos == null) {
-                        currentPhotos = new ArrayList<>();
-                    }
-
+                    // Thêm ảnh mới vào danh sách hiện tại
                     currentPhotos.addAll(newUris);
 
                     if (currentPhotos.size() > MAX_PHOTOS) {
@@ -231,19 +232,27 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                     }
 
                     currentModel.setPhotoUris(currentPhotos);
-                    currentModel.setVideoUri(null);
-                    Toast.makeText(this, "Đã thêm " + newUris.size() + " ảnh. Tổng cộng: " + currentPhotos.size(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Đã thêm ảnh. Tổng cộng: " + currentPhotos.size() + " ảnh.", Toast.LENGTH_SHORT).show();
                 }
 
             } else if (requestCode == REQUEST_CODE_PICK_VIDEO) {
+                // Lấy video
                 Uri videoUri = data.getData();
                 if (videoUri != null) {
-                    currentModel.setVideoUri(videoUri);
-                    currentModel.setPhotoUris(new ArrayList<>());
-                    Toast.makeText(this, "Đã chọn 1 video.", Toast.LENGTH_SHORT).show();
+                    List<Uri> currentVideos = currentModel.getVideoUris();
+
+                    // Chỉ thêm 1 video mới
+                    if (currentVideos.size() >= MAX_VIDEOS) {
+                        currentVideos.clear(); // Xóa video cũ
+                        Toast.makeText(this, "Đã thay thế video cũ.", Toast.LENGTH_SHORT).show();
+                    }
+
+                    currentVideos.add(videoUri);
+
+                    currentModel.setVideoUris(currentVideos);
+                    Toast.makeText(this, "Đã thêm 1 video. Tổng cộng: " + currentVideos.size() + " video.", Toast.LENGTH_SHORT).show();
                 }
             }
-
             reviewAdapter.notifyItemChanged(currentReviewItemPosition);
         }
         currentReviewItemPosition = -1;
@@ -357,70 +366,83 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
     private void submitReviews() {
         btnSubmitAllReviews.setEnabled(false);
 
-        List<ReviewItemModel> reviewsToSubmit = reviewAdapter.getReviewItems();
+        // ⭐ CHUYỂN LOGIC NẶNG SANG LUỒNG PHỤ ĐỂ TRÁNH ANR
+        new Thread(() -> {
+            List<ReviewItemModel> reviewsToSubmit = reviewAdapter.getReviewItems();
 
-        // 1. Kiểm tra điều kiện (ví dụ: rating tối thiểu)
-        for (ReviewItemModel model : reviewsToSubmit) {
-            if (model.getRating() == 0) {
-                Toast.makeText(this, "Vui lòng đánh giá sao cho tất cả sản phẩm.", Toast.LENGTH_SHORT).show();
-                btnSubmitAllReviews.setEnabled(true);
-                return;
+            // 1. Kiểm tra điều kiện (rating tối thiểu)
+            for (ReviewItemModel model : reviewsToSubmit) {
+                if (model.getRating() == 0) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(ReviewActivity.this, "Vui lòng đánh giá sao cho tất cả sản phẩm.", Toast.LENGTH_SHORT).show();
+                        btnSubmitAllReviews.setEnabled(true);
+                    });
+                    return;
+                }
             }
-        }
 
-        // 2. CHUẨN BỊ DỮ LIỆU CHO MULTIPART
+            // 2. CHUẨN BỊ DỮ LIỆU CHO MULTIPART (Trên Background Thread)
 
-        // a) Dữ liệu JSON (Text và Rating)
-        int customerId = getCurrentCustomerId();
-        ReviewSubmitRequest requestModel = new ReviewSubmitRequest(orderId, customerId, reviewsToSubmit);
+            // a) Dữ liệu JSON (Text và Rating)
+            int customerId = getCurrentCustomerId();
+            ReviewSubmitRequest requestModel = new ReviewSubmitRequest(orderId, customerId, reviewsToSubmit);
 
-        String jsonString = gson.toJson(requestModel);
+            String jsonString = gson.toJson(requestModel);
 
-        RequestBody reviewDataJson = RequestBody.create(MediaType.parse("application/json"), jsonString);
+            RequestBody reviewDataJson = RequestBody.create(MediaType.parse("application/json"), jsonString);
 
-        // b) Chuẩn bị các tệp Ảnh và Video
-        List<MultipartBody.Part> photoParts = new ArrayList<>();
-        MultipartBody.Part videoPart = null;
+            // b) Chuẩn bị các tệp Ảnh và Video
+            List<MultipartBody.Part> photoParts = new ArrayList<>();
+            List<MultipartBody.Part> videoParts = new ArrayList<>();
 
-        for (ReviewItemModel model : reviewsToSubmit) {
+            for (ReviewItemModel model : reviewsToSubmit) {
 
-            // Xử lý Ảnh (Tên field PHP: photos[])
-            if (model.getPhotoUris() != null) {
-                for (Uri uri : model.getPhotoUris()) {
-                    MultipartBody.Part part = prepareFilePart("photos[]", uri);
-                    if (part != null) {
-                        photoParts.add(part);
+                // Xử lý Ảnh (Tên field PHP: photos[])
+                if (model.getPhotoUris() != null) {
+                    for (Uri uri : model.getPhotoUris()) {
+                        MultipartBody.Part part = prepareFilePart("photos[]", uri);
+                        if (part != null) {
+                            photoParts.add(part);
+                        }
+                    }
+                }
+
+                // Xử lý Video (Tên field PHP: videos[])
+                if (model.getVideoUris() != null) {
+                    for (Uri uri : model.getVideoUris()) {
+                        // Tên field PHP: videos[]
+                        MultipartBody.Part part = prepareFilePart("videos[]", uri);
+                        if (part != null) {
+                            videoParts.add(part);
+                        }
                     }
                 }
             }
 
-            // Xử lý Video (Tên field PHP: video)
-            if (model.getVideoUri() != null && videoPart == null) {
-                videoPart = prepareFilePart("video", model.getVideoUri());
-            }
-        }
+            // ⭐ 3. GỌI API MULTIPART (Trở lại Main Thread)
+            runOnUiThread(() -> {
+                api.submitReviewsMultipart(reviewDataJson, photoParts, videoParts).enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                            Toast.makeText(ReviewActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                            setResult(RESULT_OK);
+                            finish();
+                        } else {
+                            String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
+                            Toast.makeText(ReviewActivity.this, "Gửi đánh giá thất bại: " + msg, Toast.LENGTH_LONG).show();
+                            btnSubmitAllReviews.setEnabled(true);
+                        }
+                    }
 
-        // 3. GỌI API MULTIPART MỚI
-        api.submitReviewsMultipart(reviewDataJson, photoParts, videoPart).enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    Toast.makeText(ReviewActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
-                    Toast.makeText(ReviewActivity.this, "Gửi đánh giá thất bại: " + msg, Toast.LENGTH_LONG).show();
-                    btnSubmitAllReviews.setEnabled(true);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e(TAG, "FATAL NETWORK ERROR: " + t.getMessage(), t);
-                Toast.makeText(ReviewActivity.this, "Lỗi kết nối khi gửi đánh giá.", Toast.LENGTH_SHORT).show();
-                btnSubmitAllReviews.setEnabled(true);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<ApiResponse> call, Throwable t) {
+                        Log.e(TAG, "FATAL NETWORK ERROR: " + t.getMessage(), t);
+                        Toast.makeText(ReviewActivity.this, "Lỗi kết nối khi gửi đánh giá.", Toast.LENGTH_SHORT).show();
+                        btnSubmitAllReviews.setEnabled(true);
+                    }
+                });
+            });
+        }).start();
     }
 }

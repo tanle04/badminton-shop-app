@@ -8,7 +8,6 @@ try {
     }
 
     // ⭐ HÀM PHỤ TRỢ: Lấy URL ảnh chính cho mỗi sản phẩm
-    // Sử dụng MIN() trên chuỗi GROUP_CONCAT để lấy URL đầu tiên (hoặc sử dụng subquery)
     $imageSubquery = "(
         SELECT pi.imageUrl FROM productimages pi 
         WHERE pi.productID = p.productID 
@@ -16,13 +15,13 @@ try {
     ) AS imageUrl";
 
     // --- 1. Coming Soon (Stock = 0) ---
-    // Giả định bạn muốn sản phẩm sắp về (Coming Soon) dựa trên stockTotal=0 hoặc là một flag riêng
     $coming = $mysqli->query("
         SELECT p.productID, p.productName, p.price, COALESCE({$imageSubquery}, '') AS imageUrl
         FROM products p
         LEFT JOIN product_variants pv ON pv.productID = p.productID
+        WHERE p.is_active = 1 /* CHỈ LẤY SẢN PHẨM ACTIVE */
         GROUP BY p.productID
-        HAVING SUM(pv.stock) = 0 
+        HAVING COALESCE(SUM(pv.stock), p.stock) = 0 
         ORDER BY p.productID DESC LIMIT 10
     ")->fetch_all(MYSQLI_ASSOC);
 
@@ -30,6 +29,7 @@ try {
     $newArrivals = $mysqli->query("
         SELECT p.productID, p.productName, p.price, COALESCE({$imageSubquery}, '') AS imageUrl
         FROM products p
+        WHERE p.is_active = 1 /* CHỈ LẤY SẢN PHẨM ACTIVE */
         ORDER BY p.createdDate DESC
         LIMIT 10
     ")->fetch_all(MYSQLI_ASSOC);
@@ -42,19 +42,21 @@ try {
         FROM orderdetails od
         JOIN product_variants pv ON pv.variantID = od.variantID
         JOIN products p ON p.productID = pv.productID
+        WHERE p.is_active = 1 /* CHỈ LẤY SẢN PHẨM ACTIVE */
         GROUP BY p.productID
         ORDER BY sold DESC
         LIMIT 10
     ")->fetch_all(MYSQLI_ASSOC);
 
     // --- 4. Featured (Đang có promotions) ---
-    // ⭐ SỬA: Dùng MySQL CURDATE() và NOW()
+    // Giả định bảng 'promotionproducts' và 'promotions' tồn tại
     $featured = $mysqli->query("
         SELECT DISTINCT p.productID, p.productName, p.price, COALESCE({$imageSubquery}, '') AS imageUrl
         FROM promotionproducts pp
         JOIN promotions pr ON pr.promoID = pp.promoID
         JOIN products p ON p.productID = pp.productID
-        WHERE DATE(pr.startDate) <= CURDATE() AND DATE(pr.endDate) >= CURDATE()
+        WHERE p.is_active = 1 /* CHỈ LẤY SẢN PHẨM ACTIVE */
+        AND DATE(pr.startDate) <= CURDATE() AND DATE(pr.endDate) >= CURDATE()
         ORDER BY p.productID DESC
         LIMIT 10
     ")->fetch_all(MYSQLI_ASSOC);

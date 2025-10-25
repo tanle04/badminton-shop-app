@@ -22,7 +22,7 @@ try {
             p.productName,
             pv.variantID,
             pv.price AS variantPrice,
-            pv.stock, -- ⭐ THÊM: LẤY CỘT TỒN KHO
+            pv.stock, -- LẤY CỘT TỒN KHO
             (SELECT pi.imageUrl FROM productimages pi WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl,
             GROUP_CONCAT(CONCAT(pa.attributeName, ': ', pav.valueName) SEPARATOR ', ') AS variantDetails
         FROM shopping_cart sc
@@ -32,8 +32,8 @@ try {
         LEFT JOIN product_attribute_values pav ON vav.valueID = pav.valueID
         LEFT JOIN product_attributes pa ON pav.attributeID = pa.attributeID
         WHERE sc.customerID = ?
-        -- ⭐ CẦN THÊM pv.stock VÀO GROUP BY VÌ NÓ KHÔNG PHẢI LÀ HÀM TỔNG HỢP
-        GROUP BY sc.cartID, sc.quantity, p.productID, p.productName, pv.variantID, pv.price, pv.stock, imageUrl 
+        AND p.is_active = 1 /* ⭐ ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
+        GROUP BY sc.cartID, sc.quantity, p.productID, p.productName, pv.variantID, pv.price, pv.stock, imageUrl
         ORDER BY sc.addedDate DESC
     ";
 
@@ -49,10 +49,11 @@ try {
     $data = [];
     while ($row = $res->fetch_assoc()) {
         $row['variantPrice'] = (string) $row['variantPrice'];
-        // ⭐ ÉP KIỂU STOCK SANG INT
+        // ÉP KIỂU STOCK SANG INT
         $row['stock'] = (int) $row['stock']; 
         
         $img = $row['imageUrl'] ?? "";
+        // Xử lý tên file (giữ nguyên logic của bạn)
         if ($img && preg_match('/^http/', $img)) {
             $img = basename($img); 
         }
@@ -64,7 +65,7 @@ try {
 
     $stmt->close();
     
-    // ⭐ PHẢN HỒI THÀNH CÔNG: Sử dụng respond() với cấu trúc DTO
+    // PHẢN HỒI THÀNH CÔNG: Sử dụng respond() với cấu trúc DTO
     respond([
         "isSuccess" => true,
         "message" => "Cart items loaded successfully.",

@@ -88,31 +88,35 @@ try {
     $paymentStatus = ('COD' === $paymentMethod) ? 'Unpaid' : 'Pending';
     $initialStatus = ('COD' === $paymentMethod) ? 'Processing' : 'Pending';
     
-    // ⭐ ĐÃ XÓA LOGIC HẾT HẠN: Không cần txnRef, paymentExpiry, hay update token ở đây nữa.
-    $txnRef = null;
-    
-    // ⭐ ĐÃ SỬA SQL: Trở lại lệnh INSERT gốc (Không có paymentExpiry/paymentToken)
+    // ⭐ LOGIC BỔ SUNG CHO VNPAY ⭐
+    $paymentToken = null;
+    $paymentExpiry = null;
+    if ($paymentMethod === 'VNPay') {
+        $paymentToken = "ORDER_" . time(); // Tạo TxnRef tạm thời
+        $paymentExpiry = date('Y-m-d H:i:s', strtotime('+1 hour')); // 1 giờ
+    }
+
+    // ⭐ SỬA SQL: Thêm paymentToken và paymentExpiry
     $sql_order = "
-        INSERT INTO orders (customerID, addressID, paymentMethod, paymentStatus, total, status, voucherID) 
-        VALUES (?, ?, ?, ?, ?, ?, IF(? > 0, ?, NULL))
+        INSERT INTO orders (customerID, addressID, paymentMethod, paymentStatus, total, status, voucherID, paymentToken, paymentExpiry) 
+        VALUES (?, ?, ?, ?, ?, ?, IF(? > 0, ?, NULL), ?, ?)
     ";
 
     $stmt_order = $mysqli->prepare($sql_order);
     if ($stmt_order === false) throw new Exception("Lỗi chuẩn bị SQL cho đơn hàng: " . $mysqli->error);
     
-    // Bind: i i s s d s i i
-    $stmt_order->bind_param("iissdsii", 
-        $customerID, $addressID, $paymentMethod, $paymentStatus, $total, $initialStatus, $voucherID, $voucherID
+    // Bind: i i s s d s i i s s
+    $stmt_order->bind_param("iissdsiiss", 
+        $customerID, $addressID, $paymentMethod, $paymentStatus, $total, $initialStatus, 
+        $voucherID, $voucherID, $paymentToken, $paymentExpiry
     );
     $stmt_order->execute();
     $orderID = $mysqli->insert_id;
     $stmt_order->close();
     
-    // ⭐ KHÔNG CẦN CẬP NHẬT paymentToken NỮA ⭐
-
     if ($orderID == 0) throw new Exception("Không thể tạo bản ghi đơn hàng.");
 
-    // --- Bước 4 & 5 (Voucher & OrderDetails) (giữ nguyên) ---
+    // --- Bước 4 & 5 (Voucher & OrderDetails) ⭐ LOGIC VOUCHER ĐÃ SỬA ⭐ ---
     if ($voucherID > 0) {
         $stmt_voucher_info = $mysqli->prepare("SELECT isPrivate FROM vouchers WHERE voucherID = ?");
         $stmt_voucher_info->bind_param("i", $voucherID);
@@ -122,19 +126,37 @@ try {
 
         if ($voucher_info) {
             $isPrivate = (bool)$voucher_info['isPrivate'];
+            
+            // 1. Xử lý Voucher Cá nhân (Đảm bảo chỉ dùng 1 lần)
             if ($isPrivate) {
                 $stmt_update_cust_voucher = $mysqli->prepare("UPDATE customer_vouchers SET status = 'used' WHERE customerID = ? AND voucherID = ? AND status = 'available'");
                 $stmt_update_cust_voucher->bind_param("ii", $customerID, $voucherID);
                 $stmt_update_cust_voucher->execute();
-                if ($stmt_update_cust_voucher->affected_rows == 0) throw new Exception("Voucher cá nhân đã được sử dụng hoặc không hợp lệ (VoucherID: {$voucherID}).");
+                if ($stmt_update_cust_voucher->affected_rows == 0) {
+                    throw new Exception("Voucher cá nhân đã được sử dụng hoặc không hợp lệ (VoucherID: {$voucherID}).");
+                }
                 $stmt_update_cust_voucher->close();
-            } else {
-                $stmt_update_global_voucher = $mysqli->prepare("UPDATE vouchers SET usedCount = usedCount + 1 WHERE voucherID = ? AND usedCount < maxUsage");
-                $stmt_update_global_voucher->bind_param("i", $voucherID);
-                $stmt_update_global_voucher->execute();
-                if ($stmt_update_global_voucher->affected_rows == 0) throw new Exception("Voucher đã hết lượt sử dụng.");
-                $stmt_update_global_voucher->close();
+            } 
+            
+            // 2. Xử lý giới hạn sử dụng Toàn cầu (Áp dụng cho cả chung và cá nhân)
+            // Đảm bảo maxUsage được tuân thủ cho cả 2 loại voucher
+            $stmt_update_global_voucher = $mysqli->prepare("UPDATE vouchers SET usedCount = usedCount + 1 WHERE voucherID = ? AND usedCount < maxUsage");
+            $stmt_update_global_voucher->bind_param("i", $voucherID);
+            $stmt_update_global_voucher->execute();
+            if ($stmt_update_global_voucher->affected_rows == 0) {
+                // Nếu voucher là private, ta cần rollback trạng thái 'used' vừa cập nhật.
+                if ($isPrivate) {
+                    // Cố gắng đặt lại trạng thái về 'available'
+                    $stmt_rollback_cust_voucher = $mysqli->prepare("UPDATE customer_vouchers SET status = 'available' WHERE customerID = ? AND voucherID = ? AND status = 'used'");
+                    $stmt_rollback_cust_voucher->bind_param("ii", $customerID, $voucherID);
+                    $stmt_rollback_cust_voucher->execute();
+                    $stmt_rollback_cust_voucher->close();
+                    // Lưu ý: Nếu rollback thất bại (affected_rows == 0) thì ta chấp nhận mất voucher, 
+                    // nhưng sẽ throw exception để transaction lớn rollback
+                }
+                throw new Exception("Voucher đã hết lượt sử dụng (maxUsage).");
             }
+            $stmt_update_global_voucher->close();
         }
     }
 
@@ -160,7 +182,8 @@ try {
     // --- Bước 6: Xóa Cart (giữ nguyên) ---
     if (!empty($cartIDsToDelete)) {
         $placeholders = implode(',', array_fill(0, count($cartIDsToDelete), '?'));
-        $types = 'i' . str_repeat('i', count($cartIDsToDelete));
+        // Cần thêm 1 'i' cho $customerID ở đầu
+        $types = 'i' . str_repeat('i', count($cartIDsToDelete)); 
         $stmt_delete = $mysqli->prepare("DELETE FROM shopping_cart WHERE customerID = ? AND cartID IN ($placeholders)");
         if ($stmt_delete === false) throw new Exception("Lỗi chuẩn bị SQL xóa giỏ hàng: " . $mysqli->error);
         $bind_params = array_merge([$types], [$customerID], $cartIDsToDelete);
@@ -178,7 +201,13 @@ try {
     if ($paymentMethod === 'VNPay') {
         // LOGIC VNPAY
         
-        $txnRef = "ORDER_" . $orderID . "_" . time(); // Tạo TxnRef cuối cùng
+        $txnRef = $paymentToken . "_" . $orderID; // Cần có orderID để sau này truy vấn dễ dàng hơn
+        
+        // Cập nhật txnRef đầy đủ (có orderID) vào DB
+        $stmt_update_token = $mysqli->prepare("UPDATE orders SET paymentToken = ? WHERE orderID = ?");
+        $stmt_update_token->bind_param("si", $txnRef, $orderID);
+        $stmt_update_token->execute();
+        $stmt_update_token->close();
         
         // COMMIT ở đây để đơn hàng đã được ghi nhận trước khi chuyển hướng
         $mysqli->commit(); 
@@ -218,7 +247,7 @@ try {
 
         respond([
             'isSuccess' => true, 
-            'message' => 'Đặt hàng thành công! Email xác nhận đã được gửi.', 
+            'message' => 'Đặt hàng thành công! Đơn hàng sẽ được giao trong vài ngày tới.', 
             'orderID' => $orderID,
             'emailStatus' => $emailSent ? 'sent' : 'failed_to_send'
         ], 200);

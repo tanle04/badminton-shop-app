@@ -58,6 +58,7 @@ try {
         LEFT JOIN variant_attribute_values vv ON v.variantID = vv.variantID
         LEFT JOIN product_attribute_values pav ON vv.valueID = pav.valueID
         WHERE v.productID = ?
+        AND p.is_active = 1 /* ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
         GROUP BY v.variantID
         ORDER BY v.price ASC
     ";

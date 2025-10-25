@@ -1,48 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp">
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
         <TextView
-            android:id="@+id/txtAvatar"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@drawable/circle_background"
-            android:gravity="center"
-            android:text="C"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:id="@+id/tvCustomerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="bsduytuyen0309" />
+
         <TextView
-            android:id="@+id/txtReviewerName"
+            android:id="@+id/tvReviewDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Christopher Jones"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:textColor="#888"
+            android:textSize="12sp"
+            tools:text="10/08/2025" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/txtRating"
+    <RatingBar
+        android:id="@+id/ratingBarReviewItem"
+        style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="★★★★★"
-        android:textColor="#FFC107" />
+        android:numStars="5"
+        android:rating="5"
+        android:stepSize="1"
+        android:theme="@style/RatingBarYellow" />
 
     <TextView
-        android:id="@+id/txtReviewContent"
+        android:id="@+id/tvReviewContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="fantastic looking game will play soon 👍"
-        android:textColor="#333333" />
+        android:layout_marginTop="8dp"
+        android:textColor="#444"
+        android:textSize="14sp"
+        android:lineSpacingExtra="2dp"
+        tools:text="Máy mới nhận thì chưa đánh giá được nhưng khi shop thừa nhận có nhầm lẫn thì thái độ nhân viên vẫn rất tệ..." />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerReviewMedia"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:clipToPadding="false"
+        tools:itemCount="3"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:orientation="horizontal"
+        tools:listitem="@layout/item_review_media" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="#EEEEEE" />
+
 </LinearLayout>

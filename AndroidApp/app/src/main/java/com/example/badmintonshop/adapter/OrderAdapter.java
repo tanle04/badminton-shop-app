@@ -38,7 +38,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     private final Context context;
     private List<OrderDto> orderList;
     private final OrderAdapterListener listener;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
+    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     public OrderAdapter(Context context, List<OrderDto> orderList, OrderAdapterListener listener) {
         this.context = context;

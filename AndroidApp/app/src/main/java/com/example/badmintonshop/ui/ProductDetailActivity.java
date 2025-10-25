@@ -9,11 +9,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -27,6 +29,8 @@ import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.ProductDetailResponse;
 import com.example.badmintonshop.network.dto.ProductDto;
+import com.example.badmintonshop.network.dto.WishlistAddRequest; // ⭐ IMPORT CẦN THIẾT
+import com.example.badmintonshop.network.dto.WishlistDeleteRequest; // ⭐ IMPORT CẦN THIẾT
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -40,21 +44,30 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private ViewPager2 pagerImages;
     private RecyclerView recyclerGalleryThumbs;
-    private TextView txtName, txtPrice, txtDesc, txtImageCount;
+    private TextView txtName, txtPrice, txtDesc, txtImageCount, tvRatingScore;
     private LinearLayout layoutVariants;
     private MaterialButton btnAddToCart;
+    private RatingBar ratingBarProductDetail;
+    private ImageButton btnWishlist;
 
     private ImageButton btnDecreaseQuantity, btnIncreaseQuantity;
     private TextView tvQuantity;
 
+    // Các biến thành viên bị thiếu (cho Review Summary)
+    private TextView tvAverageRating, tvTotalReviews;
+    private RatingBar ratingBarSummary;
+    private TextView btnViewAllReviews;
+
     private ApiService api;
     private int selectedVariantId = -1;
     private int currentQuantity = 1;
+    private int currentProductId = -1;
+    private String currentProductName = "";
+    private boolean isInWishlist = false;
 
-    // ⭐ NEW: Lưu trữ đối tượng biến thể đã chọn
     private ProductDto.VariantDto selectedVariant = null;
 
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
+    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
     private int selectedThumb = -1;
     private static final String TAG = "PRODUCT_DETAIL_DEBUG";
 
@@ -77,6 +90,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvQuantity = findViewById(R.id.tvQuantity);
         btnIncreaseQuantity = findViewById(R.id.btnIncreaseQuantity);
 
+        // Bind Views cho phần Rating và Review
+        tvRatingScore = findViewById(R.id.tvRatingScore);
+        ratingBarProductDetail = findViewById(R.id.ratingBarProductDetail);
+        tvAverageRating = findViewById(R.id.tvAverageRating);
+        ratingBarSummary = findViewById(R.id.ratingBarSummary);
+        tvTotalReviews = findViewById(R.id.tvTotalReviews);
+        btnViewAllReviews = findViewById(R.id.btnViewAllReviews);
+        btnWishlist = findViewById(R.id.btnWishlist);
+
         api = ApiClient.getApiService();
 
         int productID = getIntent().getIntExtra("productID", -1);
@@ -86,11 +108,64 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
+        currentProductId = productID;
         loadProductDetail(productID);
         setupQuantityButtons();
         btnAddToCart.setOnClickListener(v -> handleAddToCart());
 
+        btnWishlist.setOnClickListener(v -> handleWishlist());
+        btnViewAllReviews.setOnClickListener(v -> handleViewAllReviews());
+    }
 
+    // ⭐ HÀM XỬ LÝ WISHLIST
+    private void handleWishlist() {
+        int customerId = getCurrentCustomerId();
+        if (customerId == -1) {
+            Toast.makeText(this, "Vui lòng đăng nhập để thêm vào Wishlist.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            return;
+        }
+
+        if (isInWishlist) {
+            // Xóa khỏi wishlist (Sử dụng Request Body WishlistDeleteRequest)
+            WishlistDeleteRequest request = new WishlistDeleteRequest(customerId, currentProductId);
+            api.deleteFromWishlist(request).enqueue(new Callback<ApiResponse>() { // ⭐ SỬ DỤNG deleteFromWishlist
+                @Override
+                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        isInWishlist = false;
+                        updateWishlistUI();
+                        Toast.makeText(ProductDetailActivity.this, "Đã xóa khỏi Wishlist.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override public void onFailure(Call<ApiResponse> call, Throwable t) { Log.e(TAG, "Remove Wishlist failed: ", t); }
+            });
+        } else {
+            // Thêm vào wishlist (Sử dụng Request Body WishlistAddRequest)
+            WishlistAddRequest request = new WishlistAddRequest(customerId, currentProductId);
+            api.addToWishlist(request).enqueue(new Callback<ApiResponse>() {
+                @Override
+                public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                        isInWishlist = true;
+                        updateWishlistUI();
+                        Toast.makeText(ProductDetailActivity.this, "Đã thêm vào Wishlist.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override public void onFailure(Call<ApiResponse> call, Throwable t) { Log.e(TAG, "Add Wishlist failed: ", t); }
+            });
+        }
+    }
+
+    // ⭐ HÀM CẬP NHẬT UI WISHLIST
+    private void updateWishlistUI() {
+        int color = ContextCompat.getColor(this, isInWishlist ? R.color.red : R.color.black);
+        btnWishlist.setColorFilter(color);
+    }
+
+    private int getCurrentCustomerId() {
+        SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
+        return sp.getInt("customerID", -1);
     }
 
     private void setupQuantityButtons() {
@@ -124,16 +199,14 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void loadProductDetail(int productID) {
-        // ⭐ SỬA: Dùng ProductDetailResponse
         api.getProductDetail(productID).enqueue(new Callback<ProductDetailResponse>() {
             @Override
             public void onResponse(Call<ProductDetailResponse> call, Response<ProductDetailResponse> response) {
-                // Kiểm tra HTTP success và logic success
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    // ⭐ SỬA LOGIC: Lấy ProductDto từ response.body().getProduct()
                     ProductDto product = response.body().getProduct();
                     if (product != null) {
                         displayProductDetails(product);
+                        checkWishlistStatus(productID);
                     } else {
                         Log.e(TAG, "Load detail failed: Product data is null.");
                         Toast.makeText(ProductDetailActivity.this, "Không tìm thấy dữ liệu sản phẩm", Toast.LENGTH_SHORT).show();
@@ -146,7 +219,6 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            // ⭐ SỬA KIỂU DỮ LIỆU: Phải là ProductDetailResponse
             public void onFailure(Call<ProductDetailResponse> call, Throwable t) {
                 Log.e(TAG, "Load detail network error: ", t);
                 Toast.makeText(ProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_LONG).show();
@@ -154,17 +226,49 @@ public class ProductDetailActivity extends AppCompatActivity {
         });
     }
 
+    // ⭐ HÀM KIỂM TRA WISHLIST (Giả định API kiểm tra đã được sửa)
+    private void checkWishlistStatus(int productID) {
+        int customerId = getCurrentCustomerId();
+        if (customerId == -1) return;
+
+        api.checkWishlistStatus(customerId, productID).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    isInWishlist = response.body().isSuccess();
+                    updateWishlistUI();
+                }
+            }
+            @Override public void onFailure(Call<ApiResponse> call, Throwable t) {}
+        });
+    }
+
     private void displayProductDetails(ProductDto p) {
+        currentProductName = p.getProductName();
         txtName.setText(p.getProductName());
-        // Hiển thị giá mặc định (có thể là giá thấp nhất hoặc giá duy nhất)
+
+        // Định dạng giá
         txtPrice.setText(String.format(Locale.GERMAN, "%,.0f ₫", p.getPrice()));
         txtDesc.setText(p.getDescription());
+
         setupImageViewer(p.getImages());
         setupVariants(p.getVariants());
+
+        // HIỂN THỊ RATING DETAIL (Điểm số + RatingBar)
+        float avgRating = p.getAverageRating();
+
+        tvRatingScore.setText(String.format(Locale.US, "%.1f", avgRating));
+        ratingBarProductDetail.setRating(avgRating);
+
+        // HIỂN THỊ RATING SUMMARY (Cho phần review)
+        int totalReviews = p.getTotalReviews();
+        tvAverageRating.setText(String.format(Locale.US, "%.1f", avgRating));
+        ratingBarSummary.setRating(avgRating);
+        tvTotalReviews.setText(String.format("(%d Reviews)", totalReviews));
+        btnViewAllReviews.setVisibility(totalReviews > 0 ? View.VISIBLE : View.GONE);
     }
 
     private void setupImageViewer(List<ProductDto.ImageDto> images) {
-        // ⭐ Cải tiến: Sử dụng List getters an toàn (đã được sửa trong DTO)
         if (images == null || images.isEmpty()) {
             txtImageCount.setText("0/0");
             return;
@@ -208,7 +312,6 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (variants == null || variants.isEmpty()) {
             btnAddToCart.setEnabled(false);
             btnAddToCart.setText("Sản phẩm chưa có phiên bản");
-            // Vô hiệu hóa bộ chọn số lượng nếu không có biến thể
             btnIncreaseQuantity.setEnabled(false);
             btnDecreaseQuantity.setEnabled(false);
             return;
@@ -247,7 +350,6 @@ public class ProductDetailActivity extends AppCompatActivity {
                 currentQuantity = 1;
                 tvQuantity.setText(String.valueOf(currentQuantity));
 
-                // Kích hoạt/Vô hiệu hóa nút tăng/giảm dựa trên tồn kho
                 boolean hasStock = v.getStock() > 0;
                 btnDecreaseQuantity.setEnabled(true);
                 btnIncreaseQuantity.setEnabled(hasStock);
@@ -275,14 +377,21 @@ public class ProductDetailActivity extends AppCompatActivity {
             layoutVariants.addView(btn);
         }
 
-        // Đảm bảo nút tăng/giảm số lượng bị vô hiệu hóa nếu chưa chọn biến thể
         btnIncreaseQuantity.setEnabled(false);
         btnDecreaseQuantity.setEnabled(false);
     }
 
+    // ⭐ XỬ LÝ CHUYỂN ACTIVITY SANG REVIEW LIST
+    private void handleViewAllReviews() {
+        Intent intent = new Intent(this, ReviewListActivity.class);
+        intent.putExtra("PRODUCT_ID", currentProductId);
+        intent.putExtra("PRODUCT_NAME", currentProductName);
+        startActivity(intent);
+    }
+
+
     private void handleAddToCart() {
-        SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
-        int customerId = prefs.getInt("customerID", -1);
+        int customerId = getCurrentCustomerId();
 
         if (customerId == -1) {
             Toast.makeText(this, "Vui lòng đăng nhập để thêm sản phẩm", Toast.LENGTH_SHORT).show();
@@ -300,13 +409,12 @@ public class ProductDetailActivity extends AppCompatActivity {
             return;
         }
 
-        btnAddToCart.setEnabled(false); // Ngăn chặn click đúp
+        btnAddToCart.setEnabled(false);
 
-        // Gọi API với số lượng hiện tại
         api.addToCart(customerId, selectedVariantId, currentQuantity).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                btnAddToCart.setEnabled(true); // Bật lại nút
+                btnAddToCart.setEnabled(true);
                 Log.d(TAG, "Cart Add Response Code: " + response.code());
 
                 if (response.code() >= 200 && response.code() < 300) {
@@ -319,7 +427,6 @@ public class ProductDetailActivity extends AppCompatActivity {
                             Toast.makeText(ProductDetailActivity.this, "❌ Thêm thất bại: " + msg, Toast.LENGTH_LONG).show();
                             Log.e(TAG, "Add to Cart FAIL (Logic): " + msg);
 
-                            // Nếu lỗi do hết hàng, cần tải lại chi tiết sản phẩm để cập nhật UI
                             if (selectedVariant != null && msg != null && (msg.toLowerCase().contains("hết hàng") || msg.toLowerCase().contains("kho không đủ"))) {
                                 loadProductDetail(selectedVariant.getProductID());
                             }
@@ -342,7 +449,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                btnAddToCart.setEnabled(true); // Bật lại nút
+                btnAddToCart.setEnabled(true);
                 Toast.makeText(ProductDetailActivity.this, "Lỗi kết nối mạng", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Network failure during addToCart: " + t.getMessage(), t);
             }

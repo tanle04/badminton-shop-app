@@ -1,7 +1,7 @@
 package com.example.badmintonshop.network.dto;
 
 import com.google.gson.annotations.SerializedName;
-import java.util.ArrayList; // Thêm import
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDto {
@@ -28,6 +28,13 @@ public class ProductDto {
 
     @SerializedName("categoryName")
     private String categoryName;
+
+    // ⭐ NEW: Tóm tắt đánh giá (Được trả về từ detail.php)
+    @SerializedName("averageRating")
+    private float averageRating;
+
+    @SerializedName("totalReviews")
+    private int totalReviews;
 
     // ====== Ảnh ======
     // list.php có imageUrl (1 ảnh), detail.php có images[] (nhiều ảnh)
@@ -66,6 +73,13 @@ public class ProductDto {
 
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+
+    // ⭐ NEW: Getter và Setter cho Review Summary
+    public float getAverageRating() { return averageRating; }
+    public void setAverageRating(float averageRating) { this.averageRating = averageRating; }
+
+    public int getTotalReviews() { return totalReviews; }
+    public void setTotalReviews(int totalReviews) { this.totalReviews = totalReviews; }
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }

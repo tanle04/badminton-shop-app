@@ -22,7 +22,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private final Context context;
     private final List<OrderDetailDto> itemList;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
+    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     public OrderDetailAdapter(Context context, List<OrderDetailDto> itemList) {
         this.context = context;

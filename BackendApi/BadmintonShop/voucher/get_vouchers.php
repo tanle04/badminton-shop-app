@@ -18,12 +18,17 @@ try {
 
     $subtotal_for_query = number_format($subtotal, 2, '.', '');
 
-    // ⭐ CÂU LỆNH SQL ĐÃ SỬA: Bao gồm voucher chung VÀ voucher riêng đã được gán (JOIN customer_vouchers)
+    // ⭐ CÂU LỆNH SQL ĐÃ SỬA:
+    // Bao gồm voucher chung (isPrivate=0) VÀ voucher riêng (isPrivate=1)
+    // Voucher chung: Có thể dùng nhiều lần (miễn còn lượt chung).
+    // Voucher riêng: Phải được gán (trong customer_vouchers) VÀ status = 'available'.
     $sql = "
     SELECT 
         v.voucherID, v.voucherCode, v.description, v.discountType, v.discountValue, 
         v.minOrderValue, v.maxDiscountAmount, v.maxUsage, v.usedCount, v.startDate, 
-        v.endDate, v.isActive, v.isPrivate
+        v.endDate, v.isActive, v.isPrivate,
+        -- Thêm trạng thái 'status' từ bảng 'customer_vouchers' nếu có
+        cv.status as customerVoucherStatus 
     FROM vouchers v
     -- LEFT JOIN với bảng gán voucher cá nhân
     LEFT JOIN customer_vouchers cv ON v.voucherID = cv.voucherID AND cv.customerID = ?
@@ -32,23 +37,24 @@ try {
         AND v.endDate >= ?
         AND v.minOrderValue <= ? 
         AND v.usedCount < v.maxUsage 
-        -- ⭐ ĐK LỌC: Hoặc là voucher chung OR (voucher riêng AND đã được gán)
+        -- ⭐ ĐK LỌC ĐÃ SỬA:
         AND (
-            v.isPrivate = 0 OR 
+            -- 1. Là voucher chung (luôn hiển thị nếu thỏa mãn đk trên)
+            v.isPrivate = 0 
+            OR 
+            -- 2. Là voucher riêng VÀ đã được gán VÀ status = 'available'
             (v.isPrivate = 1 AND cv.customerID IS NOT NULL AND cv.status = 'available')
         )
-        -- ⭐ ĐK BỔ SUNG: Loại trừ các voucher đã được sử dụng trong orders (Kiểm tra lại nếu cần)
-        AND v.voucherID NOT IN (SELECT voucherID FROM orders WHERE customerID = ? AND voucherID IS NOT NULL)
     ORDER BY v.minOrderValue ASC";
 
-    // Bind: i s s s i (customerID đầu tiên là cho LEFT JOIN, customerID cuối là cho NOT IN)
+    // Bind: i s s s (customerID cho LEFT JOIN, date, date, subtotal)
     $stmt = $mysqli->prepare($sql);
     if ($stmt === false) {
         respond(['isSuccess' => false, 'message' => 'Lỗi chuẩn bị SQL: ' . $mysqli->error], 500);
     }
 
-    // ⭐ SỬA BIND: Bind 5 tham số (customerID, date, date, subtotal, customerID)
-    $stmt->bind_param("isssi", $customerID, $currentDate, $currentDate, $subtotal_for_query, $customerID);
+    // ⭐ SỬA BIND: Bind 4 tham số (customerID, date, date, subtotal)
+    $stmt->bind_param("isss", $customerID, $currentDate, $currentDate, $subtotal_for_query);
     $stmt->execute();
     $res = $stmt->get_result();
 
@@ -63,6 +69,9 @@ try {
         $row['usageLimitPercent'] = $row['maxUsage'] > 0
             ? round((($row['maxUsage'] - $row['usedCount']) / $row['maxUsage']) * 100)
             : 0;
+        
+        // Thêm trường trạng thái voucher cá nhân nếu có
+        $row['customerVoucherStatus'] = $row['customerVoucherStatus'] ?? null;
 
         $vouchers[] = $row;
     }
@@ -78,3 +87,4 @@ try {
     error_log("[VOUCHER_API] Global Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Lỗi server không xác định: ' . $e->getMessage()], 500);
 }
+// Lưu ý: Thẻ đóng ?> bị loại bỏ.

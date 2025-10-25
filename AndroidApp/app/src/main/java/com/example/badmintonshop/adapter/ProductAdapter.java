@@ -35,7 +35,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     // 🚩 Biến lưu trữ ID sản phẩm yêu thích để kiểm tra trạng thái
     private final Set<Integer> favoriteIds;
 
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
+    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // Constructor CŨ (Giữ lại để tương thích)
     public ProductAdapter(Context ctx, List<ProductDto> items) {

@@ -17,10 +17,9 @@ import com.bumptech.glide.Glide;
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.model.ReviewItemModel;
 import com.example.badmintonshop.network.dto.OrderDetailDto;
-// ⭐ Import cần thiết
 import com.example.badmintonshop.adapter.ReviewMediaAdapter.MediaDeleteListener;
 
-import java.util.Collections;
+import java.util.ArrayList; // Thêm import cho ArrayList
 import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
@@ -28,7 +27,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     private final Context context;
     private List<ReviewItemModel> reviewItems;
     private final ReviewAdapterListener listener;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/uploads/";
+    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // 1. INTERFACE CHO SỰ KIỆN CLICK (Giao tiếp với Activity)
     public interface ReviewAdapterListener {
@@ -71,29 +70,30 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         holder.ratingBar.setRating(model.getRating());
         holder.etContent.setText(model.getReviewContent());
 
-        // ⭐ 3. LOGIC HIỂN THỊ MEDIA PREVIEW
-        boolean hasPhotos = model.getPhotoUris() != null && !model.getPhotoUris().isEmpty();
-        boolean hasVideo = model.getVideoUri() != null;
+        // ⭐ 3. LOGIC HIỂN THỊ MEDIA PREVIEW (Đã sửa để xử lý List<Uri> cho Video)
 
-        if (hasPhotos || hasVideo) {
+        List<android.net.Uri> mediaList = new ArrayList<>();
+
+        // Thêm Ảnh (PhotoUris đã là List)
+        if (model.getPhotoUris() != null && !model.getPhotoUris().isEmpty()) {
+            mediaList.addAll(model.getPhotoUris());
+        }
+
+        // Thêm Video (VideoUris đã là List)
+        if (model.getVideoUris() != null && !model.getVideoUris().isEmpty()) {
+            mediaList.addAll(model.getVideoUris());
+        }
+
+        if (!mediaList.isEmpty()) {
             holder.recyclerMediaPreview.setVisibility(View.VISIBLE);
 
-            // Xác định danh sách Uri và chế độ hiển thị
-            List<android.net.Uri> mediaList;
-            boolean isVideoMode;
-
-            if (hasVideo) {
-                // Nếu có video, chỉ hiển thị một thumbnail video
-                mediaList = Collections.singletonList(model.getVideoUri());
-                isVideoMode = true;
-            } else {
-                // Nếu có ảnh, hiển thị danh sách ảnh
-                mediaList = model.getPhotoUris();
-                isVideoMode = false;
-            }
+            // ⭐ Xử lý isVideoMode: Cần truyền logic cho Adapter con để nhận diện video
+            // Chúng ta không thể chỉ dùng isVideoMode boolean, cần truyền List tổng hợp.
+            // Để đơn giản, ta sẽ đặt logic kiểm tra video trong ReviewMediaAdapter.java.
 
             // ⭐ Khởi tạo Media Adapter con và truyền Listener xóa
-            ReviewMediaAdapter mediaAdapter = new ReviewMediaAdapter(context, mediaList, isVideoMode,
+            // Chúng ta truyền List Uri tổng hợp của cả ảnh và video
+            ReviewMediaAdapter mediaAdapter = new ReviewMediaAdapter(context, mediaList, false, // isVideoSelected không còn cần thiết
                     // Triển khai MediaDeleteListener
                     new MediaDeleteListener() {
                         @Override
@@ -101,6 +101,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
                             // Gọi lại Activity thông qua Listener chính của Adapter
                             int currentReviewPos = holder.getAdapterPosition();
                             if (currentReviewPos != RecyclerView.NO_POSITION && listener != null) {
+                                // Xử lý logic xóa trong Activity (Cần biết là ảnh hay video để xóa đúng)
                                 listener.onMediaDeleted(currentReviewPos, mediaPosition);
                             }
                         }
