@@ -15,7 +15,7 @@ set GIT_TARGET_ROOT=C:\BadmintonShop
 echo.
 echo === [1/4] DONG BO BACKEND (API PHP GOC) ===
 set SOURCE_API=C:\xampp\htdocs\api\BadmintonShop
-set TARGET_API=%GIT_TARGET_ROOT%\BackendApi\BadmintonShop
+set TARGET_API=%GIT_TARGET_ROOT%\BackendApi
 
 xcopy "%SOURCE_API%" "%TARGET_API%" /E /H /Y /I >nul
 if %ERRORLEVEL% EQU 0 (echo [? API]: DONG BO THANH CONG!) else (echo [? API]: LOI DONG BO!)

@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Test Register</title></head>
+<body>
+  <input id="fullName"  placeholder="Full name" value="Le Tan"><br>
+  <input id="email"     placeholder="Email"     value="tanlthe182131@fpt.edu.vn"><br>
+  <input id="password"  placeholder="Password"  value="123456"><br>
+  <input id="phone"     placeholder="Phone"     value="0817112004"><br>
+  <input id="address"   placeholder="Address"   value="Hanoi"><br>
+  <button id="btn">Register</button>
+
+  <pre id="out"></pre>
+
+  <script>
+    document.getElementById('btn').onclick = async () => {
+      const payload = {
+        fullName: document.getElementById('fullName').value,
+        email:    document.getElementById('email').value,
+        password: document.getElementById('password').value,
+        phone:    document.getElementById('phone').value,
+        address:  document.getElementById('address').value
+      };
+
+      const res = await fetch('http://localhost/api/BadmintonShop/auth/register.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(()=>({raw: await res.text()}));
+      document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+    };
+  </script>
+</body>
+</html>
