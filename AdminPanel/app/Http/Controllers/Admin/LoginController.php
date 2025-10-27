@@ -13,7 +13,6 @@ class LoginController extends Controller
     public function __construct()
     {
         // Chỉ khách (chưa đăng nhập) mới được xem login form.
-        // Chỉ Guard 'admin' bị ảnh hưởng.
         $this->middleware('guest:admin')->except('logout');
     }
 
@@ -22,7 +21,6 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // Trỏ đến file view mới: resources/views/admin/login.blade.php
         return view('admin.login');
     }
 
@@ -41,7 +39,6 @@ class LoginController extends Controller
         
         // 2. Auth::attempt với Guard 'admin'
         if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
-            // Đăng nhập thành công
             $request->session()->regenerate();
 
             // Chuyển hướng đến Dashboard Admin (admin.dashboard)
@@ -59,11 +56,13 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
+        // Logout guard 'admin'
         Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // Chuyển hướng đến trang đăng nhập Admin (đã fix lỗi 404 /home)
         return redirect()->route('admin.login');
     }
 }

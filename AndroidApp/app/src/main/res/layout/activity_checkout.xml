@@ -94,27 +94,40 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- ⭐⭐ PHƯƠNG THỨC VẬN CHUYỂN ĐÃ CHUYỂN THÀNH SECTION CLICKABLE ⭐⭐ -->
             <androidx.cardview.widget.CardView style="@style/CheckoutCard">
-                <LinearLayout style="@style/CheckoutSection">
+                <LinearLayout
+                    android:id="@+id/shipping_section_container"
+                    style="@style/CheckoutSection"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="vertical">
+
                     <TextView
                         style="@style/CheckoutSectionHeader"
                         android:drawableEnd="@null"
                         android:text="Phương thức vận chuyển" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recycler_shipping_methods"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/tv_shipping_method"
+                        style="@style/CheckoutText.Primary"
                         android:layout_marginTop="8dp"
-                        android:nestedScrollingEnabled="false" />
+                        android:text="Chọn phương thức vận chuyển >"
+                        android:textColor="@color/colorPrimary"
+                        android:textStyle="bold"
+                        tools:text="Giao Hàng Nhanh - Tiêu Chuẩn"/>
 
                     <TextView
+                        android:id="@+id/tv_shipping_estimate"
                         style="@style/CheckoutText.Secondary"
-                        android:layout_marginTop="8dp"
-                        android:text="Thời gian giao hàng dự kiến có thể bị ảnh hưởng bởi những yếu tố khác."
-                        android:textSize="12sp"/>
+                        android:layout_marginTop="4dp"
+                        android:text="Thời gian giao hàng dự kiến..."
+                        tools:text="Dự kiến giao hàng: 2-4 ngày"/>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+            <!-- ⭐⭐ KẾT THÚC PHƯƠNG THỨC VẬN CHUYỂN ⭐⭐ -->
 
             <androidx.cardview.widget.CardView style="@style/CheckoutCard">
                 <LinearLayout style="@style/CheckoutSection">

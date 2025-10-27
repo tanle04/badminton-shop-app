@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Broadcast;
 
 class BroadcastServiceProvider extends ServiceProvider
 {
@@ -14,7 +14,8 @@ class BroadcastServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Broadcast::routes();
+        // FIX: Chỉ định middleware 'web' và guard 'auth:admin'
+        Broadcast::routes(['middleware' => ['web', 'auth:admin']]);
 
         require base_path('routes/channels.php');
     }

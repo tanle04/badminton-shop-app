@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-require_once("../bootstrap.php"); // Giả định chứa hàm respond()
+require_once "../bootstrap.php"; // Giả định chứa hàm respond() và $mysqli
+require_once "../utils/price_calculator.php"; // ⭐ THÊM: Logic tính giá sale
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -17,11 +18,12 @@ try {
         respond(['isSuccess' => false, 'message' => 'ID khách hàng không hợp lệ.'], 400);
     }
 
+    // ⭐ SỬA SQL: Lấy giá gốc từ p.price để PHP tính toán
     $sql = "
     SELECT 
         p.productID, 
         p.productName, 
-        p.price, 
+        p.price AS basePrice, /* ⭐ Đổi tên cột giá để giữ giá gốc */
         b.brandName,
         (
             SELECT pi.imageUrl 
@@ -48,14 +50,28 @@ try {
 
     $wishlist = [];
     while ($row = $res->fetch_assoc()) {
-        $img = $row['imageUrl'] ?? "";
+        $productID = (int)$row['productID'];
+        
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GHI ĐÈ GIÁ
+        $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
+
+        // price là trường mà Android đang đọc là giá cuối cùng
+        $row['price'] = $price_details['salePrice'];
+        
+        // Gán các cờ sale cần thiết
+        $row['originalPriceMin'] = $price_details['originalPrice']; 
+        $row['isDiscounted'] = $price_details['isDiscounted'];
         
         // Xử lý tên file ảnh (giữ nguyên logic)
+        $img = $row['imageUrl'] ?? "";
         if ($img && preg_match('/^http/', $img)) {
-            $img = basename($img); 
+            $img = basename($img);
         }
-        
         $row['imageUrl'] = $img ?: "no_image.png"; 
+
+        // Loại bỏ cột tạm thời
+        unset($row['basePrice']); 
+        
         $wishlist[] = $row;
     }
 
@@ -73,4 +89,3 @@ try {
     error_log("Wishlist Get API Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

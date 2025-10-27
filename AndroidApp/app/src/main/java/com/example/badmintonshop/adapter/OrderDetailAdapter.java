@@ -1,7 +1,7 @@
 package com.example.badmintonshop.adapter;
 
 import android.content.Context;
-import android.graphics.Paint; // ⭐ ĐÃ THÊM: Cần cho việc gạch ngang giá
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -24,9 +25,18 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     private final List<OrderDetailDto> itemList;
     private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
+    // ⭐ Định nghĩa màu Sale (Cần định nghĩa trong colors.xml)
+    private static final int COLOR_SALE = R.color.red_sale;
+    private static final int COLOR_ORIGINAL = R.color.gray_strikethrough;
+    private static final int COLOR_DEFAULT = R.color.default_text;
+
     public OrderDetailAdapter(Context context, List<OrderDetailDto> itemList) {
         this.context = context;
         this.itemList = itemList;
+    }
+
+    private String formatCurrency(double price) {
+        return String.format(Locale.GERMAN, "%,.0f đ", price);
     }
 
     @NonNull
@@ -41,10 +51,8 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     public void onBindViewHolder(@NonNull DetailViewHolder holder, int position) {
         OrderDetailDto item = itemList.get(position);
 
-        // Giả định giá gốc (chỉ để minh họa, cần lấy từ DTO thực tế)
-        // Ví dụ: Giả định giảm 50.000 đ
-        double originalPrice = item.getPrice() + 50000;
-        double itemPrice = item.getPrice();
+        double itemPrice = item.getPrice(); // Giá mua (đã sale)
+        double originalPrice = item.getOriginalPrice(); // Giá gốc hiện tại (để tham khảo)
         int quantity = item.getQuantity();
 
         // 1. Tải ảnh sản phẩm
@@ -63,18 +71,23 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
         // ⭐ 4. Giá và Số lượng (SỬA ĐỔI LOGIC GIÁ)
 
-        if (originalPrice > itemPrice) {
-            // Hiển thị giá gốc bị gạch ngang
-            holder.tvOriginalPrice.setText(String.format(Locale.GERMAN, "%,.0f đ", originalPrice));
+        // Cờ isDiscounted được tính bằng cách so sánh giá mua (od.price) với giá gốc hiện tại
+        if (item.isDiscounted()) {
+            // Có Sale: Hiển thị giá gốc bị gạch ngang
+            holder.tvOriginalPrice.setText(formatCurrency(originalPrice));
             holder.tvOriginalPrice.setPaintFlags(holder.tvOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            holder.tvOriginalPrice.setTextColor(ContextCompat.getColor(context, COLOR_ORIGINAL));
             holder.tvOriginalPrice.setVisibility(View.VISIBLE);
 
-            // Hiển thị giá đã giảm (Giá cuối cùng)
-            holder.tvPrice.setText(String.format(Locale.GERMAN, "%,.0f đ", itemPrice));
+            // Hiển thị giá đã giảm (Giá cuối cùng khi mua)
+            holder.tvPrice.setText(formatCurrency(itemPrice));
+            holder.tvPrice.setTextColor(ContextCompat.getColor(context, COLOR_SALE));
         } else {
-            // Không có giảm giá, chỉ hiển thị giá cuối cùng
+            // Không có giảm giá, chỉ hiển thị giá mua (giá gốc)
             holder.tvOriginalPrice.setVisibility(View.GONE);
-            holder.tvPrice.setText(String.format(Locale.GERMAN, "%,.0f đ", itemPrice));
+            holder.tvPrice.setText(formatCurrency(itemPrice));
+            holder.tvPrice.setTextColor(ContextCompat.getColor(context, COLOR_DEFAULT));
+            holder.tvPrice.setPaintFlags(0); // Đảm bảo bỏ gạch ngang
         }
 
         // Hiển thị số lượng
@@ -91,7 +104,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         ImageView imgProduct;
         TextView tvProductName;
         TextView tvVariantDetails;
-        TextView tvOriginalPrice; // ⭐ Ánh xạ mới
+        TextView tvOriginalPrice;
         TextView tvPrice;
         TextView tvQuantity;
 
@@ -100,7 +113,10 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             imgProduct = itemView.findViewById(R.id.img_product);
             tvProductName = itemView.findViewById(R.id.tv_product_name);
             tvVariantDetails = itemView.findViewById(R.id.tv_variant_details);
-            tvOriginalPrice = itemView.findViewById(R.id.tv_original_price); // ⭐ Ánh xạ mới
+
+            // ⭐ Đảm bảo ID này tồn tại trong item_order_detail_product.xml
+            tvOriginalPrice = itemView.findViewById(R.id.tv_original_price);
+
             tvPrice = itemView.findViewById(R.id.tv_price);
             tvQuantity = itemView.findViewById(R.id.tv_quantity);
         }

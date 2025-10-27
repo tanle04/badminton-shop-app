@@ -14,13 +14,29 @@ public class OrderDto implements Serializable {
     private String orderDate;
 
     @SerializedName("status")
-    private String status; // Pending, Processing, Shipped, Delivered, Cancelled, Refunded
+    private String status;
 
     @SerializedName("total")
     private double total;
 
     @SerializedName("paymentMethod")
     private String paymentMethod;
+
+    // ⭐ THÊM MỚI: Thông tin phí ship
+    @SerializedName("shippingFee")
+    private double shippingFee;
+
+    @SerializedName("isFreeShip")
+    private boolean isFreeShip;
+    // ⭐ KẾT THÚC THÊM MỚI
+
+    // ⭐ THÊM: Subtotal và Voucher Discount đã được tính toán bởi Server
+    @SerializedName("subtotal")
+    private double subtotal; // Tổng tiền hàng (trước phí ship và voucher)
+
+    @SerializedName("voucherDiscountAmount")
+    private double voucherDiscountAmount; // Giá trị giảm thực tế của voucher
+    // ⭐ KẾT THÚC THÊM
 
     // ⭐ ĐÃ THÊM: Thông tin Địa chỉ/Người nhận từ API
     @SerializedName("recipientName")
@@ -38,14 +54,6 @@ public class OrderDto implements Serializable {
     // ⭐ ĐÃ THÊM: Thông tin Voucher từ API
     @SerializedName("voucherCode")
     private String voucherCode;
-
-    // Trong API, bạn chỉ lấy discountValue từ bảng vouchers
-    // Đối với màn hình hiển thị, ta dùng nó làm giá trị giảm tối đa/thực tế
-    @SerializedName("discountValue")
-    private double discountAmount;
-
-    // Giả định phí ship là hằng số hoặc đã được tính vào tổng tiền,
-    // nên không cần trường riêng ở đây trừ khi bạn muốn hiển thị chi tiết.
 
     // --- Chi tiết sản phẩm ---
     @SerializedName("items")
@@ -75,6 +83,26 @@ public class OrderDto implements Serializable {
         return items;
     }
 
+    // ⭐ GETTERS MỚI CHO PHÍ SHIP
+    public double getShippingFee() {
+        return shippingFee;
+    }
+
+    public boolean isFreeShip() {
+        return isFreeShip;
+    }
+    // ⭐ KẾT THÚC GETTERS MỚI
+
+    // GETTERS MỚI CHO TỔNG KẾT
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public double getVoucherDiscountAmount() {
+        return voucherDiscountAmount;
+    }
+    // KẾT THÚC GETTERS MỚI
+
     // GETTERS cho Địa chỉ/Người nhận
     public String getRecipientName() {
         return recipientName;
@@ -89,12 +117,13 @@ public class OrderDto implements Serializable {
         return city;
     }
 
-    // ⭐ GETTERS mới cho Voucher
+    // GETTERS cho Voucher
     public String getVoucherCode() {
         return voucherCode;
     }
+    // Giữ lại getDiscountAmount() và trả về voucherDiscountAmount
     public double getDiscountAmount() {
-        return discountAmount;
+        return voucherDiscountAmount;
     }
 
 
@@ -118,6 +147,26 @@ public class OrderDto implements Serializable {
         this.items = items;
     }
 
+    // ⭐ SETTERS MỚI CHO PHÍ SHIP
+    public void setShippingFee(double shippingFee) {
+        this.shippingFee = shippingFee;
+    }
+
+    public void setFreeShip(boolean freeShip) {
+        isFreeShip = freeShip;
+    }
+    // ⭐ KẾT THÚC SETTERS MỚI
+
+    // SETTERS MỚI CHO TỔNG KẾT
+    public void setSubtotal(double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public void setVoucherDiscountAmount(double voucherDiscountAmount) {
+        this.voucherDiscountAmount = voucherDiscountAmount;
+    }
+    // KẾT THÚC SETTERS MỚI
+
     // SETTERS cho Địa chỉ/Người nhận
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
@@ -132,12 +181,12 @@ public class OrderDto implements Serializable {
         this.city = city;
     }
 
-    // ⭐ SETTERS mới cho Voucher
+    // SETTERS cho Voucher
     public void setVoucherCode(String voucherCode) {
         this.voucherCode = voucherCode;
     }
     public void setDiscountAmount(double discountAmount) {
-        this.discountAmount = discountAmount;
+        this.voucherDiscountAmount = discountAmount; // Đảm bảo gán vào trường mới
     }
 
 

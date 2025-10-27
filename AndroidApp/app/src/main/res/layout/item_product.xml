@@ -15,7 +15,6 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <!-- Dùng FrameLayout để đặt ảnh và icon trái tim chồng lên nhau -->
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="140dp">
@@ -57,13 +56,29 @@
             android:textSize="12sp"
             android:layout_marginTop="2dp" />
 
-        <TextView
-            android:id="@+id/tvPrice"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#D32F2F"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginTop="2dp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="2dp">
+
+            <TextView
+                android:id="@+id/tv_original_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#777"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone"
+                />
+
+            <TextView
+                android:id="@+id/tvPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#D32F2F"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

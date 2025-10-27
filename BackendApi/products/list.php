@@ -1,6 +1,8 @@
 <?php
 // GET ?page=1&limit=10
 require_once '../bootstrap.php'; // mở db + headers
+// ⭐ THÊM: INCLUDE PRICE CALCULATOR
+require_once '../utils/price_calculator.php';
 
 // Hàm trả về JSON nhất quán
 function json_response($isSuccess, $message, $page = null, $items = null) {
@@ -26,7 +28,7 @@ $offset = ($page-1)*$limit;
 $sql = "
 SELECT 
     p.productID, p.productName, p.description,
-    COALESCE(MIN(v.price), p.price) AS priceMin,
+    p.price AS priceMin, /* Dùng p.price làm giá trị ban đầu (sẽ bị ghi đè) */
     COALESCE(SUM(v.stock), p.stock) AS stockTotal,
     b.brandName, c.categoryName,
     (SELECT pi.imageUrl FROM productimages pi 
@@ -35,15 +37,13 @@ FROM products p
 LEFT JOIN product_variants v ON v.productID = p.productID
 LEFT JOIN brands b ON b.brandID = p.brandID
 LEFT JOIN categories c ON c.categoryID = p.categoryID
-WHERE p.is_active = 1  /* ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
+WHERE p.is_active = 1 
 GROUP BY p.productID
 ORDER BY p.createdDate DESC
 LIMIT ? OFFSET ?";
 
 try {
-    // Tắt các thông báo lỗi nếu cần (nếu không thể sửa bootstrap)
-    // error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING); 
-    // ini_set('display_errors', 0); 
+    // ... (Prepare và execute SQL) ...
     
     $stmt = $mysqli->prepare($sql);
     if (!$stmt) {
@@ -53,8 +53,19 @@ try {
     $stmt->bind_param("ii", $limit, $offset);
     $stmt->execute();
     $res = $stmt->get_result();
+    
     $data = [];
     while ($row = $res->fetch_assoc()) {
+        $productID = (int)$row['productID'];
+        
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GHI ĐÈ GIÁ MIN
+        $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
+
+        $row['priceMin'] = $price_details['salePrice'];
+        // Gán các cờ sale cần thiết cho ProductDto chính
+        $row['originalPriceMin'] = $price_details['originalPrice']; 
+        $row['isDiscounted'] = $price_details['isDiscounted'];
+        
         $data[] = $row;
     }
     

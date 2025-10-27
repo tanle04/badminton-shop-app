@@ -4,7 +4,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Paint; // ⭐ IMPORT CẦN THIẾT CHO GẠCH NGANG
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue; // ⭐ IMPORT CẦN THIẾT CHO SIZE CHỮ
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -29,8 +31,8 @@ import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.ProductDetailResponse;
 import com.example.badmintonshop.network.dto.ProductDto;
-import com.example.badmintonshop.network.dto.WishlistAddRequest; // ⭐ IMPORT CẦN THIẾT
-import com.example.badmintonshop.network.dto.WishlistDeleteRequest; // ⭐ IMPORT CẦN THIẾT
+import com.example.badmintonshop.network.dto.WishlistAddRequest;
+import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
@@ -45,6 +47,10 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ViewPager2 pagerImages;
     private RecyclerView recyclerGalleryThumbs;
     private TextView txtName, txtPrice, txtDesc, txtImageCount, tvRatingScore;
+
+    // ⭐ ÁNH XẠ TEXTVIEW MỚI CHO GIÁ GỐC TRONG CHI TIẾT
+    private TextView tvOriginalPriceDetail;
+
     private LinearLayout layoutVariants;
     private MaterialButton btnAddToCart;
     private RatingBar ratingBarProductDetail;
@@ -71,6 +77,16 @@ public class ProductDetailActivity extends AppCompatActivity {
     private int selectedThumb = -1;
     private static final String TAG = "PRODUCT_DETAIL_DEBUG";
 
+    // ⭐ THÊM MÀU VÀ HÀM FORMAT TIỀN TỆ
+    private static final int COLOR_SALE = R.color.red_sale;
+    private static final int COLOR_DEFAULT = R.color.default_text;
+    private static final int COLOR_ORIGINAL = R.color.gray_strikethrough;
+
+    private String formatCurrency(double price) {
+        return String.format(Locale.GERMAN, "%,.0f ₫", price);
+    }
+    // ⭐ KẾT THÚC THÊM MÀU VÀ HÀM FORMAT
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +105,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnDecreaseQuantity = findViewById(R.id.btnDecreaseQuantity);
         tvQuantity = findViewById(R.id.tvQuantity);
         btnIncreaseQuantity = findViewById(R.id.btnIncreaseQuantity);
+
+        // ⭐ BIND TEXTVIEW CHO GIÁ GỐC (ĐÃ SỬA TRONG LAYOUT Ở BƯỚC TRƯỚC)
+        tvOriginalPriceDetail = findViewById(R.id.tv_original_price_detail);
 
         // Bind Views cho phần Rating và Review
         tvRatingScore = findViewById(R.id.tvRatingScore);
@@ -117,7 +136,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnViewAllReviews.setOnClickListener(v -> handleViewAllReviews());
     }
 
-    // ⭐ HÀM XỬ LÝ WISHLIST
+    // ⭐ HÀM XỬ LÝ WISHLIST (Giữ nguyên)
     private void handleWishlist() {
         int customerId = getCurrentCustomerId();
         if (customerId == -1) {
@@ -129,7 +148,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         if (isInWishlist) {
             // Xóa khỏi wishlist (Sử dụng Request Body WishlistDeleteRequest)
             WishlistDeleteRequest request = new WishlistDeleteRequest(customerId, currentProductId);
-            api.deleteFromWishlist(request).enqueue(new Callback<ApiResponse>() { // ⭐ SỬ DỤNG deleteFromWishlist
+            api.deleteFromWishlist(request).enqueue(new Callback<ApiResponse>() {
                 @Override
                 public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                     if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
@@ -157,7 +176,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-    // ⭐ HÀM CẬP NHẬT UI WISHLIST
+    // ⭐ HÀM CẬP NHẬT UI WISHLIST (Giữ nguyên)
     private void updateWishlistUI() {
         int color = ContextCompat.getColor(this, isInWishlist ? R.color.red : R.color.black);
         btnWishlist.setColorFilter(color);
@@ -226,7 +245,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         });
     }
 
-    // ⭐ HÀM KIỂM TRA WISHLIST (Giả định API kiểm tra đã được sửa)
+    // ⭐ HÀM KIỂM TRA WISHLIST (Giữ nguyên)
     private void checkWishlistStatus(int productID) {
         int customerId = getCurrentCustomerId();
         if (customerId == -1) return;
@@ -247,8 +266,37 @@ public class ProductDetailActivity extends AppCompatActivity {
         currentProductName = p.getProductName();
         txtName.setText(p.getProductName());
 
-        // Định dạng giá
-        txtPrice.setText(String.format(Locale.GERMAN, "%,.0f ₫", p.getPrice()));
+        // ⭐ BƯỚC 1: XỬ LÝ HIỂN THỊ GIÁ SALE DÙNG VARIANT MẶC ĐỊNH
+        if (!p.getVariants().isEmpty()) {
+            // Lấy biến thể có giá thấp nhất (thường là biến thể đầu tiên do ORDER BY v.price ASC)
+            ProductDto.VariantDto defaultVariant = p.getVariants().get(0);
+
+            // ⭐ GÁN BIẾN THỂ MẶC ĐỊNH CHO BIẾN TOÀN CỤC
+            selectedVariantId = defaultVariant.getVariantID();
+            selectedVariant = defaultVariant;
+
+            // Áp dụng Logic Hiển thị Giá Sale
+            if (defaultVariant.isDiscounted()) {
+                // Có SALE: Hiển thị giá gốc bị gạch ngang
+                tvOriginalPriceDetail.setText(formatCurrency(defaultVariant.getOriginalPrice()));
+                tvOriginalPriceDetail.setPaintFlags(tvOriginalPriceDetail.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                tvOriginalPriceDetail.setTextColor(ContextCompat.getColor(this, COLOR_ORIGINAL));
+                tvOriginalPriceDetail.setVisibility(View.VISIBLE);
+
+                // Hiển thị giá sale nổi bật
+                txtPrice.setText(formatCurrency(defaultVariant.getSalePrice()));
+                txtPrice.setTextColor(ContextCompat.getColor(this, COLOR_SALE));
+
+            } else {
+                // KHÔNG SALE: Chỉ hiển thị giá bình thường
+                tvOriginalPriceDetail.setVisibility(View.GONE);
+                txtPrice.setText(formatCurrency(defaultVariant.getSalePrice()));
+                txtPrice.setTextColor(ContextCompat.getColor(this, COLOR_DEFAULT));
+                txtPrice.setPaintFlags(0);
+            }
+        }
+        // ⭐ KẾT THÚC XỬ LÝ GIÁ SALE
+
         txtDesc.setText(p.getDescription());
 
         setupImageViewer(p.getImages());
@@ -343,7 +391,9 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
 
             btn.setOnClickListener(x -> {
-                txtPrice.setText(String.format(Locale.GERMAN, "%,.0f ₫", v.getPrice()));
+                // ⭐ SỬA: Cập nhật giá khi chọn variant
+                updatePriceDisplay(v);
+
                 selectedVariantId = v.getVariantID();
                 selectedVariant = v;
 
@@ -381,7 +431,27 @@ public class ProductDetailActivity extends AppCompatActivity {
         btnDecreaseQuantity.setEnabled(false);
     }
 
-    // ⭐ XỬ LÝ CHUYỂN ACTIVITY SANG REVIEW LIST
+    // ⭐ HÀM MỚI: CẬP NHẬT HIỂN THỊ GIÁ KHI CHỌN VARIANT MỚI
+    private void updatePriceDisplay(ProductDto.VariantDto variant) {
+        if (variant.isDiscounted()) {
+            tvOriginalPriceDetail.setText(formatCurrency(variant.getOriginalPrice()));
+            tvOriginalPriceDetail.setPaintFlags(tvOriginalPriceDetail.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            tvOriginalPriceDetail.setTextColor(ContextCompat.getColor(this, COLOR_ORIGINAL));
+            tvOriginalPriceDetail.setVisibility(View.VISIBLE);
+
+            txtPrice.setText(formatCurrency(variant.getSalePrice()));
+            txtPrice.setTextColor(ContextCompat.getColor(this, COLOR_SALE));
+            txtPrice.setPaintFlags(0);
+        } else {
+            tvOriginalPriceDetail.setVisibility(View.GONE);
+            txtPrice.setText(formatCurrency(variant.getSalePrice()));
+            txtPrice.setTextColor(ContextCompat.getColor(this, COLOR_DEFAULT));
+            txtPrice.setPaintFlags(0);
+        }
+    }
+
+
+    // ⭐ XỬ LÝ CHUYỂN ACTIVITY SANG REVIEW LIST (Giữ nguyên)
     private void handleViewAllReviews() {
         Intent intent = new Intent(this, ReviewListActivity.class);
         intent.putExtra("PRODUCT_ID", currentProductId);

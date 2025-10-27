@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-require_once '../bootstrap.php'; // Giả định chứa hàm respond()
+require_once '../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
+require_once '../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -13,12 +14,16 @@ try {
 
     $productID = (int)$_GET['productID'];
     
-    $sql = "SELECT v.variantID, v.price, v.stock, GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
+    // ⭐ SỬA SQL: Lấy thêm reservedStock và join với products để lọc is_active
+    $sql = "SELECT v.variantID, v.price AS priceBase, v.stock, v.reservedStock, v.productID,
+               GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
             FROM product_variants v
+            JOIN products p ON p.productID = v.productID /* JOIN để lọc is_active */
             JOIN variant_attribute_values vav ON v.variantID = vav.variantID
             JOIN product_attribute_values pav ON vav.valueID = pav.valueID
-            WHERE v.productID = ?
-            GROUP BY v.variantID, v.price, v.stock"; // Thêm price, stock vào GROUP BY
+            WHERE v.productID = ? AND p.is_active = 1 /* ⭐ Lọc theo is_active */
+            GROUP BY v.variantID
+            ORDER BY v.price ASC"; 
     
     $stmt = $mysqli->prepare($sql);
 
@@ -32,8 +37,26 @@ try {
 
     $variants = [];
     while ($row = $result->fetch_assoc()) {
-        // ⭐ Ép kiểu giá trị DECIMAL/FLOAT sang chuỗi để khớp với DTO Android (nếu cần)
-        $row['price'] = (string) $row['price'];
+        $variantID = (int)$row['variantID'];
+        
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GẮN CÁC TRƯỜNG MỚI
+        $price_details = get_best_sale_price($mysqli, $variantID);
+        
+        // Gắn các trường sale vào biến thể
+        $row['originalPrice'] = (float)$row['priceBase'];
+        $row['salePrice'] = $price_details['salePrice'];
+        $row['isDiscounted'] = $price_details['isDiscounted'];
+        
+        // Ghi đè trường price cũ bằng giá sale cuối cùng (cho Android DTO)
+        $row['price'] = $row['salePrice']; 
+        
+        // Ép kiểu cuối cùng
+        $row['price'] = (float) $row['price'];
+        $row['stock'] = (int) $row['stock'];
+        $row['reservedStock'] = (int) $row['reservedStock'];
+        $row['variantID'] = (int) $row['variantID'];
+        
+        unset($row['priceBase']); // Loại bỏ cột giá gốc tạm thời
         $variants[] = $row;
     }
 
@@ -43,12 +66,10 @@ try {
     respond([
         "isSuccess" => true,
         "message" => "Variants loaded successfully.",
-        "variants" => $variants // Khớp với trường 'variants' trong VariantListResponse
+        "variants" => $variants
     ]);
 
 } catch (Throwable $e) {
     error_log("Variant List API Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

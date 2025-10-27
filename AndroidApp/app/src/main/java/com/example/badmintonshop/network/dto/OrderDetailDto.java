@@ -33,6 +33,15 @@ public class OrderDetailDto implements Serializable {
     @SerializedName("isReviewed")
     private boolean isReviewed;
 
+    // ⭐ BỔ SUNG CÁC TRƯỜNG SALE TỪ BACKEND
+    // (Khớp với dữ liệu trả về từ orders/get_by_customer.php)
+    @SerializedName("originalPrice")
+    private double originalPrice;
+
+    @SerializedName("isDiscounted")
+    private boolean isDiscounted;
+    // ⭐ KẾT THÚC BỔ SUNG
+
     // --------------------------------------------------
     // 1. Constructors
     // --------------------------------------------------
@@ -43,7 +52,8 @@ public class OrderDetailDto implements Serializable {
 
     // Constructor đầy đủ tham số
     public OrderDetailDto(int orderDetailID, int variantID, int productID, String productName,
-                          String imageUrl, int quantity, double price, String variantDetails, boolean isReviewed) {
+                          String imageUrl, int quantity, double price, String variantDetails, boolean isReviewed,
+                          double originalPrice, boolean isDiscounted) { // ⭐ Cập nhật tham số
         this.orderDetailID = orderDetailID;
         this.variantID = variantID;
         this.productID = productID;
@@ -53,6 +63,8 @@ public class OrderDetailDto implements Serializable {
         this.price = price;
         this.variantDetails = variantDetails;
         this.isReviewed = isReviewed;
+        this.originalPrice = originalPrice;
+        this.isDiscounted = isDiscounted;
     }
 
     // --------------------------------------------------
@@ -134,4 +146,22 @@ public class OrderDetailDto implements Serializable {
     public void setReviewed(boolean reviewed) {
         isReviewed = reviewed;
     }
+
+    // ⭐ GETTER / SETTER MỚI CHO GIÁ SALE
+    public double getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(double originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    public boolean isDiscounted() {
+        return isDiscounted;
+    }
+
+    public void setDiscounted(boolean discounted) {
+        isDiscounted = discounted;
+    }
+    // ⭐ KẾT THÚC GETTER / SETTER MỚI
 }

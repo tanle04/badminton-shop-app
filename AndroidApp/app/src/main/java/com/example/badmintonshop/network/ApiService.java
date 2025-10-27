@@ -14,6 +14,7 @@ import com.example.badmintonshop.network.dto.ProductDetailResponse;
 import com.example.badmintonshop.network.dto.ProductListResponse;
 import com.example.badmintonshop.network.dto.ReviewListResponse;
 import com.example.badmintonshop.network.dto.ReviewSubmitRequest;
+import com.example.badmintonshop.network.dto.ShippingRatesResponse;
 import com.example.badmintonshop.network.dto.SliderDto;
 import com.example.badmintonshop.network.dto.VariantListResponse;
 import com.example.badmintonshop.network.dto.VoucherListResponse;
@@ -74,7 +75,7 @@ public interface ApiService {
     @POST("wishlist/add.php")
     Call<ApiResponse> addToWishlist(@Body WishlistAddRequest request);
 
-    // ⭐ 1.1. Thêm vào Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
+    // 1.1. Thêm vào Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
     @FormUrlEncoded
     @POST("wishlist/add.php")
     Call<ApiResponse> addToWishlist(
@@ -90,7 +91,7 @@ public interface ApiService {
     @POST("wishlist/remove.php")
     Call<ApiResponse> deleteFromWishlist(@Body WishlistDeleteRequest request);
 
-    // ⭐ 3.1. Xóa sản phẩm khỏi Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
+    // 3.1. Xóa sản phẩm khỏi Wishlist (Dùng tham số trực tiếp - cho ProductDetailActivity)
     @FormUrlEncoded
     @POST("wishlist/remove.php")
     Call<ApiResponse> removeFromWishlist(
@@ -98,7 +99,7 @@ public interface ApiService {
             @Field("productID") int productId
     );
 
-    // ⭐ 4. Kiểm tra Trạng thái Wishlist (Phương thức bị thiếu - cho ProductDetailActivity)
+    // 4. Kiểm tra Trạng thái Wishlist (Phương thức bị thiếu - cho ProductDetailActivity)
     @GET("wishlist/check.php")
     Call<ApiResponse> checkWishlistStatus(
             @Query("customerID") int customerId,
@@ -118,7 +119,7 @@ public interface ApiService {
             @Field("quantity") int quantity
     );
 
-    // ⭐ Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng (Duplication with addToCart, but kept for consistency)
+    // Phương thức mới: Thêm sản phẩm (biến thể) vào giỏ hàng
     @FormUrlEncoded
     @POST("cart/add.php")
     Call<ApiResponse> addVariantToCart(
@@ -206,11 +207,14 @@ public interface ApiService {
             @Field("customerID") int customerId
     );
 
-    // 2. Lấy danh sách Phương thức Vận chuyển
+    // 2. Lấy danh sách Phương thức Vận chuyển (ĐÃ CHUẨN HÓA)
     @GET("shipping/get_rates.php")
-    Call<List<ShippingRate>> getShippingRates();
+    Call<ShippingRatesResponse> getShippingRates(
+            @Query("subtotal") double subtotal,
+            @Query("addressID") int addressId // Tùy chọn, nếu bạn triển khai phí theo vùng
+    );
 
-    // 3. ĐẶT HÀNG
+    // 3. ĐẶT HÀNG (ĐÃ SỬA LỖI: Cập nhật chữ ký lên 8 tham số)
     @FormUrlEncoded
     @POST("orders/create.php")
     Call<ApiResponse> createOrder(
@@ -219,8 +223,11 @@ public interface ApiService {
             @Field("paymentMethod") String paymentMethod,
             @Field("total") double total,
             @Field("items") String itemsJson,
-            @Field("voucherID") int voucherId
+            @Field("voucherID") int voucherId,
+            @Field("selectedRateID") int selectedRateID, // ⭐ THAM SỐ THỨ 7
+            @Field("shippingFee") double shippingFee // ⭐ THAM SỐ THỨ 8
     );
+
     @GET("orders/get_by_customer.php")
     Call<OrderListResponse> getCustomerOrders(@Query("customerID") int customerId, @Query("status") String statusFilter);
 

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="1dp"
+    app:cardElevation="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:background="?attr/selectableItemBackground">
+
+        <RadioButton
+            android:id="@+id/rb_rate_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:clickable="false"
+            android:focusable="false" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/rb_rate_select"
+            android:layout_toStartOf="@+id/tv_rate_fee"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tv_rate_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                tools:text="Giao Hàng Nhanh - Tiêu Chuẩn" />
+
+            <TextView
+                android:id="@+id/tv_rate_estimate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#757575"
+                android:textSize="12sp"
+                tools:text="Dự kiến: 2-4 ngày" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_rate_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            tools:text="30.000 đ" />
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

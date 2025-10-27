@@ -16,9 +16,17 @@ public class ProductDto {
     @SerializedName("description")
     private String description;
 
-    // ⚠️ list.php dùng priceMin, detail.php dùng price
+    // ⚠️ list.php dùng priceMin, detail.php dùng price. Trường này sẽ chứa giá cuối cùng.
     @SerializedName(value = "priceMin", alternate = {"price"})
     private double price;
+
+    // ⭐ BỔ SUNG CÁC TRƯỜNG SALE CHO PRODUCTDTO CHÍNH (ĐỂ DÙNG TRONG LIST VIEW)
+    @SerializedName("originalPriceMin")
+    private double originalPriceMin; // Giá gốc thấp nhất
+
+    @SerializedName("isDiscounted")
+    private boolean isDiscounted; // Cờ giảm giá
+    // ⭐ KẾT THÚC BỔ SUNG
 
     @SerializedName("stockTotal")
     private int stockTotal;
@@ -37,7 +45,6 @@ public class ProductDto {
     private int totalReviews;
 
     // ====== Ảnh ======
-    // list.php có imageUrl (1 ảnh), detail.php có images[] (nhiều ảnh)
     @SerializedName("imageUrl")
     private String imageUrl;
 
@@ -64,6 +71,14 @@ public class ProductDto {
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+
+    // ⭐ GETTER / SETTER MỚI CHO PRODUCT (LIST VIEW)
+    public double getOriginalPriceMin() { return originalPriceMin; }
+    public void setOriginalPriceMin(double originalPriceMin) { this.originalPriceMin = originalPriceMin; }
+
+    public boolean isDiscounted() { return isDiscounted; }
+    public void setDiscounted(boolean discounted) { isDiscounted = discounted; }
+    // ⭐ KẾT THÚC GETTER / SETTER MỚI
 
     public int getStockTotal() { return stockTotal; }
     public void setStockTotal(int stockTotal) { this.stockTotal = stockTotal; }
@@ -116,13 +131,13 @@ public class ProductDto {
         @SerializedName("variantID")
         private int variantID;
 
-        // ⭐ THÊM TRƯỜNG productID VÀO VARIANT ĐỂ DỄ DÀNG LẤY ID SẢN PHẨM CHA
         @SerializedName("productID")
         private int productID;
 
         @SerializedName("sku")
         private String sku;
 
+        // ⚠️ TRƯỜNG PRICE NÀY HIỆN CHỨA GIÁ SALE CUỐI CÙNG HOẶC GIÁ GỐC
         @SerializedName("price")
         private double price;
 
@@ -130,14 +145,24 @@ public class ProductDto {
         private int stock;
 
         @SerializedName("attributes")
-        private String attributes; // Ví dụ: "3U, G5" hoặc "L", "XL"
+        private String attributes;
+
+        // ⭐ BẮT ĐẦU PHẦN BỔ SUNG CHO SALE (CẦN KHỚP VỚI JSON TỪ PHP BACKEND)
+        @SerializedName("originalPrice")
+        private double originalPrice;
+
+        @SerializedName("salePrice")
+        private double salePrice;
+
+        @SerializedName("isDiscounted")
+        private boolean isDiscounted;
+        // ⭐ KẾT THÚC PHẦN BỔ SUNG
 
         // ⭐ THÊM: Constructor mặc định
         public VariantDto() {}
 
         // Getter
         public int getVariantID() { return variantID; }
-        // ⭐ THÊM GETTER VÀ SETTER CHO PRODUCTID
         public int getProductID() { return productID; }
         public void setProductID(int productID) { this.productID = productID; }
 
@@ -145,5 +170,15 @@ public class ProductDto {
         public double getPrice() { return price; }
         public int getStock() { return stock; }
         public String getAttributes() { return attributes; }
+
+        // ⭐ GETTER / SETTER MỚI
+        public double getOriginalPrice() { return originalPrice; }
+        public void setOriginalPrice(double originalPrice) { this.originalPrice = originalPrice; }
+
+        public double getSalePrice() { return salePrice; }
+        public void setSalePrice(double salePrice) { this.salePrice = salePrice; }
+
+        public boolean isDiscounted() { return isDiscounted; }
+        public void setDiscounted(boolean discounted) { isDiscounted = discounted; }
     }
 }

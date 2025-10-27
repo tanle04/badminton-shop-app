@@ -19,10 +19,10 @@ try {
     }
     
     $message = "Không có gì thay đổi"; // Thông báo mặc định
+    $stmt = null;
 
     if ($quantity > 0) {
         // --- 2. KIỂM TRA TỒN KHO ---
-        // Lấy variantID, tồn kho (stock), và tên sản phẩm
         $sql_check = "
             SELECT pv.stock, p.productName, sc.variantID 
             FROM shopping_cart sc 
@@ -53,11 +53,11 @@ try {
             $message = $currentStock > 0 
                      ? "Chỉ còn $currentStock sản phẩm ($productName) trong kho. Vui lòng giảm số lượng."
                      : "Sản phẩm ($productName) đã hết hàng.";
-            respond(['isSuccess' => false, 'message' => $message], 409); // 409 Conflict
+            // ⭐ TRẢ VỀ PHẢN HỒI LỖI TRƯỚC KHI THỬ CẬP NHẬT
+            respond(['isSuccess' => false, 'message' => $message, 'maxStock' => $currentStock], 409); 
         }
         
         // --- 3. Cập nhật số lượng ---
-        // Không cần kiểm tra race condition ở đây vì stock chỉ được trừ khi đặt hàng cuối cùng.
         $stmt = $mysqli->prepare("UPDATE shopping_cart SET quantity = ? WHERE cartID = ? AND customerID = ?");
         if (!$stmt) {
             throw new Exception("Lỗi chuẩn bị SQL cập nhật: " . $mysqli->error);
@@ -81,11 +81,12 @@ try {
     if ($stmt->affected_rows > 0) {
         respond(['isSuccess' => true, 'message' => $message], 200);
     } else {
-        // Trả về thành công nếu không có hàng nào bị ảnh hưởng (ví dụ: cố gắng xóa mặt hàng không tồn tại)
+        // Trả về thành công nếu không có hàng nào bị ảnh hưởng (ví dụ: số lượng không đổi)
         respond(['isSuccess' => true, 'message' => 'Không có gì thay đổi'], 200); 
     }
 
-    $stmt->close();
+    // $stmt->close() cần được gọi nếu code không throw exception (dù PHP sẽ dọn dẹp)
+    if ($stmt) $stmt->close();
 
 } catch (Throwable $e) {
     error_log("Cart Update/Delete API Error: " . $e->getMessage());

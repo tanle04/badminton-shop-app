@@ -2,6 +2,7 @@ package com.example.badmintonshop.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint; // ⭐ Import cần thiết cho gạch ngang
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat; // Import cần thiết để lấy màu
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -34,6 +35,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     private final OnWishlistClickListener wishlistClickListener;
     // 🚩 Biến lưu trữ ID sản phẩm yêu thích để kiểm tra trạng thái
     private final Set<Integer> favoriteIds;
+    // ⭐ Định nghĩa màu cho Sale và mặc định (Cần có trong resources/values/colors.xml)
+    private static final int COLOR_SALE = R.color.red_sale; // Bạn cần định nghĩa màu này
+    private static final int COLOR_DEFAULT = R.color.default_text; // Bạn cần định nghĩa màu này
+    private static final int COLOR_ORIGINAL = R.color.gray_strikethrough; // Màu xám cho giá bị gạch
 
     private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
@@ -62,11 +67,34 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
         ProductDto p = items.get(pos);
 
-        // ✅ Tên sản phẩm, Giá, Thương hiệu, Ảnh (giữ nguyên)
+        // ✅ Tên sản phẩm, Thương hiệu, Ảnh (giữ nguyên)
         h.tvName.setText(p.getProductName());
-        h.tvPrice.setText(String.format("%,.0f ₫", p.getPrice()));
         h.tvBrand.setText(p.getBrandName() != null ? p.getBrandName() : "Unknown");
 
+        // ⭐ BẮT ĐẦU LOGIC XỬ LÝ GIÁ SALE MỚI
+        if (p.isDiscounted()) {
+            // 1. Nếu có sale: Hiển thị giá gốc bị gạch ngang
+            h.tvOriginalPrice.setText(formatCurrency(p.getOriginalPriceMin()));
+            // Áp dụng hiệu ứng gạch ngang
+            h.tvOriginalPrice.setPaintFlags(h.tvOriginalPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            h.tvOriginalPrice.setTextColor(ContextCompat.getColor(ctx, COLOR_ORIGINAL));
+            h.tvOriginalPrice.setVisibility(View.VISIBLE);
+
+            // 2. Hiển thị giá sale (price hiện tại) với màu nổi bật
+            h.tvPrice.setText(formatCurrency(p.getPrice()));
+            h.tvPrice.setTextColor(ContextCompat.getColor(ctx, COLOR_SALE));
+
+        } else {
+            // 3. Nếu không có sale: Ẩn giá gốc, hiển thị giá bình thường
+            h.tvOriginalPrice.setVisibility(View.GONE);
+            h.tvPrice.setText(formatCurrency(p.getPrice()));
+            // Loại bỏ gạch ngang và dùng màu mặc định
+            h.tvPrice.setPaintFlags(h.tvPrice.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            h.tvPrice.setTextColor(ContextCompat.getColor(ctx, COLOR_DEFAULT));
+        }
+        // ⭐ KẾT THÚC LOGIC XỬ LÝ GIÁ SALE
+
+        // Load ảnh (giữ nguyên)
         String imgUrl = p.getImageUrl();
         if (imgUrl != null && !imgUrl.isEmpty()) {
             Glide.with(ctx)
@@ -79,17 +107,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             h.img.setImageResource(R.drawable.ic_badminton_logo);
         }
 
-        // 🚩 LOGIC CẬP NHẬT MÀU NÚT WISHLIST
+        // Logic Wishlist (giữ nguyên)
         if (favoriteIds.contains(p.getProductID())) {
-            // Đã yêu thích: Dùng trái tim đầy (Đỏ)
-            // (Bạn cần đảm bảo R.drawable.ic_favorite_filled tồn tại trong drawable)
             h.btnWishlist.setImageResource(R.drawable.ic_favorite_filled);
         } else {
-            // Chưa yêu thích: Dùng trái tim rỗng (Trắng/Xám)
             h.btnWishlist.setImageResource(R.drawable.ic_favorite);
         }
 
-        // Sự kiện click nút Wishlist (giữ nguyên, gọi toggleWishlist)
+        // Sự kiện click nút Wishlist (giữ nguyên)
         h.btnWishlist.setOnClickListener(v -> {
             if (wishlistClickListener != null) {
                 wishlistClickListener.onWishlistClick(p);
@@ -102,6 +127,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             Intent i = new Intent(ctx, ProductDetailActivity.class);
             i.putExtra("productID", p.getProductID());
             i.putExtra("productName", p.getProductName());
+            // ⚠️ Cần truyền giá sale vào intent
             i.putExtra("productPrice", p.getPrice());
             i.putExtra("productBrand", p.getBrandName());
             i.putExtra("productImage", BASE_IMAGE_URL + p.getImageUrl());
@@ -114,17 +140,25 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public int getItemCount() {
         return items != null ? items.size() : 0;
     }
-    // 🚩 NEW: Thêm phương thức này vào cuối lớp
+
     public void updateData(List<ProductDto> newItems) {
-        this.items.clear(); // Xóa dữ liệu cũ
+        this.items.clear();
         if (newItems != null) {
-            this.items.addAll(newItems); // Thêm dữ liệu mới
+            this.items.addAll(newItems);
         }
-        notifyDataSetChanged(); // Báo cho Adapter biết dữ liệu đã thay đổi
+        notifyDataSetChanged();
     }
+
+    // ⭐ HÀM CHUYỂN ĐỔI TIỀN TỆ MỚI
+    private String formatCurrency(double price) {
+        // Sử dụng định dạng tiền tệ Việt Nam đồng
+        return String.format("%,.0f ₫", price);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView img;
         TextView tvName, tvPrice, tvBrand;
+        TextView tvOriginalPrice; // ⭐ THÊM TextView cho giá gốc
         ImageView btnWishlist;
 
         ViewHolder(View v) {
@@ -134,6 +168,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             tvPrice = v.findViewById(R.id.tvPrice);
             tvBrand = v.findViewById(R.id.tvBrand);
             btnWishlist = v.findViewById(R.id.btnWishlist);
+
+            // ⭐ ÁNH XẠ TextView MỚI
+            tvOriginalPrice = v.findViewById(R.id.tv_original_price);
         }
     }
 }

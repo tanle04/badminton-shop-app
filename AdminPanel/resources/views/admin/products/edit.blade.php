@@ -65,22 +65,22 @@
                             
                             @foreach ($attributes as $attribute)
                                 <div class="attribute-group" 
-                                     data-attribute-id="{{ $attribute->attributeID }}" 
-                                     data-attribute-name="{{ $attribute->attributeName }}"
-                                     id="attribute-{{ $attribute->attributeID }}" style="display: none;">
+                                    data-attribute-id="{{ $attribute->attributeID }}" 
+                                    data-attribute-name="{{ $attribute->attributeName }}"
+                                    id="attribute-{{ $attribute->attributeID }}" style="display: none;">
                                     
                                     <strong>{{ $attribute->attributeName }}</strong>:
                                     @foreach ($attribute->values as $value)
                                         <div class="form-check form-check-inline attribute-value-item" 
-                                             data-value-id="{{ $value->valueID }}">
+                                            data-value-id="{{ $value->valueID }}">
                                             
                                             <input class="form-check-input attribute-checkbox" type="checkbox" 
-                                                   name="attribute_values_temp[]" 
-                                                   data-attribute-id="{{ $attribute->attributeID }}"
-                                                   data-attribute-value-name="{{ $value->valueName }}"
-                                                   value="{{ $value->valueID }}" 
-                                                   {{ in_array($value->valueID, $currentValueIds) ? 'checked' : '' }}
-                                                   onchange="generateVariants()">
+                                                name="attribute_values_temp[]" 
+                                                data-attribute-id="{{ $attribute->attributeID }}"
+                                                data-attribute-value-name="{{ $value->valueName }}"
+                                                value="{{ $value->valueID }}" 
+                                                {{ in_array($value->valueID, $currentValueIds) ? 'checked' : '' }}
+                                                onchange="generateVariants()">
                                             <label class="form-check-label">{{ $value->valueName }}</label>
                                         </div>
                                     @endforeach
@@ -148,6 +148,10 @@
 @stop
 
 @section('js')
+{{-- KHẮC PHỤC LỖI TOASTR: AdminLTE đang không chèn script, ta thêm thủ công --}}
+<link rel="stylesheet" href="{{ asset('vendor/toastr/toastr.min.css') }}">
+<script src="{{ asset('vendor/toastr/toastr.min.js') }}"></script>
+
 <script>
     const CURRENT_VARIANTS = @json($product->variants->keyBy(function($item) {
         // Tạo khóa dựa trên tổ hợp valueID để tra cứu nhanh
@@ -229,7 +233,7 @@
                     }
                 });
             } else {
-                 $group.find('.attribute-value-item').show();
+                $group.find('.attribute-value-item').show();
             }
         });
     }
@@ -239,7 +243,7 @@
         const selectedValues = {}; 
         // Chỉ lấy các checkbox được check VÀ đang được hiển thị
         const checkedCheckboxes = $('.attribute-checkbox:checked').filter(function() {
-             return $(this).closest('.attribute-value-item').css('display') !== 'none';
+            return $(this).closest('.attribute-value-item').css('display') !== 'none';
         });
 
         // 1. Gom nhóm các ValueID đã chọn theo AttributeID (Giống create)
@@ -259,8 +263,8 @@
         const $matrixArea = $('#variant-matrix-area');
 
         if (attrIds.length === 0) {
-             $matrixArea.html('<p class="text-danger">Vui lòng chọn ít nhất một giá trị thuộc tính để tạo biến thể.</p>');
-             return;
+            $matrixArea.html('<p class="text-danger">Vui lòng chọn ít nhất một giá trị thuộc tính để tạo biến thể.</p>');
+            return;
         }
 
         // 2. Tạo Ma trận Decartes (Tổ hợp chéo) (Giống create)

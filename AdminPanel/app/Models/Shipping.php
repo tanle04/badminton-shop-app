@@ -26,6 +26,7 @@ class Shipping extends Model
      */
     public function order()
     {
+        // Giả sử Order Model của bạn tồn tại và sử dụng khóa chính orderID
         return $this->belongsTo(Order::class, 'orderID', 'orderID');
     }
 }

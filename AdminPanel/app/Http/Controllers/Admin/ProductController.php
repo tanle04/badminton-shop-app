@@ -141,7 +141,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        // LOGIC KÍCH HOẠT LẠI:
+        // LOGIC KÍCH HOẠT LẠI: (Giữ nguyên)
         if ($request->has('action_reactivate')) {
             $product->is_active = 1;
             $product->save();
@@ -149,25 +149,38 @@ class ProductController extends Controller
                 ->with('success', 'Sản phẩm "' . $product->productName . '" đã được KÍCH HOẠT LẠI thành công!');
         }
 
-        // ... (Validation đã có) ...
+        // 1. VALIDATION CẬP NHẬT
         $request->validate([
             'productName' => 'required|string|max:255',
             'categoryID' => 'required|exists:categories,categoryID',
             'brandID' => 'required|exists:brands,brandID',
             'images.main' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'variants' => 'required|array',
-            'variants.*.id' => 'required|exists:product_variants,variantID',
+
+            // SỬA LỖI TẠI ĐÂY (Dòng 161 cũ): Sử dụng 'in' string rule và custom rule để kiểm tra existence
+            'variants.*.id' => [
+                'required',
+                'in:NEW,' . $product->variants->pluck('variantID')->implode(','),
+                // Rule 'in' đảm bảo nó là 'NEW' hoặc là một ID biến thể hiện có của sản phẩm này.
+            ],
+
             'variants.*.price' => 'required|numeric|min:1000',
             'variants.*.stock' => 'required|integer|min:0',
-            'selected_attribute_values' => 'nullable|array',
+            'variants.*.attribute_values' => 'required|array', // Thêm validation cho trường này
             'variants.*.sku' => [
                 'required',
                 'max:50',
+                // Custom Rule: Kiểm tra SKU duy nhất, bỏ qua variantID hiện tại
                 function ($attribute, $value, $fail) use ($request, $product) {
                     $index = explode('.', $attribute)[1];
-                    $variantId = $request->variants[$index]['id'] ?? null;
+                    $variantId = $request->variants[$index]['id'] === 'NEW' ? null : $request->variants[$index]['id'];
+
+                    // BỎ qua check unique nếu SKU rỗng (đã có required)
+                    if (empty($value)) return;
+
                     $exists = DB::table('product_variants')
                         ->where('sku', $value)
+                        // Bỏ qua variantID hiện tại, nếu là NEW thì $variantId là null
                         ->where('variantID', '!=', $variantId)
                         ->exists();
 
@@ -180,8 +193,8 @@ class ProductController extends Controller
 
         try {
             DB::beginTransaction();
-            // ... (Logic cập nhật Sản phẩm, Variants, Thuộc tính đã có) ...
 
+            // Cập nhật thông tin cơ bản của Sản phẩm
             $product->update([
                 'productName' => $request->productName,
                 'description' => $request->description,
@@ -192,28 +205,67 @@ class ProductController extends Controller
             $totalStock = 0;
             $minPrice = PHP_INT_MAX;
 
+            // Lấy ID của các Variants cũ được gửi lên
+            $submittedVariantIds = collect($request->variants)
+                ->where('id', '!=', 'NEW')
+                ->pluck('id')
+                ->toArray();
+
+            // 2. XÓA VARIANTS CŨ KHÔNG CÓ TRONG FORM
+            $variantsToDelete = $product->variants()
+                ->whereNotIn('variantID', $submittedVariantIds)
+                ->get();
+
+            foreach ($variantsToDelete as $variantToDelete) {
+                // Xóa liên kết thuộc tính trước
+                $variantToDelete->attributeValues()->detach();
+                // Xóa variant
+                $variantToDelete->delete();
+            }
+
+
+            // 3. LẶP VÀ XỬ LÝ CẬP NHẬT HOẶC TẠO MỚI
+            // 3. LẶP VÀ XỬ LÝ CẬP NHẬT HOẶC TẠO MỚI
             foreach ($request->variants as $variantData) {
-                $variant = $product->variants()->where('variantID', $variantData['id'])->firstOrFail();
-                $newStock = $variantData['stock'];
-                $variant->update([
+                // Trích xuất dữ liệu variant CHUNG (KHÔNG bao gồm reservedStock)
+                $variantPayload = [
                     'sku' => $variantData['sku'],
                     'price' => $variantData['price'],
-                    'stock' => $newStock,
-                ]);
+                    'stock' => $variantData['stock'],
+                    // Bỏ 'reservedStock' ra khỏi payload chung để nó không bị cập nhật
+                ];
 
-                $totalStock += $newStock;
+                if ($variantData['id'] === 'NEW') {
+                    // TẠO MỚI (INSERT) VARIANT: Cần set reservedStock = 0
+                    $variantPayload['reservedStock'] = 0;
+                    $variant = $product->variants()->create($variantPayload);
+                } else {
+                    // CẬP NHẬT (UPDATE) VARIANT CŨ: 
+                    // reservedStock sẽ tự động giữ nguyên giá trị cũ vì nó không có trong $variantPayload
+                    $variant = $product->variants()->find($variantData['id']);
+
+                    if (!$variant) {
+                        throw new \Exception("Variant ID {$variantData['id']} không được tìm thấy.");
+                    }
+                    $variant->update($variantPayload);
+                }
+
+
+                // ĐỒNG BỘ THUỘC TÍNH
+                if (isset($variantData['attribute_values'])) {
+                    $variant->attributeValues()->sync($variantData['attribute_values']);
+                }
+
+                $totalStock += $variant->stock;
                 $minPrice = min($minPrice, $variant->price);
             }
-            $firstVariant = $product->variants->first();
-            if ($firstVariant && $request->has('selected_attribute_values')) {
-                $firstVariant->attributeValues()->sync($request->selected_attribute_values);
-            }
 
+            // Cập nhật lại Stock và Price trên Product Model
             $product->stock = $totalStock;
-            $product->price = $product->variants()->min('price');
+            $product->price = $product->variants()->min('price') ?? 0;
             $product->save();
 
-            // SỬ DỤNG HÀM MỚI
+            // Xử lý ảnh (Giữ nguyên)
             $this->handleImageUpdate($request, $product);
 
             DB::commit();

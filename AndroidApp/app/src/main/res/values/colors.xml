@@ -37,5 +37,11 @@
     <color name="chip_background_color">#EEEEEE</color>
 
     <color name="chip_text_color">#333333</color>
+    <color name="red_sale">#D32F2F</color>
 
+    <color name="default_text">#000000</color>
+
+    <color name="gray_strikethrough">#757575</color>
+    <color name="colorBlack">#FF000000</color>
+    <color name="colorSecondaryText">#757575</color>
 </resources>

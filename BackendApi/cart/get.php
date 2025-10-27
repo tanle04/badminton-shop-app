@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-require_once '../bootstrap.php'; // Giả định chứa hàm respond()
+require_once '../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
+require_once '../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -14,6 +15,7 @@ try {
     $customerID = (int)$_GET['customerID'];
 
     // 2. Câu SQL JOIN nhiều bảng để lấy thông tin chi tiết
+    // ⭐ SỬA SQL: Đổi tên pv.price thành pv.priceBase để tránh nhầm lẫn với giá sale cuối cùng
     $sql = "
         SELECT
             sc.cartID,
@@ -21,8 +23,8 @@ try {
             p.productID,
             p.productName,
             pv.variantID,
-            pv.price AS variantPrice,
-            pv.stock, -- LẤY CỘT TỒN KHO
+            pv.price AS priceBase, /* ⭐ LẤY GIÁ GỐC BIẾN THỂ */
+            pv.stock,
             (SELECT pi.imageUrl FROM productimages pi WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl,
             GROUP_CONCAT(CONCAT(pa.attributeName, ': ', pav.valueName) SEPARATOR ', ') AS variantDetails
         FROM shopping_cart sc
@@ -32,7 +34,7 @@ try {
         LEFT JOIN product_attribute_values pav ON vav.valueID = pav.valueID
         LEFT JOIN product_attributes pa ON pav.attributeID = pa.attributeID
         WHERE sc.customerID = ?
-        AND p.is_active = 1 /* ⭐ ĐIỀU KIỆN LỌC SẢN PHẨM HOẠT ĐỘNG */
+        AND p.is_active = 1 
         GROUP BY sc.cartID, sc.quantity, p.productID, p.productName, pv.variantID, pv.price, pv.stock, imageUrl
         ORDER BY sc.addedDate DESC
     ";
@@ -47,33 +49,51 @@ try {
     $res = $stmt->get_result();
 
     $data = [];
+    $subtotal = 0; // ⭐ Biến tính tổng tiền hàng (sau sale)
+    
     while ($row = $res->fetch_assoc()) {
-        $row['variantPrice'] = (string) $row['variantPrice'];
-        // ÉP KIỂU STOCK SANG INT
+        $variantID = (int)$row['variantID'];
+        $quantity = (int)$row['quantity'];
+        
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE
+        $price_details = get_best_sale_price($mysqli, $variantID);
+        $salePrice = $price_details['salePrice'];
+        
+        // Gắn các trường sale vào item giỏ hàng
+        $row['variantPrice'] = $salePrice; // Ghi đè giá hiển thị bằng giá sale
+        $row['originalPrice'] = $price_details['originalPrice'];
+        $row['isDiscounted'] = $price_details['isDiscounted'];
+        
+        // Cập nhật tổng tiền
+        $subtotal += $salePrice * $quantity;
+        
+        // Ép kiểu cuối cùng
+        $row['variantPrice'] = (float) $row['variantPrice'];
         $row['stock'] = (int) $row['stock']; 
         
         $img = $row['imageUrl'] ?? "";
-        // Xử lý tên file (giữ nguyên logic của bạn)
         if ($img && preg_match('/^http/', $img)) {
             $img = basename($img); 
         }
         $row['imageUrl'] = $img ?: "no_image.png";
         
         $row['isSelected'] = true; 
+        
+        unset($row['priceBase']); // Loại bỏ cột gốc đã đổi tên
         $data[] = $row;
     }
 
     $stmt->close();
     
-    // PHẢN HỒI THÀNH CÔNG: Sử dụng respond() với cấu trúc DTO
+    // PHẢN HỒI THÀNH CÔNG: Bao gồm cả subtotal
     respond([
         "isSuccess" => true,
         "message" => "Cart items loaded successfully.",
-        "items" => $data // Khớp với trường 'items' trong CartResponse
+        "subtotal" => round($subtotal, 2), // ⭐ THÊM SUB TOTAL
+        "items" => $data 
     ]);
 
 } catch (Throwable $e) {
     error_log("Cart Get API Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

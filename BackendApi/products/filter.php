@@ -1,6 +1,7 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
 require_once __DIR__ . '/../bootstrap.php'; // Mở db + headers + hàm respond()
+require_once __DIR__ . '/../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
 
 try {
     // Kiểm tra phương thức
@@ -11,59 +12,59 @@ try {
     // --- Lấy tất cả các tham số lọc có thể có từ URL ---
     $categoryName = isset($_GET['category']) ? trim($_GET['category']) : null;
     $brandName = isset($_GET['brand']) ? trim($_GET['brand']) : null;
-    // Đọc giá trị và đảm bảo là float hoặc null
-    $price_min = isset($_GET['price_min']) && is_numeric($_GET['price_min']) ? (float)$_GET['price_min'] : null;
-    $price_max = isset($_GET['price_max']) && is_numeric($_GET['price_max']) ? (float)$_GET['price_max'] : null;
+    $price_min_filter = isset($_GET['price_min']) && is_numeric($_GET['price_min']) ? (float)$_GET['price_min'] : null;
+    $price_max_filter = isset($_GET['price_max']) && is_numeric($_GET['price_max']) ? (float)$_GET['price_max'] : null;
 
     // Phân trang
     $page = max(1, (int)($_GET['page'] ?? 1));
     $limit = max(1, min(50, (int)($_GET['limit'] ?? 20)));
     $offset = ($page - 1) * $limit;
 
-    // --- Bắt đầu xây dựng câu lệnh SQL một cách linh hoạt ---
+    // --- Bắt đầu xây dựng câu lệnh SQL ---
+    // ⭐ SỬA: Bỏ COALESCE(MIN(v.price), p.price) AS priceMin. Ta dùng p.price làm base
     $sql = "
         SELECT 
             p.productID, p.productName, p.description,
-            COALESCE(MIN(v.price), p.price) AS priceMin,
+            p.price AS basePrice, /* ⭐ Lấy giá base để tính toán */
             b.brandName, c.categoryName,
             (SELECT pi.imageUrl FROM productimages pi 
-               WHERE pi.productID = p.productID ORDER BY pi.imageType ASC, pi.imageID ASC LIMIT 1) AS imageUrl
+                WHERE pi.productID = p.productID ORDER BY pi.imageType ASC, pi.imageID ASC LIMIT 1) AS imageUrl
         FROM products p
         LEFT JOIN product_variants v ON v.productID = p.productID
         LEFT JOIN brands b ON b.brandID = p.brandID
-        LEFT JOIN categories c ON c.categoryID = p.categoryID
+        LEFT JOIN categories c ON p.categoryID = c.categoryID
     ";
 
     $whereClauses = []; 
     $params = []; 
     $types = ""; 
 
-    // 0. ĐIỀU KIỆN CỐ ĐỊNH: Chỉ lấy sản phẩm đang hoạt động (p.is_active = 1)
-    $whereClauses[] = "p.is_active = 1"; // ⭐ ĐÃ THÊM
+    // 0. ĐIỀU KIỆN CỐ ĐỊNH: Chỉ lấy sản phẩm đang hoạt động
+    $whereClauses[] = "p.is_active = 1";
 
-    // 1. Thêm điều kiện lọc theo Danh mục (nếu có)
+    // 1. Lọc theo Danh mục
     if ($categoryName && strtolower($categoryName) !== 'featured' && strtolower($categoryName) !== 'all') {
         $whereClauses[] = "c.categoryName = ?";
         $params[] = $categoryName;
         $types .= "s";
     }
 
-    // 2. Thêm điều kiện lọc theo Thương hiệu (nếu có)
+    // 2. Lọc theo Thương hiệu
     if ($brandName && strtolower($brandName) !== 'tất cả') {
         $whereClauses[] = "b.brandName = ?";
         $params[] = $brandName;
         $types .= "s";
     }
 
-    // 3. Thêm điều kiện lọc theo Giá
-    if ($price_min !== null) {
+    // 3. Lọc theo Giá (Dùng giá basePrice/price của sản phẩm để lọc)
+    if ($price_min_filter !== null) {
         $whereClauses[] = "p.price >= ?";
-        $params[] = $price_min;
+        $params[] = $price_min_filter;
         $types .= "d";
     }
-    if ($price_max !== null) {
+    if ($price_max_filter !== null) {
         $whereClauses[] = "p.price <= ?";
-        $params[] = $price_max;
+        $params[] = $price_max_filter;
         $types .= "d";
     }
 
@@ -82,26 +83,45 @@ try {
 
     $stmt = $mysqli->prepare($sql);
 
-    // Xử lý lỗi prepare (nếu có)
     if (!$stmt) {
         respond(['isSuccess' => false, 'message' => 'SQL Prepare failed: ' . $mysqli->error], 500);
     }
 
-    // Bind các tham số một cách linh hoạt
+    // Bind các tham số một cách linh hoạt (cách dùng call_user_func_array của bạn)
     if (!empty($types)) {
-        // Sử dụng call_user_func_array để bind động
         $bind_names = array($types);
         for ($i = 0; $i < count($params); $i++) {
             $bind_name = 'p' . $i;
-            $$bind_name = $params[$i]; // Tạo biến động
-            $bind_names[] = &$$bind_name; // Lấy tham chiếu
+            $$bind_name = $params[$i];
+            $bind_names[] = &$$bind_name;
         }
         call_user_func_array(array($stmt, 'bind_param'), $bind_names);
     }
 
     $stmt->execute();
     $result = $stmt->get_result();
-    $data = $result->fetch_all(MYSQLI_ASSOC);
+    $data = [];
+    
+    while ($row = $result->fetch_assoc()) {
+        $productID = (int)$row['productID'];
+        
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GHI ĐÈ GIÁ
+        $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
+
+        // priceMin là trường mà Android đang đọc là giá cuối cùng
+        $row['priceMin'] = $price_details['salePrice'];
+        
+        // Gán các cờ sale cần thiết cho ProductDto chính
+        $row['originalPriceMin'] = $price_details['originalPrice']; 
+        $row['isDiscounted'] = $price_details['isDiscounted'];
+        
+        // Loại bỏ trường basePrice không cần thiết trên Android
+        unset($row['basePrice']); 
+        
+        $data[] = $row;
+    }
+    
+    $stmt->close();
 
     // Trả về phản hồi THÀNH CÔNG
     respond([
@@ -114,7 +134,5 @@ try {
 } catch (Throwable $e) {
     // Xử lý lỗi bất ngờ 
     error_log("Filter API Error: " . $e->getMessage());
-    // Trả về phản hồi THẤT BẠI
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

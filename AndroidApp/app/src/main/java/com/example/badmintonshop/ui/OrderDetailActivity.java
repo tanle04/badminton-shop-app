@@ -13,19 +13,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.OrderDetailAdapter;
 import com.example.badmintonshop.network.ApiClient;
-import com.example.badmintonshop.network.ApiService; // ⭐ ĐÃ THÊM: Cần cho API hủy
-import com.example.badmintonshop.network.dto.ApiResponse; // ⭐ ĐÃ THÊM: Cần cho API hủy
+import com.example.badmintonshop.network.ApiService;
+import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.OrderDetailDto;
 import com.example.badmintonshop.network.dto.OrderDto;
 import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.Locale;
 
-import androidx.appcompat.app.AlertDialog; // ⭐ ĐÃ THÊM: Cần cho AlertDialog
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,8 +33,8 @@ import retrofit2.Response;
 public class OrderDetailActivity extends AppCompatActivity {
 
     private OrderDto orderDetailData;
-    private ApiService apiService; // ⭐ ĐÃ THÊM: Khai báo ApiService
-    private int currentCustomerId = 12; // ⭐ Giả định lấy CustomerID (bạn cần thay bằng logic thực)
+    private ApiService apiService;
+    private int currentCustomerId = 12;
 
     // Khai báo các Views chính
     private MaterialToolbar toolbar;
@@ -57,25 +57,25 @@ public class OrderDetailActivity extends AppCompatActivity {
     private View voucherDetailContainer;
     private TextView tvVoucherCodeLabel;
 
-    // Hardcoded phí ship (Cần thiết cho tổng kết)
-    private final double SHIPPING_FEE = 22200;
+    // ⭐ ĐÃ XÓA HARDCODED PHÍ SHIP: private final double SHIPPING_FEE = 22200;
 
+    // Hàm Format Tiền tệ
+    private String formatCurrency(double price) {
+        return String.format(Locale.GERMAN, "%,.0f đ", price);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
 
-        apiService = ApiClient.getApiService(); // ⭐ KHỞI TẠO API SERVICE
+        apiService = ApiClient.getApiService();
 
         // 1. Nhận dữ liệu OrderDto từ Intent
         if (getIntent().hasExtra("ORDER_DETAIL_DATA")) {
             orderDetailData = (OrderDto) getIntent().getSerializableExtra("ORDER_DETAIL_DATA");
 
             if (orderDetailData != null) {
-                // ⭐ Lấy CustomerID thực tế từ SharedPreferences nếu cần
-                // currentCustomerId = getSharedPreferences("auth", MODE_PRIVATE).getInt("customerID", -1);
-
                 setupViews();
                 displayDetails();
             } else {
@@ -130,8 +130,13 @@ public class OrderDetailActivity extends AppCompatActivity {
         String city = orderDetailData.getCity();
 
         String voucherCode = orderDetailData.getVoucherCode();
+        // Lấy discountAmount và Subtotal đã tính từ Backend
         double discountAmount = orderDetailData.getDiscountAmount();
-        double shippingFee = SHIPPING_FEE;
+        double subtotalFromDto = orderDetailData.getSubtotal();
+
+        // ⭐ ĐỌC PHÍ SHIP VÀ CỜ FREESHIP TỪ DTO
+        double actualShippingFee = orderDetailData.getShippingFee();
+        boolean isFreeShip = orderDetailData.isFreeShip();
 
 
         // 1. KHỐI THANH TOÁN
@@ -145,13 +150,8 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvRecipientInfo.setText(String.format("%s (+84 %s)", recipient, phone));
         tvShippingAddress.setText(String.format("%s, %s", street, city));
 
-        // 3. KHỐI DANH SÁCH SẢN PHẨM & TÍNH SUBTOTAL
-        double subtotal = 0;
+        // 3. KHỐI DANH SÁCH SẢN PHẨM
         if (orderDetailData.getItems() != null && !orderDetailData.getItems().isEmpty()) {
-            for (OrderDetailDto item : orderDetailData.getItems()) {
-                subtotal += item.getPrice() * item.getQuantity();
-            }
-
             OrderDetailAdapter itemAdapter = new OrderDetailAdapter(this, orderDetailData.getItems());
             recyclerOrderItems.setLayoutManager(new LinearLayoutManager(this));
             recyclerOrderItems.setAdapter(itemAdapter);
@@ -160,25 +160,32 @@ public class OrderDetailActivity extends AppCompatActivity {
         // 4. KHỐI TỔNG KẾT & VOUCHER
 
         // 4.1. Tổng tiền hàng (Subtotal)
-        tvSummarySubtotalAmount.setText(String.format(Locale.GERMAN, "%,.0f đ", subtotal));
+        tvSummarySubtotalAmount.setText(formatCurrency(subtotalFromDto));
 
-        // 4.2. Hiển thị Voucher
+        // 4.2. ⭐ SỬA LỖI HIỂN THỊ PHÍ SHIP DỰA TRÊN CỜ FREESHIP
+        if (tvShippingFeeSummary != null) {
+            if (isFreeShip) {
+                // Hiển thị "0 đ" khi cờ Freeship là true
+                tvShippingFeeSummary.setText("0 đ");
+            } else {
+                // Sử dụng phí ship thực tế từ DTO (ví dụ: 22.200 đ)
+                tvShippingFeeSummary.setText(formatCurrency(actualShippingFee));
+            }
+        }
+
+        // 4.3. Hiển thị Voucher
         if (voucherCode != null && !voucherCode.isEmpty() && discountAmount > 0) {
             tvVoucherCodeLabel.setText(String.format(Locale.getDefault(), "Mã giảm giá (%s):", voucherCode));
+            // Hiển thị giá trị giảm giá dưới dạng số âm
             tvVoucherDiscountSummary.setText(String.format(Locale.GERMAN, "- %,.0f đ", discountAmount));
             voucherDetailContainer.setVisibility(View.VISIBLE);
         } else {
             voucherDetailContainer.setVisibility(View.GONE);
         }
 
-        // 4.3. Hiển thị Phí ship
-        if (tvShippingFeeSummary != null) {
-            tvShippingFeeSummary.setText(String.format(Locale.GERMAN, "%,.0f đ", shippingFee));
-        }
-
         // 4.4. Tổng thanh toán cuối cùng (Khối Summary và Thanh dưới cùng)
-        tvTotalFinalSummary.setText(String.format(Locale.GERMAN, "%,.0f đ", total));
-        tvFinalTotalPayment.setText(String.format(Locale.GERMAN, "%,.0f đ", total));
+        tvTotalFinalSummary.setText(formatCurrency(total));
+        tvFinalTotalPayment.setText(formatCurrency(total));
 
 
         // 5. KHỐI MÃ ĐƠN HÀNG
@@ -186,16 +193,19 @@ public class OrderDetailActivity extends AppCompatActivity {
         tvOrderTrackingCode.setText(orderCode);
         btnCopyCode.setOnClickListener(v -> copyToClipboard(orderCode));
 
-        // 6. THANH DƯỚI CÙNG (Nút Hành động)
-        if (status.equals("Pending")) {
+        // 6. THANH DƯỚI CÙNG (Nút Hành động) ⭐ LOGIC HỦY ĐƠN HÀNG
+        if (status.equals("Pending") || status.equals("Processing")) {
+            // Cho phép hủy khi là Pending hoặc Processing
             btnMainAction.setText("Hủy đơn hàng");
             btnMainAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.red_700));
-            // ⭐ ĐÃ SỬA: Thay thế Toast bằng AlertDialog
             btnMainAction.setOnClickListener(v -> showCancellationDialog(orderId));
-        } else if (status.equals("Processing") || status.equals("Shipped")) {
+        } else if (status.equals("Shipped")) {
+            // Khi là Shipped (Đã giao cho Vận chuyển), chỉ cho phép Theo dõi
             btnMainAction.setText("Theo dõi đơn hàng");
             btnMainAction.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.orange_500));
+            // Thêm logic mở trình duyệt tracking nếu có tracking code
         } else {
+            // Delivered, Cancelled, Refunded, hoặc các trạng thái khác
             btnMainAction.setVisibility(View.GONE);
         }
     }
@@ -207,7 +217,6 @@ public class OrderDetailActivity extends AppCompatActivity {
         Toast.makeText(this, "Đã sao chép mã đơn hàng!", Toast.LENGTH_SHORT).show();
     }
 
-    // ⭐ ĐÃ SỬA: Phương thức hiển thị AlertDialog và gọi API hủy
     private void showCancellationDialog(int orderId) {
         if (currentCustomerId <= 0) {
             Toast.makeText(this, "Lỗi xác thực: Vui lòng đăng nhập lại.", Toast.LENGTH_LONG).show();
@@ -218,13 +227,12 @@ public class OrderDetailActivity extends AppCompatActivity {
                 .setTitle("Xác nhận Hủy Đơn hàng")
                 .setMessage("Bạn có chắc chắn muốn hủy đơn hàng #" + orderId + "? Tồn kho sản phẩm sẽ được phục hồi.")
                 .setPositiveButton("Hủy ngay", (dialog, which) -> {
-                    callCancelOrderApi(orderId); // GỌI API HỦY
+                    callCancelOrderApi(orderId);
                 })
                 .setNegativeButton("Quay lại", null)
                 .show();
     }
 
-    // ⭐ ĐÃ THÊM: HÀM GỌI API HỦY
     private void callCancelOrderApi(int orderId) {
 
         apiService.cancelOrder(currentCustomerId, orderId).enqueue(new Callback<ApiResponse>() {
@@ -232,7 +240,6 @@ public class OrderDetailActivity extends AppCompatActivity {
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
                     Toast.makeText(OrderDetailActivity.this, "Đã hủy đơn hàng #" + orderId + " thành công!", Toast.LENGTH_LONG).show();
-                    // Trả về RESULT_OK cho Activity cha (YourOrdersActivity) để refresh
                     setResult(RESULT_OK);
                     finish();
                 } else {

@@ -67,7 +67,7 @@ return [
     */
 
     'login_url' => 'admin/login',
-    'logout_url' => 'admin/logout',
+    'logout_url' => 'admin/logout', // ĐÚNG: AdminLTE sẽ dùng URL này để tạo POST request
     'register_url' => 'register',
     'password_reset_url' => 'password/reset',
     'password_email_url' => 'password/email',
@@ -89,8 +89,6 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    // config/adminlte.php (PHẦN ĐÃ CHỈNH SỬA)
-
     'menu' => [
         // Menu quan trọng: Dashboard (Tất cả nhân viên đã đăng nhập)
         [
@@ -101,11 +99,21 @@ return [
         ],
 
         // =========================================================================
+        // THÊM MỤC CHAT VÀO MENU
+        // =========================================================================
+        [
+            'text' => 'Chat Nội Bộ',
+            'url'  => 'admin/chat',
+            'icon' => 'fas fa-fw fa-comments',
+            'active' => ['admin/chat'],
+        ],
+        // =========================================================================
+
         ['header' => 'QUẢN LÝ NGHIỆP VỤ', 'can' => 'auth:admin'], // Tất cả đều thấy header này
 
         // ĐƠN HÀNG (Tất cả nhân viên xem)
         [
-            'text' => 'Đơn hàng & Vận chuyển',
+            'text' => 'Đơn hàng',
             'url'  => 'admin/orders',
             'icon' => 'fas fa-fw fa-shopping-cart',
             // KHÔNG CẦN 'can' vì tất cả nhân viên đều xem được index
@@ -126,18 +134,29 @@ return [
         ],
 
         // MARKETING (Admin & Marketing)
+        // Bắt đầu khối Marketing
         [
             'text' => 'Mã giảm giá (Voucher)',
             'url'  => 'admin/vouchers',
             'icon' => 'fas fa-fw fa-gift',
             'can'  => 'marketing', // Marketing và Admin
         ],
+        
+        // === MỤC MỚI: CHƯƠNG TRÌNH GIẢM GIÁ SẢN PHẨM ===
+        [
+            'text' => 'Chương trình Giảm giá SP',
+            'url'  => 'admin/product-discounts', // URL đã được định nghĩa trong routes/admin.php
+            'icon' => 'fas fa-fw fa-percent', // Sử dụng icon phần trăm
+            'can'  => 'marketing', // Marketing và Admin
+        ],
+        
         [
             'text' => 'Slider/Banner', // Đã thêm module Slider
             'url'  => 'admin/sliders',
             'icon' => 'fas fa-fw fa-images',
             'can'  => 'marketing', // Marketing và Admin
         ],
+        // Kết thúc khối Marketing
 
         // =========================================================================
         ['header' => 'CẤU HÌNH HỆ THỐNG', 'can' => 'admin'], // Chỉ Admin thấy header này
@@ -152,9 +171,9 @@ return [
 
         // CẤU HÌNH CHUNG (Chỉ Admin)
         [
-            'text'    => 'Cấu hình chung',
-            'icon'    => 'fas fa-fw fa-cogs',
-            'can'     => 'admin', // Chỉ Admin
+            'text'      => 'Cấu hình chung',
+            'icon'      => 'fas fa-fw fa-cogs',
+            'can'       => 'admin', // Chỉ Admin
             'submenu' => [
                 [
                     'text' => 'Thương hiệu',
@@ -165,6 +184,31 @@ return [
                     'text' => 'Danh mục sản phẩm',
                     'url'  => 'admin/categories',
                     'icon' => 'fas fa-fw fa-layer-group',
+                ],
+                // ⭐ QUẢN LÝ CẤU HÌNH VẬN CHUYỂN ⭐
+                [
+                    'text' => 'Cấu hình Vận chuyển',
+                    'icon' => 'fas fa-fw fa-sliders-h',
+                    'submenu' => [
+                        [
+                            'text' => 'Đơn vị Vận chuyển',
+                            'url'  => 'admin/carriers',
+                            'icon' => 'fas fa-fw fa-truck',
+                            'active' => ['admin/carriers*'],
+                        ],
+                        [
+                            'text' => 'Mức phí Dịch vụ',
+                            'url'  => 'admin/rates',
+                            'icon' => 'fas fa-fw fa-list-alt',
+                            'active' => ['admin/rates*'],
+                        ],
+                        // Trang cấu hình để thay đổi ngưỡng Free Ship
+                        [
+                            'text' => 'Ngưỡng Free Ship',
+                            'url'  => 'admin/shipping/config', // Cần tạo route và controller cho mục này
+                            'icon' => 'fas fa-fw fa-hand-holding-usd',
+                        ],
+                    ],
                 ],
             ],
         ],
@@ -193,6 +237,22 @@ return [
     */
 
     'plugins' => [
+        // ⭐ BỔ SUNG TOASTR CHO THÔNG BÁO AJAX
+        'Toastr' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => 'vendor/toastr/toastr.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/toastr/toastr.min.js',
+                ],
+            ],
+        ],
         // Cấu hình plugin nếu cần
     ],
 

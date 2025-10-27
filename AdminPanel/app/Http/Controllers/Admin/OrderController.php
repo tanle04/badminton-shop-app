@@ -21,7 +21,7 @@ class OrderController extends Controller
     /**
      * Hiển thị danh sách tất cả đơn hàng.
      */
-   public function index()
+    public function index()
     {
         $orders = Order::with(['customer', 'address', 'orderDetails.variant.product'])
                         ->latest('orderDate')
@@ -68,7 +68,7 @@ class OrderController extends Controller
         $newStatus = $request->status;
         $newPaymentStatus = $request->paymentStatus;
         
-        // --- LOGIC NGHIÊP VỤ TUYẾN TÍNH & KIỂM TRA CHẶN ---
+        // --- LOGIC NGHIỆP VỤ TUYẾN TÍNH & KIỂM TRA CHẶN ---
         
         $finalStates = ['Delivered', 'Cancelled', 'Refunded'];
         $transitionMap = [
@@ -109,6 +109,9 @@ class OrderController extends Controller
         }
         // --- KẾT THÚC LOGIC NGHIỆP VỤ ---
         
+        // Theo dõi các Product ID đã bị thay đổi stock để cập nhật tổng stock 1 lần duy nhất.
+        $productsToUpdate = [];
+        
         try {
             DB::beginTransaction();
 
@@ -123,6 +126,9 @@ class OrderController extends Controller
                         $variant->stock += $item->quantity;
                         if ($variant->reservedStock < 0) $variant->reservedStock = 0; 
                         $variant->save();
+                        
+                        // ⭐ THÊM ID SẢN PHẨM CẦN CẬP NHẬT TỔNG STOCK
+                        $productsToUpdate[$variant->productID] = true;
                     }
                 }
             }
@@ -135,6 +141,9 @@ class OrderController extends Controller
                         $variant->reservedStock -= $item->quantity;
                         if ($variant->reservedStock < 0) $variant->reservedStock = 0; 
                         $variant->save();
+
+                        // ⭐ THÊM ID SẢN PHẨM CẦN CẬP NHẬT TỔNG STOCK
+                        $productsToUpdate[$variant->productID] = true;
                     }
                 }
                 
@@ -144,8 +153,20 @@ class OrderController extends Controller
                     session()->flash('info', 'Đơn hàng COD đã giao thành công. Trạng thái thanh toán tự động chuyển sang "Paid".');
                 }
             }
+            
+            // ⭐ 3. CẬP NHẬT TỔNG STOCK CHO CÁC SẢN PHẨM LIÊN QUAN
+            if (!empty($productsToUpdate)) {
+                // Tải lại các Product model cần thiết để gọi hàm update
+                $productIDs = array_keys($productsToUpdate);
+                $products = \App\Models\Product::whereIn('productID', $productIDs)->get(); 
+                
+                foreach ($products as $product) {
+                    // Gọi hàm đã thêm vào Product Model
+                    $product->updateStockAndPriceFromVariants();
+                }
+            }
 
-            // 3. LƯU MÃ VẬN ĐƠN (TRACKING CODE)
+            // 4. LƯU MÃ VẬN ĐƠN (TRACKING CODE)
             if ($request->has('trackingCode') || optional($order->shipping)->exists) {
                 $trackingCode = trim($request->trackingCode);
                 
@@ -161,12 +182,12 @@ class OrderController extends Controller
                 $shipping->save();
             }
             
-            // 4. CẬP NHẬT TRẠNG THÁI CUỐI CÙNG
+            // 5. CẬP NHẬT TRẠNG THÁI CUỐI CÙNG
             $order->status = $newStatus;
             $order->paymentStatus = $newPaymentStatus; // Sử dụng biến mới nhất
             $order->save();
 
-            // 5. GỬI EMAIL THÔNG BÁO
+            // 6. GỬI EMAIL THÔNG BÁO
             $recipientEmail = $order->customer->email ?? null; 
             $recipientName = $order->customer->fullName ?? 'Quý khách';
             $orderID = $order->orderID;

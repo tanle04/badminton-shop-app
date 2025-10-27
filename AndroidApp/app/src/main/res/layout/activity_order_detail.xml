@@ -43,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_payment"
                     android:drawablePadding="8dp"
-                    android:text="Thanh toán bằng Thanh toán khi nhận hàng"
+                    android:text="Đã thanh toán bằng VNPay"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp" />
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAlignment="textEnd"
-                        tools:text="900.000đ"
+                        tools:text="450.000 đ"
                         android:textColor="@color/text_secondary"/>
                 </LinearLayout>
 
@@ -187,7 +187,7 @@
                         android:id="@+id/tv_voucher_code_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mã giảm giá (SALE15):"
+                        android:text="Mã giảm giá (Voucher):"
                         android:textColor="@color/red_700"
                         android:textStyle="bold"/>
                     <TextView
@@ -196,7 +196,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAlignment="textEnd"
-                        tools:text="- 15.000 đ"
+                        tools:text="- 30.000 đ"
                         android:textColor="@color/red_700"
                         android:textStyle="bold"/>
                 </LinearLayout>
@@ -224,14 +224,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textAlignment="textEnd"
-                        tools:text="902.200 đ"
+                        tools:text="442.200 đ"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/red_700"/>
                 </LinearLayout>
             </LinearLayout>
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
