@@ -1,4 +1,10 @@
 <?php
+// ⭐ THÊM 3 DÒNG NÀY ĐỂ CHỐNG CACHE
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Code gốc của bạn
 header("Content-Type: application/json; charset=UTF-8");
 require_once '../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
 require_once '../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
@@ -16,7 +22,7 @@ try {
     
     // ⭐ SỬA SQL: Lấy thêm reservedStock và join với products để lọc is_active
     $sql = "SELECT v.variantID, v.price AS priceBase, v.stock, v.reservedStock, v.productID,
-               GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
+                GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
             FROM product_variants v
             JOIN products p ON p.productID = v.productID /* JOIN để lọc is_active */
             JOIN variant_attribute_values vav ON v.variantID = vav.variantID

@@ -6,7 +6,7 @@ import java.util.List;
 
 public class OrderDto implements Serializable {
 
-    // --- Thông tin Đơn hàng chính ---
+    // --- Main Order Information ---
     @SerializedName("orderID")
     private int orderID;
 
@@ -16,29 +16,32 @@ public class OrderDto implements Serializable {
     @SerializedName("status")
     private String status;
 
+    // ⭐ ADDED: Payment Status
+    @SerializedName("paymentStatus")
+    private String paymentStatus;
+    // ⭐ END ADDITION
+
     @SerializedName("total")
     private double total;
 
     @SerializedName("paymentMethod")
     private String paymentMethod;
 
-    // ⭐ THÊM MỚI: Thông tin phí ship
+    // --- Shipping Information ---
     @SerializedName("shippingFee")
     private double shippingFee;
 
     @SerializedName("isFreeShip")
     private boolean isFreeShip;
-    // ⭐ KẾT THÚC THÊM MỚI
 
-    // ⭐ THÊM: Subtotal và Voucher Discount đã được tính toán bởi Server
+    // --- Calculated Totals (from Server) ---
     @SerializedName("subtotal")
-    private double subtotal; // Tổng tiền hàng (trước phí ship và voucher)
+    private double subtotal; // Subtotal (before shipping and voucher)
 
     @SerializedName("voucherDiscountAmount")
-    private double voucherDiscountAmount; // Giá trị giảm thực tế của voucher
-    // ⭐ KẾT THÚC THÊM
+    private double voucherDiscountAmount; // Actual discount value applied
 
-    // ⭐ ĐÃ THÊM: Thông tin Địa chỉ/Người nhận từ API
+    // --- Address/Recipient Information ---
     @SerializedName("recipientName")
     private String recipientName;
 
@@ -51,15 +54,15 @@ public class OrderDto implements Serializable {
     @SerializedName("city")
     private String city;
 
-    // ⭐ ĐÃ THÊM: Thông tin Voucher từ API
+    // --- Voucher Information ---
     @SerializedName("voucherCode")
     private String voucherCode;
 
-    // --- Chi tiết sản phẩm ---
+    // --- Product Details ---
     @SerializedName("items")
     private List<OrderDetailDto> items;
 
-    // ⭐ CONSTRUCTOR RỖNG (Quan trọng cho các thư viện như Gson)
+    // --- Empty Constructor (Important for libraries like Gson) ---
     public OrderDto() {
     }
 
@@ -73,6 +76,11 @@ public class OrderDto implements Serializable {
     public String getStatus() {
         return status;
     }
+    // ⭐ GETTER FOR PAYMENT STATUS
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+    // ⭐ END GETTER
     public double getTotal() {
         return total;
     }
@@ -82,28 +90,18 @@ public class OrderDto implements Serializable {
     public List<OrderDetailDto> getItems() {
         return items;
     }
-
-    // ⭐ GETTERS MỚI CHO PHÍ SHIP
     public double getShippingFee() {
         return shippingFee;
     }
-
     public boolean isFreeShip() {
         return isFreeShip;
     }
-    // ⭐ KẾT THÚC GETTERS MỚI
-
-    // GETTERS MỚI CHO TỔNG KẾT
     public double getSubtotal() {
         return subtotal;
     }
-
     public double getVoucherDiscountAmount() {
         return voucherDiscountAmount;
     }
-    // KẾT THÚC GETTERS MỚI
-
-    // GETTERS cho Địa chỉ/Người nhận
     public String getRecipientName() {
         return recipientName;
     }
@@ -116,12 +114,10 @@ public class OrderDto implements Serializable {
     public String getCity() {
         return city;
     }
-
-    // GETTERS cho Voucher
     public String getVoucherCode() {
         return voucherCode;
     }
-    // Giữ lại getDiscountAmount() và trả về voucherDiscountAmount
+    // Kept getDiscountAmount() for compatibility, returns the calculated server discount
     public double getDiscountAmount() {
         return voucherDiscountAmount;
     }
@@ -137,6 +133,11 @@ public class OrderDto implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+    // ⭐ SETTER FOR PAYMENT STATUS
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    // ⭐ END SETTER
     public void setTotal(double total) {
         this.total = total;
     }
@@ -146,28 +147,18 @@ public class OrderDto implements Serializable {
     public void setItems(List<OrderDetailDto> items) {
         this.items = items;
     }
-
-    // ⭐ SETTERS MỚI CHO PHÍ SHIP
     public void setShippingFee(double shippingFee) {
         this.shippingFee = shippingFee;
     }
-
     public void setFreeShip(boolean freeShip) {
         isFreeShip = freeShip;
     }
-    // ⭐ KẾT THÚC SETTERS MỚI
-
-    // SETTERS MỚI CHO TỔNG KẾT
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
     }
-
     public void setVoucherDiscountAmount(double voucherDiscountAmount) {
         this.voucherDiscountAmount = voucherDiscountAmount;
     }
-    // KẾT THÚC SETTERS MỚI
-
-    // SETTERS cho Địa chỉ/Người nhận
     public void setRecipientName(String recipientName) {
         this.recipientName = recipientName;
     }
@@ -180,17 +171,15 @@ public class OrderDto implements Serializable {
     public void setCity(String city) {
         this.city = city;
     }
-
-    // SETTERS cho Voucher
     public void setVoucherCode(String voucherCode) {
         this.voucherCode = voucherCode;
     }
+    // Maps setDiscountAmount to the correct field
     public void setDiscountAmount(double discountAmount) {
-        this.voucherDiscountAmount = discountAmount; // Đảm bảo gán vào trường mới
+        this.voucherDiscountAmount = discountAmount;
     }
 
-
-    // --- Phương thức tiện ích ---
+    // --- Utility Method ---
     public int getTotalItemsCount() {
         int count = 0;
         if (items != null) {

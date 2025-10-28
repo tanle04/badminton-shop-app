@@ -30,12 +30,12 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
     private ViewPager2 viewPagerOrders;
     private TabLayout tabLayoutOrders;
     private MaterialToolbar toolbar;
-    private ApiService apiService;
+    private ApiService apiService; // Not strictly needed here unless used directly
 
-    // Launcher cho Reviews
+    // Launcher for Reviews
     private ActivityResultLauncher<Intent> reviewActivityResultLauncher;
 
-    // ⭐ ĐÃ SỬA: Launcher mới để mở OrderDetailActivity và bắt kết quả HỦY ĐƠN HÀNG
+    // Launcher for Order Detail (handles Cancel result)
     private ActivityResultLauncher<Intent> orderDetailActivityResultLauncher;
 
     private final String[] tabTitles = {"All orders", "Processing", "Shipped", "Delivered", "Cancelled", "Refunded"};
@@ -45,79 +45,81 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_orders);
 
-        apiService = ApiClient.getApiService();
+        // apiService = ApiClient.getApiService(); // Initialize if needed directly in Activity
 
         toolbar = findViewById(R.id.toolbar);
         viewPagerOrders = findViewById(R.id.view_pager_orders);
         tabLayoutOrders = findViewById(R.id.tab_layout_orders);
 
-        // Khởi tạo Activity Result Launcher cho Reviews
+        // Initialize Review Launcher
         reviewActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        Toast.makeText(this, "Đơn hàng đã được đánh giá, đang cập nhật...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Order reviewed, updating list...", Toast.LENGTH_SHORT).show();
                         refreshCurrentOrderFragment();
                     }
                 }
         );
 
-        // ⭐ KHỞI TẠO LAUNCHER CHO ORDER DETAIL (HỦY ĐƠN HÀNG) ⭐
+        // Initialize Order Detail Launcher (for Cancel)
         orderDetailActivityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        // Nếu OrderDetailActivity trả về RESULT_OK (sau khi Hủy thành công)
-                        Toast.makeText(this, "Trạng thái đơn hàng đã được cập nhật.", Toast.LENGTH_SHORT).show();
-                        // Chuyển về tab "All orders" hoặc "Cancelled"
-                        viewPagerOrders.setCurrentItem(0, true);
-                        refreshCurrentOrderFragment();
+                        Toast.makeText(this, "Order status updated.", Toast.LENGTH_SHORT).show();
+                        // Optionally switch tabs, e.g., to "All orders" or "Cancelled"
+                        // viewPagerOrders.setCurrentItem(0, true);
+                        refreshCurrentOrderFragment(); // Refresh the list
                     }
                 }
         );
-        // ⭐ KẾT THÚC LAUNCHER ⭐
-
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Đơn hàng của bạn");
+            getSupportActionBar().setTitle("Your Orders");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         setupViewPagerAndTabs();
 
-        // XỬ LÝ DEEP LINK TỪ VNPAY CALLBACK KHI ACTIVITY ĐƯỢC TẠO
+        // Handle deep link from VNPay callback if Activity is newly created
         handleIntent(getIntent());
     }
 
-    // Xử lý Deep Link khi Activity đã chạy (từ callback VNPay)
+    // Handle deep link if Activity is already running
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent);
+        setIntent(intent); // Update the intent this Activity is holding
         handleIntent(intent);
     }
 
-    // HÀM XỬ LÝ INTENT ĐỂ BẮT VÀ THÔNG BÁO KẾT QUẢ VNPAY
+    // Process intent for VNPay results
     private void handleIntent(Intent intent) {
         String action = intent.getAction();
         Uri data = intent.getData();
 
+        // Check if it's a deep link from your app's scheme
         if (Intent.ACTION_VIEW.equals(action) && data != null && "yourorders".equals(data.getHost())) {
             String status = data.getQueryParameter("status");
-            String orderId = data.getQueryParameter("orderID");
+            String orderId = data.getQueryParameter("orderID"); // Make sure parameter name matches PHP
 
-            Log.d("VNPAY_DEEPLINK", "Status: " + status + ", OrderID: " + orderId);
+            Log.d("VNPAY_DEEPLINK", "Received status: " + status + ", OrderID: " + orderId);
 
             if ("success".equals(status)) {
-                Toast.makeText(this, "Thanh toán thành công! Đơn hàng #" + orderId + " đang được xử lý.", Toast.LENGTH_LONG).show();
-                viewPagerOrders.setCurrentItem(1, true); // Chuyển đến tab Processing
-            } else if ("failed".equals(status) || "failed_cancelled".equals(status)) {
-                Toast.makeText(this, "Thanh toán thất bại cho đơn hàng #" + orderId + " và đã bị hủy.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Payment successful! Order #" + orderId + " is processing.", Toast.LENGTH_LONG).show();
+                viewPagerOrders.setCurrentItem(1, true); // Go to "Processing" tab
+            } else if ("failed".equals(status)) {
+                Toast.makeText(this, "Payment failed for order #" + orderId + ".", Toast.LENGTH_LONG).show();
+                // Optionally switch to "Cancelled" or stay on "All Orders"
+            } else if ("failed_cancelled".equals(status)) { // If PHP cancels on failure
+                Toast.makeText(this, "Payment failed for order #" + orderId + " and it was cancelled.", Toast.LENGTH_LONG).show();
+                viewPagerOrders.setCurrentItem(4, true); // Go to "Cancelled" tab
             } else if ("security_error".equals(status)) {
-                Toast.makeText(this, "Lỗi bảo mật/dữ liệu trong giao dịch VNPay.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "VNPay transaction security error.", Toast.LENGTH_LONG).show();
             }
-            refreshCurrentOrderFragment();
+            refreshCurrentOrderFragment(); // Refresh the list regardless of status
         }
     }
 
@@ -130,12 +132,15 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
         return super.onOptionsItemSelected(item);
     }
 
+    // Helper to get Customer ID
     public int getCurrentCustomerId() {
         SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
         return sp.getInt("customerID", -1);
     }
 
+    // Setup ViewPager and Tabs
     private void setupViewPagerAndTabs() {
+        // Use the correct PagerAdapter name
         OrderPagerAdapter adapter = new OrderPagerAdapter(this, tabTitles);
         viewPagerOrders.setAdapter(adapter);
 
@@ -143,53 +148,61 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
             tab.setText(tabTitles[position]);
         }).attach();
 
-        viewPagerOrders.setCurrentItem(1, false);
+        // Optionally set default tab (e.g., "Processing")
+        viewPagerOrders.setCurrentItem(0, false); // Start at "All orders" initially
     }
 
-    // HÀM REFRESH DỮ LIỆU TRONG FRAGMENT HIỆN TẠI
+    // Refreshes data in the currently visible Fragment
     private void refreshCurrentOrderFragment() {
+        // Fragment tag is usually "f" + position
         Fragment fragment = getSupportFragmentManager()
                 .findFragmentByTag("f" + viewPagerOrders.getCurrentItem());
 
         if (fragment instanceof OrderFragment) {
             ((OrderFragment) fragment).fetchOrders();
+        } else {
+            Log.e("YourOrdersActivity", "Could not find OrderFragment at position: " + viewPagerOrders.getCurrentItem() + " to refresh.");
         }
     }
 
 
     // -----------------------------------------------------------------
-    // TRIỂN KHAI CÁC PHƯƠNG THỨC CỦA OrderAdapter.OrderAdapterListener
+    // IMPLEMENTATION of OrderAdapter.OrderAdapterListener
     // -----------------------------------------------------------------
 
-    // ⭐ ĐÃ SỬA: Xử lý click vào toàn bộ đơn hàng để mở OrderDetailActivity DÙNG LAUNCHER
+    // Handle clicks on the entire order item
     @Override
     public void onOrderClicked(OrderDto order) {
         Intent intent = new Intent(this, OrderDetailActivity.class);
-
-        intent.putExtra("ORDER_DETAIL_DATA", order);
-
-        // ⭐ Dùng launcher mới để chờ kết quả hủy đơn hàng
+        intent.putExtra("ORDER_DETAIL_DATA", order); // Pass the whole OrderDto
+        // Use the launcher to wait for a potential RESULT_OK from cancelling the order
         orderDetailActivityResultLauncher.launch(intent);
     }
 
-
+    // Handle clicks on the "Leave a review" button
     @Override
     public void onReviewClicked(int orderId) {
         Intent intent = new Intent(this, ReviewActivity.class);
         intent.putExtra("orderID", orderId);
+        // Use launcher to wait for RESULT_OK after review submission
         reviewActivityResultLauncher.launch(intent);
     }
 
+    // Handle clicks on the "Return/Refund" button (placeholder)
     @Override
     public void onRefundClicked(int orderId) {
-        Toast.makeText(this, "Yêu cầu Hoàn/Đổi hàng đơn " + orderId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Request Return/Refund for order " + orderId, Toast.LENGTH_SHORT).show();
+        // Implement refund logic/activity start here
     }
 
+    // Handle clicks on the "Track" button (placeholder)
     @Override
     public void onTrackClicked(int orderId) {
-        Toast.makeText(this, "Theo dõi đơn hàng " + orderId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Track order " + orderId, Toast.LENGTH_SHORT).show();
+        // Implement tracking logic/activity start here
     }
 
+    // Handle clicks on the "Buy Again" button
     @Override
     public void onBuyAgainClicked(int orderId) {
         Fragment fragment = getSupportFragmentManager()
@@ -197,9 +210,28 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
 
         if (fragment instanceof OrderFragment) {
             ((OrderFragment) fragment).executeBuyAgain(orderId);
+            // Show confirmation Toast in the Activity after triggering the fragment action
+            Toast.makeText(this, "Adding items to your cart...", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Lỗi: Không thể tìm thấy trang đơn hàng hiện tại.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error: Could not process 'Buy Again'.", Toast.LENGTH_LONG).show();
             Log.e("YourOrdersActivity", "Fragment for BuyAgain not found or wrong instance.");
+        }
+    }
+
+    // ⭐ THÊM: Implement phương thức mới for the list repay button
+    @Override
+    public void onListRepayClicked(int orderId) {
+        Log.d("YourOrdersActivity", "Handling onListRepayClicked for order ID: " + orderId);
+        // Find the current fragment
+        Fragment fragment = getSupportFragmentManager()
+                .findFragmentByTag("f" + viewPagerOrders.getCurrentItem());
+
+        if (fragment instanceof OrderFragment) {
+            // Call the fragment's method to handle repayment
+            ((OrderFragment) fragment).initiateRepayment(orderId);
+        } else {
+            Toast.makeText(this, "Error processing payment.", Toast.LENGTH_SHORT).show();
+            Log.e("YourOrdersActivity", "Current fragment is not OrderFragment, cannot handle repay click.");
         }
     }
 }

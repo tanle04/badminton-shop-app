@@ -11,6 +11,8 @@ import android.provider.MediaStore;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import androidx.activity.result.ActivityResultLauncher; // ⭐ THÊM: Dùng ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts; // ⭐ THÊM
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,13 +27,17 @@ import com.example.badmintonshop.network.ApiClient;
 import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.OrderDetailDto;
-import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
+import com.example.badmintonshop.network.dto.OrderDto; // ⭐ SỬA: Dùng OrderDto
+// ⭐ BỎ: import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
 import com.example.badmintonshop.network.dto.ReviewSubmitRequest;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.IOException; // ⭐ THÊM
+import java.io.InputStream; // ⭐ THÊM
+import java.io.ByteArrayOutputStream; // ⭐ THÊM
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -43,14 +49,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+// ⭐ THÊM
+import android.os.Build;
+import android.provider.OpenableColumns;
+
+
 public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.ReviewAdapterListener {
 
     private static final String TAG = "ReviewActivityDebug";
     private static final int MAX_PHOTOS = 5;
     private static final int MAX_VIDEOS = 1;
 
-    private static final int REQUEST_CODE_PICK_PHOTO = 1001;
-    private static final int REQUEST_CODE_PICK_VIDEO = 1002;
+    // ⭐ SỬA: Bỏ các REQUEST_CODE cũ
     private static final int PERMISSION_REQUEST_CODE = 1003;
 
     private int currentReviewItemPosition = -1;
@@ -64,6 +74,10 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
     private final Gson gson = new Gson();
 
     private final List<ReviewItemModel> reviewItemsList = new ArrayList<>();
+
+    // ⭐ THÊM: ActivityResultLauncher cho Photo và Video
+    private ActivityResultLauncher<Intent> photoPickerLauncher;
+    private ActivityResultLauncher<Intent> videoPickerLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,13 +96,16 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Leave all reviews");
+            getSupportActionBar().setTitle("Để lại đánh giá");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
         recyclerView = findViewById(R.id.recycler_review_items);
         btnSubmitAllReviews = findViewById(R.id.btn_submit_all_reviews);
         btnSubmitAllReviews.setEnabled(false);
+
+        // ⭐ SỬA: Khởi tạo launchers
+        initializeLaunchers();
 
         setupRecyclerView();
         loadOrderDetailsForReview(orderId);
@@ -105,33 +122,127 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         return super.onOptionsItemSelected(item);
     }
 
-    // ⭐ HÀM KIỂM TRA VÀ YÊU CẦU QUYỀN
+    // ⭐ SỬA: Khởi tạo launchers
+    private void initializeLaunchers() {
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && currentReviewItemPosition != -1) {
+                        ReviewItemModel currentModel = reviewItemsList.get(currentReviewItemPosition);
+                        List<Uri> newUris = new ArrayList<>();
+
+                        // Lấy nhiều ảnh
+                        if (result.getData().getClipData() != null) {
+                            int count = result.getData().getClipData().getItemCount();
+                            for (int i = 0; i < count; i++) {
+                                newUris.add(result.getData().getClipData().getItemAt(i).getUri());
+                            }
+                        } else if (result.getData().getData() != null) {
+                            // Lấy 1 ảnh
+                            newUris.add(result.getData().getData());
+                        }
+
+                        if (!newUris.isEmpty()) {
+                            List<Uri> currentPhotos = currentModel.getPhotoUris();
+                            currentPhotos.addAll(newUris); // Thêm ảnh mới vào
+
+                            if (currentPhotos.size() > MAX_PHOTOS) {
+                                // Cắt bớt nếu vượt quá giới hạn
+                                currentPhotos = currentPhotos.subList(currentPhotos.size() - MAX_PHOTOS, currentPhotos.size());
+                                Toast.makeText(this, "Chỉ được chọn tối đa " + MAX_PHOTOS + " ảnh.", Toast.LENGTH_LONG).show();
+                            }
+
+                            currentModel.setPhotoUris(currentPhotos);
+                            Toast.makeText(this, "Đã thêm ảnh. Tổng cộng: " + currentPhotos.size() + " ảnh.", Toast.LENGTH_SHORT).show();
+                            reviewAdapter.notifyItemChanged(currentReviewItemPosition);
+                        }
+                    }
+                    currentReviewItemPosition = -1; // Reset
+                }
+        );
+
+        videoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && currentReviewItemPosition != -1) {
+                        Uri videoUri = result.getData().getData();
+                        if (videoUri != null) {
+                            ReviewItemModel currentModel = reviewItemsList.get(currentReviewItemPosition);
+                            List<Uri> currentVideos = currentModel.getVideoUris();
+
+                            currentVideos.clear(); // Luôn thay thế video cũ
+                            currentVideos.add(videoUri);
+
+                            currentModel.setVideoUris(currentVideos);
+                            Toast.makeText(this, "Đã thêm 1 video.", Toast.LENGTH_SHORT).show();
+                            reviewAdapter.notifyItemChanged(currentReviewItemPosition);
+                        }
+                    }
+                    currentReviewItemPosition = -1; // Reset
+                }
+        );
+    }
+
+
+    // ⭐ HÀM KIỂM TRA VÀ YÊU CẦU QUYỀN (ĐÃ SỬA cho API 33+)
     private void requestStoragePermission(int position, boolean isPhoto) {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
+        String[] permissionsToRequest;
 
-            currentReviewItemPosition = position;
-            isAwaitingPhotoPermission = isPhoto;
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSION_REQUEST_CODE);
+        // Kiểm tra phiên bản Android
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 (API 33) trở lên
+            permissionsToRequest = isPhoto ?
+                    new String[]{android.Manifest.permission.READ_MEDIA_IMAGES} :
+                    new String[]{android.Manifest.permission.READ_MEDIA_VIDEO};
         } else {
+            // Android 12 trở xuống
+            permissionsToRequest = new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE};
+        }
+
+        // Kiểm tra xem đã có quyền chưa
+        boolean allGranted = true;
+        for (String perm : permissionsToRequest) {
+            if (ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED) {
+                allGranted = false;
+                break;
+            }
+        }
+
+        if (allGranted) {
+            // Đã có quyền, tiếp tục
             if (isPhoto) {
                 onPhotoIntent(position);
             } else {
                 onVideoIntent(position);
             }
+        } else {
+            // Chưa có quyền, lưu trạng thái và yêu cầu
+            currentReviewItemPosition = position;
+            isAwaitingPhotoPermission = isPhoto;
+            ActivityCompat.requestPermissions(this, permissionsToRequest, PERMISSION_REQUEST_CODE);
         }
     }
 
-    // ⭐ XỬ LÝ KẾT QUẢ YÊU CẦU QUYỀN
+    // ⭐ XỬ LÝ KẾT QUẢ YÊU CẦU QUYỀN (ĐÃ SỬA)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            boolean allGranted = true;
+            if (grantResults.length > 0) {
+                for (int grantResult : grantResults) {
+                    if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                        allGranted = false;
+                        break;
+                    }
+                }
+            } else {
+                allGranted = false;
+            }
+
+            if (allGranted) {
+                // Đã được cấp quyền
                 if (currentReviewItemPosition != -1) {
                     if (isAwaitingPhotoPermission) {
                         onPhotoIntent(currentReviewItemPosition);
@@ -140,13 +251,14 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                     }
                 }
             } else {
+                // Bị từ chối
                 Toast.makeText(this, "Không thể gửi ảnh/video do thiếu quyền truy cập bộ nhớ.", Toast.LENGTH_LONG).show();
             }
         }
     }
 
 
-    // ⭐ 1. PHƯƠNG THỨC XỬ LÝ CLICK (Gọi hàm kiểm tra quyền)
+    // ⭐ 1. PHƯƠNG THỨC XỬ LÝ CLICK (Không đổi)
     @Override
     public void onPhotoClicked(int position) {
         requestStoragePermission(position, true);
@@ -157,24 +269,24 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         requestStoragePermission(position, false);
     }
 
-    // ⭐ HÀM CHỌN ẢNH (Chứa logic Intent)
+    // ⭐ HÀM CHỌN ẢNH (SỬA: Dùng launcher)
     private void onPhotoIntent(int position) {
         currentReviewItemPosition = position;
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(Intent.createChooser(intent, "Chọn ảnh sản phẩm"), REQUEST_CODE_PICK_PHOTO);
+        photoPickerLauncher.launch(Intent.createChooser(intent, "Chọn ảnh sản phẩm"));
     }
 
-    // ⭐ HÀM CHỌN VIDEO (Chứa logic Intent)
+    // ⭐ HÀM CHỌN VIDEO (SỬA: Dùng launcher)
     private void onVideoIntent(int position) {
         currentReviewItemPosition = position;
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("video/*");
-        startActivityForResult(Intent.createChooser(intent, "Chọn video sản phẩm"), REQUEST_CODE_PICK_VIDEO);
+        videoPickerLauncher.launch(Intent.createChooser(intent, "Chọn video sản phẩm"));
     }
 
-    // Logic onMediaDeleted (Đã sửa)
+    // Logic onMediaDeleted (Giữ nguyên logic phức tạp của bạn, giả sử adapter gửi đúng)
     @Override
     public void onMediaDeleted(int reviewPosition, int mediaPosition) {
         if (reviewPosition >= 0 && reviewPosition < reviewItemsList.size()) {
@@ -200,63 +312,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
     }
 
 
-    // Logic onActivityResult (Đã sửa)
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == RESULT_OK && data != null && currentReviewItemPosition != -1) {
-            ReviewItemModel currentModel = reviewItemsList.get(currentReviewItemPosition);
-
-            if (requestCode == REQUEST_CODE_PICK_PHOTO) {
-                List<Uri> newUris = new ArrayList<>();
-                // Lấy nhiều ảnh
-                if (data.getClipData() != null) {
-                    int count = data.getClipData().getItemCount();
-                    for (int i = 0; i < count; i++) {
-                        newUris.add(data.getClipData().getItemAt(i).getUri());
-                    }
-                } else if (data.getData() != null) {
-                    newUris.add(data.getData());
-                }
-
-                if (!newUris.isEmpty()) {
-                    List<Uri> currentPhotos = currentModel.getPhotoUris();
-
-                    // Thêm ảnh mới vào danh sách hiện tại
-                    currentPhotos.addAll(newUris);
-
-                    if (currentPhotos.size() > MAX_PHOTOS) {
-                        currentPhotos = currentPhotos.subList(0, MAX_PHOTOS);
-                        Toast.makeText(this, "Chỉ được chọn tối đa " + MAX_PHOTOS + " ảnh. Các ảnh sau bị bỏ qua.", Toast.LENGTH_LONG).show();
-                    }
-
-                    currentModel.setPhotoUris(currentPhotos);
-                    Toast.makeText(this, "Đã thêm ảnh. Tổng cộng: " + currentPhotos.size() + " ảnh.", Toast.LENGTH_SHORT).show();
-                }
-
-            } else if (requestCode == REQUEST_CODE_PICK_VIDEO) {
-                // Lấy video
-                Uri videoUri = data.getData();
-                if (videoUri != null) {
-                    List<Uri> currentVideos = currentModel.getVideoUris();
-
-                    // Chỉ thêm 1 video mới
-                    if (currentVideos.size() >= MAX_VIDEOS) {
-                        currentVideos.clear(); // Xóa video cũ
-                        Toast.makeText(this, "Đã thay thế video cũ.", Toast.LENGTH_SHORT).show();
-                    }
-
-                    currentVideos.add(videoUri);
-
-                    currentModel.setVideoUris(currentVideos);
-                    Toast.makeText(this, "Đã thêm 1 video. Tổng cộng: " + currentVideos.size() + " video.", Toast.LENGTH_SHORT).show();
-                }
-            }
-            reviewAdapter.notifyItemChanged(currentReviewItemPosition);
-        }
-        currentReviewItemPosition = -1;
-    }
+    // ⭐ BỎ: onActivityResult (Đã thay thế bằng launchers)
 
     // -----------------------------------------------------------------
     // CÁC HÀM CƠ BẢN
@@ -285,16 +341,26 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         return items;
     }
 
+    // ⭐ SỬA LẠI HOÀN TOÀN: Dùng OrderDto và customerId
     private void loadOrderDetailsForReview(int orderId) {
         Log.d(TAG, "Loading details for OrderID: " + orderId);
         btnSubmitAllReviews.setEnabled(false);
 
-        api.getOrderDetails(orderId).enqueue(new Callback<OrderDetailsListResponse>() {
-            @Override
-            public void onResponse(Call<OrderDetailsListResponse> call, Response<OrderDetailsListResponse> response) {
+        int customerId = getCurrentCustomerId();
+        if (customerId == -1) {
+            Toast.makeText(this, "Lỗi xác thực người dùng.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
-                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    List<OrderDetailDto> orderDetails = response.body().getOrderDetails();
+        // ⭐ SỬA: Gọi đúng API với 2 tham số, nhận về Call<OrderDto>
+        api.getOrderDetails(orderId, customerId).enqueue(new Callback<OrderDto>() {
+            @Override
+            public void onResponse(Call<OrderDto> call, Response<OrderDto> response) {
+                // ⭐ SỬA: Logic nhận OrderDto
+                if (response.isSuccessful() && response.body() != null) {
+                    // Lấy danh sách item từ OrderDto
+                    List<OrderDetailDto> orderDetails = response.body().getItems();
 
                     List<ReviewItemModel> newReviews = convertOrderDetailsToReviewItems(orderDetails);
 
@@ -309,7 +375,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                         finish();
                     }
                 } else {
-                    String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
+                    String msg = "Lỗi HTTP " + response.code();
                     Toast.makeText(ReviewActivity.this, "Lỗi tải chi tiết đơn hàng: " + msg, Toast.LENGTH_LONG).show();
                     Log.e(TAG, "API Load Details Failed: " + msg);
                     finish();
@@ -317,7 +383,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
             }
 
             @Override
-            public void onFailure(Call<OrderDetailsListResponse> call, Throwable t) {
+            public void onFailure(Call<OrderDto> call, Throwable t) {
                 btnSubmitAllReviews.setEnabled(true);
                 Toast.makeText(ReviewActivity.this, "Lỗi kết nối mạng.", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Network Error loading order details: " + t.getMessage());
@@ -326,45 +392,80 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
         });
     }
 
-    private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor == null) return contentUri.getPath();
+    // ⭐ BỎ: getRealPathFromURI (Không còn dùng)
 
-        try {
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                return cursor.getString(column_index);
+    // ⭐ THÊM: Hàm trợ giúp để lấy tên file từ content:// URI
+    private String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if(index >= 0) {
+                        result = cursor.getString(index);
+                    }
+                }
+            } finally {
+                if (cursor != null) cursor.close();
             }
-        } finally {
-            if (cursor != null) cursor.close();
         }
-        return null;
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        // Thêm một phần ngẫu nhiên để tránh trùng lặp
+        return System.currentTimeMillis() + "_" + result;
     }
 
+    // ⭐ THÊM: Hàm trợ giúp để đọc InputStream từ URI và tạo RequestBody
+    private RequestBody createRequestBodyFromUri(Uri uri) throws IOException {
+        InputStream inputStream = getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new IOException("Không thể mở InputStream cho URI: " + uri);
+        }
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteStream.write(buffer, 0, bytesRead);
+        }
+        inputStream.close();
+        byte[] bytes = byteStream.toByteArray();
+
+        String mimeType = getContentResolver().getType(uri);
+        if (mimeType == null) {
+            mimeType = "application/octet-stream"; // Mặc định
+        }
+
+        return RequestBody.create(MediaType.parse(mimeType), bytes);
+    }
+
+
+    // ⭐ SỬA: prepareFilePart (Dùng InputStream thay vì File path)
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-        String filePath = getRealPathFromURI(fileUri);
-        if (filePath == null) return null;
-
-        File file = new File(filePath);
-        if (!file.exists()) return null;
-
         try {
-            String mimeType = getContentResolver().getType(fileUri);
-            if (mimeType == null) mimeType = "application/octet-stream";
+            String fileName = getFileName(fileUri);
+            RequestBody requestFile = createRequestBodyFromUri(fileUri);
 
-            RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), file);
+            return MultipartBody.Part.createFormData(partName, fileName, requestFile);
 
-            return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
         } catch (Exception e) {
-            Log.e(TAG, "Lỗi chuẩn bị tệp: " + e.getMessage());
+            Log.e(TAG, "Lỗi chuẩn bị tệp: " + e.getMessage(), e);
+            runOnUiThread(() -> Toast.makeText(ReviewActivity.this, "Lỗi đọc tệp: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             return null;
         }
     }
 
 
+    // ⭐ SỬA: submitReviews (Không đổi logic chính, nhưng hàm prepareFilePart đã được sửa)
     private void submitReviews() {
         btnSubmitAllReviews.setEnabled(false);
+        Toast.makeText(this, "Đang chuẩn bị dữ liệu...", Toast.LENGTH_SHORT).show();
 
         // ⭐ CHUYỂN LOGIC NẶNG SANG LUỒNG PHỤ ĐỂ TRÁNH ANR
         new Thread(() -> {
@@ -419,8 +520,14 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                 }
             }
 
+            Log.d(TAG, "Chuẩn bị xong: " + photoParts.size() + " ảnh, " + videoParts.size() + " video.");
+
             // ⭐ 3. GỌI API MULTIPART (Trở lại Main Thread)
             runOnUiThread(() -> {
+                if(isFinishing()) return; // Kiểm tra nếu Activity đã bị đóng
+
+                Toast.makeText(ReviewActivity.this, "Đang tải lên đánh giá...", Toast.LENGTH_SHORT).show();
+
                 api.submitReviewsMultipart(reviewDataJson, photoParts, videoParts).enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
@@ -431,6 +538,7 @@ public class ReviewActivity extends AppCompatActivity implements ReviewAdapter.R
                         } else {
                             String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
                             Toast.makeText(ReviewActivity.this, "Gửi đánh giá thất bại: " + msg, Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "Submit review failed: " + msg);
                             btnSubmitAllReviews.setEnabled(true);
                         }
                     }

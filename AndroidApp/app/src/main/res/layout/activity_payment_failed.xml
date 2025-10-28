@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/iv_failed_icon"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/ic_error_warning"
+            app:tint="@android:color/holo_red_dark" />
+
+        <TextView
+            android:id="@+id/tv_failed_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thanh toán thất bại"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <TextView
+            android:id="@+id/tv_failed_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đã có lỗi xảy ra trong quá trình thanh toán hoặc bạn đã hủy giao dịch."
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/btn_try_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thử lại"
+            android:layout_marginTop="32dp"
+            android:padding="12dp"/>
+
+        <Button
+            android:id="@+id/btn_back_to_home"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quay về trang chủ"
+            android:layout_marginTop="12dp"
+            android:padding="12dp"/>
+
+    </LinearLayout>
+</RelativeLayout>

@@ -89,6 +89,17 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.CartA
         // Xử lý sự kiện cho nút "Thanh toán"
         btnCheckout.setOnClickListener(v -> handleCheckout());
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Đây là hàm được gọi MỖI KHI người dùng quay lại màn hình này.
+        // (Bao gồm cả khi CheckoutActivity đóng lại do lỗi 409)
+
+        // Gọi hàm tải lại toàn bộ giỏ hàng từ server
+        // để đảm bảo giá và khuyến mãi luôn được cập nhật.
+        Log.d(TAG, "onResume: Fetching cart data to refresh prices...");
+        fetchCartDataForCurrentUser();
+    }
 
     private int getCurrentCustomerId() {
         SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);

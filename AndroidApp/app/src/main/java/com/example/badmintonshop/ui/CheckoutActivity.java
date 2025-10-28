@@ -8,8 +8,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
-import android.net.Uri;
 
+// ⭐ THÊM MỚI: Import cho AlertDialog
+import androidx.appcompat.app.AlertDialog;
+// ---
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,7 +29,7 @@ import com.example.badmintonshop.network.dto.AddressDto;
 import com.example.badmintonshop.network.dto.AddressListResponse;
 import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.VoucherDto;
-import com.example.badmintonshop.network.dto.ShippingRateDto; // ⭐ MỚI: Import ShippingRateDto
+import com.example.badmintonshop.network.dto.ShippingRateDto;
 import com.google.gson.Gson;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -43,21 +48,17 @@ public class CheckoutActivity extends AppCompatActivity {
 
     private static final int SELECT_ADDRESS_REQUEST_CODE = 102;
     private static final int SELECT_VOUCHER_REQUEST_CODE = 103;
-    private static final int VNPAY_REQUEST_CODE = 104;
-    private static final int SELECT_SHIPPING_REQUEST_CODE = 105; // ⭐ MỚI: Request Code cho Shipping
+    private static final int SELECT_SHIPPING_REQUEST_CODE = 105;
     private static final String TAG = "CHECKOUT_DEBUG";
 
+    // (Các biến giữ nguyên)
     private ArrayList<CartItem> selectedItems;
     private AddressDto selectedAddress;
     private VoucherDto selectedVoucher = null;
-    // XÓA: private final double shippingFee = 22200; // Phí ship cố định (được thay bằng biến)
-    private ShippingRateDto selectedShippingRate = null; // ⭐ MỚI: Biến lưu trữ Rate đã chọn
-
+    private ShippingRateDto selectedShippingRate = null;
     private ApiService api;
     private TextView tvRecipientInfo, tvAddressDetails, tvSubtotal, tvShippingFee,
             tvTotalPayment, tvBottomTotal, tvVoucherCode, tvVoucherDiscount;
-
-    // ⭐ MỚI: Views cho Shipping
     private TextView tvShippingMethod, tvShippingEstimate;
     private View addressSection, voucherSection, shippingSection;
     private RadioGroup rgPaymentMethods;
@@ -65,11 +66,30 @@ public class CheckoutActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
 
 
+    // (Launcher giữ nguyên)
+    private final ActivityResultLauncher<Intent> paymentLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Log.i(TAG, "Payment successful via WebView. Launching Success Screen.");
+                    Intent intent = new Intent(this, PaymentSuccessActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Log.w(TAG, "Payment was cancelled or failed via WebView. Launching Failed Screen.");
+                    Intent intent = new Intent(this, PaymentFailedActivity.class);
+                    startActivity(intent);
+                }
+            }
+    );
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
+        // (Code onCreate giữ nguyên)
         selectedItems = (ArrayList<CartItem>) getIntent().getSerializableExtra("SELECTED_ITEMS");
         if (selectedItems == null || selectedItems.isEmpty()) {
             Toast.makeText(this, "Không có sản phẩm để thanh toán.", Toast.LENGTH_SHORT).show();
@@ -89,30 +109,21 @@ public class CheckoutActivity extends AppCompatActivity {
 
         voucherSection.setOnClickListener(v -> {
             Intent intent = new Intent(CheckoutActivity.this, VoucherSelectionActivity.class);
-
-            // Truyền subtotal thực tế
             intent.putExtra("SUBTOTAL", calculateSubtotalValue().doubleValue());
-
             intent.putExtra("SELECTED_VOUCHER", selectedVoucher);
             startActivityForResult(intent, SELECT_VOUCHER_REQUEST_CODE);
         });
 
-        // ⭐ MỚI: Listener cho Shipping Section
         shippingSection.setOnClickListener(v -> {
             if (calculateSubtotalValue().compareTo(BigDecimal.ZERO) <= 0) {
                 Toast.makeText(CheckoutActivity.this, "Vui lòng thêm sản phẩm vào giỏ hàng.", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            // Yêu cầu: ShippingSelectionActivity phải được tạo.
             Intent intent = new Intent(CheckoutActivity.this, ShippingSelectionActivity.class);
-
-            // Truyền subtotal để ShippingSelectionActivity gọi API và tính phí động
-            intent.putExtra("SUBTOTAL", calculateSubtotalValue().doubleValue());
-
+            String itemsJson = new Gson().toJson(selectedItems);
+            intent.putExtra("ITEMS_JSON", itemsJson);
             startActivityForResult(intent, SELECT_SHIPPING_REQUEST_CODE);
         });
-        // ⭐ KẾT THÚC Listener cho Shipping Section
 
         setupProductList();
         fetchDefaultAddress();
@@ -120,6 +131,8 @@ public class CheckoutActivity extends AppCompatActivity {
         btnPlaceOrder.setOnClickListener(v -> placeOrder());
     }
 
+    // (Các hàm bindViews, setupProductList, fetchDefaultAddress, displayAddress,
+    // calculateSubtotalValue, calculateVoucherDiscount giữ nguyên)
     private void bindViews() {
         toolbar = findViewById(R.id.toolbar);
         tvRecipientInfo = findViewById(R.id.tv_recipient_info);
@@ -131,12 +144,9 @@ public class CheckoutActivity extends AppCompatActivity {
         rgPaymentMethods = findViewById(R.id.rg_payment_methods);
         btnPlaceOrder = findViewById(R.id.btn_place_order);
         addressSection = findViewById(R.id.address_section_container);
-
         voucherSection = findViewById(R.id.voucher_section_container);
         tvVoucherCode = findViewById(R.id.tv_voucher_code);
         tvVoucherDiscount = findViewById(R.id.tv_voucher_discount);
-
-        // ⭐ MỚI: Binding cho Shipping
         shippingSection = findViewById(R.id.shipping_section_container);
         tvShippingMethod = findViewById(R.id.tv_shipping_method);
         tvShippingEstimate = findViewById(R.id.tv_shipping_estimate);
@@ -156,7 +166,6 @@ public class CheckoutActivity extends AppCompatActivity {
             Toast.makeText(CheckoutActivity.this, "Vui lòng đăng nhập để tiếp tục.", Toast.LENGTH_LONG).show();
             return;
         }
-
         api.getAddresses(customerId).enqueue(new Callback<AddressListResponse>() {
             @Override
             public void onResponse(Call<AddressListResponse> call, Response<AddressListResponse> response) {
@@ -195,11 +204,11 @@ public class CheckoutActivity extends AppCompatActivity {
         Log.d(TAG, "Address displayed: " + address.getAddressID());
     }
 
+    // (Hàm calculateAndDisplaySummary giữ nguyên)
     private void calculateAndDisplaySummary() {
         BigDecimal subtotal = calculateSubtotalValue();
         BigDecimal discount = calculateVoucherDiscount(subtotal);
 
-        // ⭐ MỚI: Lấy phí ship từ rate đã chọn
         BigDecimal shippingFeeValue = (selectedShippingRate != null) ?
                 BigDecimal.valueOf(selectedShippingRate.getShippingFee()) :
                 BigDecimal.ZERO;
@@ -208,7 +217,6 @@ public class CheckoutActivity extends AppCompatActivity {
 
         tvSubtotal.setText(String.format(Locale.GERMAN, "%,.0f đ", subtotal.doubleValue()));
 
-        // --- Hiển thị Voucher (Giữ nguyên) ---
         if (selectedVoucher != null && discount.compareTo(BigDecimal.ZERO) > 0) {
             tvVoucherCode.setText(selectedVoucher.getVoucherCode());
             tvVoucherDiscount.setText(String.format(Locale.GERMAN, "- %,.0f đ", discount.doubleValue()));
@@ -217,19 +225,14 @@ public class CheckoutActivity extends AppCompatActivity {
             tvVoucherCode.setText("Chọn Voucher >");
             tvVoucherDiscount.setText(String.format(Locale.GERMAN, "%,.0f đ", 0.0));
             tvVoucherDiscount.setTextColor(getResources().getColor(R.color.colorSecondaryText, getTheme()));
-            if (selectedVoucher != null) {
-                Log.d(TAG, "Voucher code selected but not applied (Min order value not met).");
-            }
         }
 
-        // ⭐ MỚI: Hiển thị phí ship và chi tiết vận chuyển
         if (selectedShippingRate != null) {
             String shipMethod = selectedShippingRate.getCarrierName() + " - " + selectedShippingRate.getServiceName();
             tvShippingMethod.setText(shipMethod);
             tvShippingEstimate.setText(String.format(Locale.GERMAN, "Dự kiến giao hàng: %s", selectedShippingRate.getEstimatedDelivery()));
             tvShippingFee.setText(String.format(Locale.GERMAN, "%,.0f đ", shippingFeeValue.doubleValue()));
 
-            // Xử lý hiển thị Freeship
             if (selectedShippingRate.isFreeShip()) {
                 tvShippingFee.setText("Miễn phí");
                 tvShippingFee.setTextColor(getResources().getColor(R.color.colorPrimary, getTheme()));
@@ -243,14 +246,10 @@ public class CheckoutActivity extends AppCompatActivity {
             tvShippingFee.setText("---");
             tvShippingFee.setTextColor(getResources().getColor(R.color.colorSecondaryText, getTheme()));
         }
-        // ⭐ KẾT THÚC Hiển thị phí ship
 
         tvTotalPayment.setText(String.format(Locale.GERMAN, "%,.0f đ", total.doubleValue()));
         tvBottomTotal.setText(String.format(Locale.GERMAN, "%,.0f đ", total.doubleValue()));
-
-        // Kích hoạt/Vô hiệu hóa nút đặt hàng (Phải chọn địa chỉ VÀ phương thức vận chuyển)
         btnPlaceOrder.setEnabled(selectedAddress != null && selectedShippingRate != null && total.compareTo(BigDecimal.ZERO) >= 0);
-
         Log.d(TAG, "Summary calculated. Subtotal: " + subtotal + ", ShipFee: " + shippingFeeValue + ", Total: " + total.doubleValue());
     }
 
@@ -272,14 +271,12 @@ public class CheckoutActivity extends AppCompatActivity {
         if (selectedVoucher == null) {
             return BigDecimal.ZERO;
         }
-
         BigDecimal minOrderValue = selectedVoucher.getMinOrderValue();
         if (minOrderValue != null && minOrderValue.compareTo(BigDecimal.ZERO) > 0) {
             if (subtotal.compareTo(minOrderValue) < 0) {
                 return BigDecimal.ZERO;
             }
         }
-
         BigDecimal discount = BigDecimal.ZERO;
         BigDecimal discountValue = selectedVoucher.getDiscountValue();
         BigDecimal maxDiscount = selectedVoucher.getMaxDiscountAmount();
@@ -287,37 +284,32 @@ public class CheckoutActivity extends AppCompatActivity {
         if ("percentage".equalsIgnoreCase(selectedVoucher.getDiscountType())) {
             BigDecimal percent = discountValue.divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
             discount = subtotal.multiply(percent);
-
             if (maxDiscount != null && discount.compareTo(maxDiscount) > 0) {
                 discount = maxDiscount;
             }
         } else if ("fixed".equalsIgnoreCase(selectedVoucher.getDiscountType())) {
             discount = discountValue;
         }
-
         if (discount.compareTo(subtotal) > 0) {
             discount = subtotal;
         }
-
         return discount.setScale(0, RoundingMode.DOWN);
     }
 
+
     private void placeOrder() {
+        // (Code kiểm tra giữ nguyên)
         if (selectedAddress == null) {
             Toast.makeText(this, "Vui lòng chọn địa chỉ giao hàng", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Order failed: No address selected.");
             return;
         }
-
-        // ⭐ MỚI: Kiểm tra Shipping Rate
         if (selectedShippingRate == null) {
             Toast.makeText(this, "Vui lòng chọn phương thức vận chuyển", Toast.LENGTH_SHORT).show();
             btnPlaceOrder.setEnabled(true);
             return;
         }
-
         btnPlaceOrder.setEnabled(false);
-
         int customerId = getCurrentCustomerId();
         String paymentMethod;
         if (rgPaymentMethods.getCheckedRadioButtonId() == R.id.rb_cod) {
@@ -332,93 +324,123 @@ public class CheckoutActivity extends AppCompatActivity {
 
         BigDecimal subtotal = calculateSubtotalValue();
         BigDecimal discount = calculateVoucherDiscount(subtotal);
-
-        // ⭐ MỚI: Lấy phí ship đã chọn
         BigDecimal shippingFeeValue = BigDecimal.valueOf(selectedShippingRate.getShippingFee());
-
         BigDecimal totalPayment = subtotal.subtract(discount).add(shippingFeeValue);
-
         int voucherId = selectedVoucher != null ? selectedVoucher.getVoucherID() : -1;
-
-        // ⭐ MỚI: Lấy Rate ID
         int rateId = selectedShippingRate.getRateID();
-
         String itemsJson = new Gson().toJson(selectedItems);
 
-        // LOG CÁC THAM SỐ GỬI ĐI (8 tham số)
-        Log.d(TAG, String.format("Placing Order. Rate ID: %d, Ship Fee: %.0f",
-                rateId, shippingFeeValue.doubleValue()));
+        Log.d(TAG, String.format("Placing Order. Rate ID: %d, Ship Fee: %.0f, Total: %.0f",
+                rateId, shippingFeeValue.doubleValue(), totalPayment.doubleValue()));
 
-
-        // ⭐ CẬP NHẬT: Lời gọi API với 8 tham số
+        // Gọi API createOrder
         api.createOrder(
                 customerId,
                 selectedAddress.getAddressID(),
                 paymentMethod,
-                totalPayment.doubleValue(),
+                totalPayment.doubleValue(), // Gửi TỔNG TIỀN CUỐI CÙNG
                 itemsJson,
                 voucherId,
-                rateId, // ⭐ Tham số thứ 7 (Rate ID)
-                shippingFeeValue.doubleValue() // ⭐ Tham số thứ 8 (Shipping Fee)
+                rateId,
+                shippingFeeValue.doubleValue() // Gửi phí ship
         ).enqueue(new Callback<ApiResponse>() {
+
+            // ⭐ SỬA ĐỔI CHÍNH: Cập nhật onResponse
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 btnPlaceOrder.setEnabled(true);
                 Log.d(TAG, "API Response Code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
+                    // SERVER TRẢ VỀ 200 OK
                     if (response.body().isSuccess()) {
                         if ("VNPAY_REDIRECT".equalsIgnoreCase(response.body().getMessage())) {
                             String vnpayUrl = response.body().getVnpayUrl();
-
                             if (vnpayUrl != null && !vnpayUrl.isEmpty()) {
-                                Log.i(TAG, "Redirecting to VNPAY: " + vnpayUrl);
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(vnpayUrl));
-                                startActivityForResult(browserIntent, VNPAY_REQUEST_CODE);
+                                Log.i(TAG, "Launching PaymentActivity with URL: " + vnpayUrl);
+                                Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
+                                intent.putExtra("VNPAY_URL", vnpayUrl);
+                                paymentLauncher.launch(intent);
                             } else {
                                 Toast.makeText(CheckoutActivity.this, "Lỗi tạo link thanh toán VNPay.", Toast.LENGTH_LONG).show();
                             }
-
                         } else {
-                            // Xử lý COD (Đặt hàng thành công, email đã gửi)
-                            Log.i(TAG, "Order placed successfully! Message: " + response.body().getMessage());
-                            Toast.makeText(CheckoutActivity.this, "Đặt hàng thành công!", Toast.LENGTH_LONG).show();
-                            // Chuyển hướng về trang chủ và xóa hết stack
-                            Intent intent = new Intent(CheckoutActivity.this, HomeActivity.class);
+                            // COD thành công
+                            Log.i(TAG, "Order placed successfully! (COD). Launching Success Screen.");
+                            Intent intent = new Intent(CheckoutActivity.this, PaymentSuccessActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
                         }
-
                     } else {
-                        // LOG LỖI TỪ SERVER
+                        // Server trả về 200 OK, nhưng {isSuccess: false}
                         String errorMessage = response.body().getMessage();
-                        Log.e(TAG, "Order failed by server logic. Message: " + errorMessage);
+                        Log.e(TAG, "Order failed by server logic (200 OK). Message: " + errorMessage);
                         Toast.makeText(CheckoutActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // LOG LỖI HTTP
-                    String errorBody = "";
-                    try {
-                        if (response.errorBody() != null) {
-                            errorBody = response.errorBody().string();
+                    // SERVER TRẢ VỀ LỖI (4xx, 5xx)
+                    // ⭐ BẮT ĐẦU KHỐI LỖI MỚI ⭐
+                    if (response.code() == 409) {
+                        // Đây là lỗi 409 (Conflict) - GIÁ ĐÃ THAY ĐỔI
+                        String errorMessage = "Giá hoặc khuyến mãi đã thay đổi";
+                        try {
+                            if (response.errorBody() != null) {
+                                String errorJson = response.errorBody().string();
+                                ApiResponse errorResponse = new Gson().fromJson(errorJson, ApiResponse.class);
+                                if (errorResponse != null && errorResponse.getMessage() != null) {
+                                    errorMessage = errorResponse.getMessage().replace("PRICE_MISMATCH: ", "");
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to parse 409 error body", e);
                         }
-                    } catch (Exception e) {
-                        errorBody = "Error body unreadable.";
+
+                        // Hiển thị dialog thông báo
+                        showPriceMismatchDialog(errorMessage);
+
+                    } else {
+                        // Đây là các lỗi 500, 400, 404... khác
+                        String errorBody = "";
+                        try {
+                            if (response.errorBody() != null) {
+                                errorBody = response.errorBody().string();
+                            }
+                        } catch (Exception e) {
+                            errorBody = "Error body unreadable.";
+                        }
+                        Log.e(TAG, "API call failed. HTTP Code: " + response.code() + ", Error Body: " + errorBody);
+                        Toast.makeText(CheckoutActivity.this, "Đặt hàng thất bại. Vui lòng thử lại. (Code: " + response.code() + ")", Toast.LENGTH_LONG).show();
                     }
-                    Log.e(TAG, "API call failed. HTTP Code: " + response.code() + ", Error Body: " + errorBody);
-                    Toast.makeText(CheckoutActivity.this, "Đặt hàng thất bại. Vui lòng thử lại. (Code: " + response.code() + ")", Toast.LENGTH_LONG).show();
+                    // ⭐ KẾT THÚC KHỐI LỖI MỚI ⭐
                 }
             }
+
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                btnPlaceOrder.setEnabled(true); // Bật lại nút
-                // LOG LỖI KẾT NỐI
+                // (Code xử lý lỗi mạng giữ nguyên)
+                btnPlaceOrder.setEnabled(true);
                 Log.e(TAG, "Network failure during placeOrder: " + t.getMessage(), t);
                 Toast.makeText(CheckoutActivity.this, "Lỗi kết nối mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
+
+    // ⭐ THÊM MỚI: Hàm hiển thị Dialog khi giá thay đổi
+    private void showPriceMismatchDialog(String message) {
+        new AlertDialog.Builder(this)
+                .setTitle("😥 Có thay đổi về giá")
+                .setMessage(message + "\n\nVui lòng quay lại giỏ hàng để kiểm tra và cập nhật lại đơn hàng của bạn.")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+                    // Đóng CheckoutActivity để buộc người dùng quay lại CartActivity
+                    // CartActivity PHẢI tải lại dữ liệu trong onResume()
+                    finish();
+                })
+                .setCancelable(false) // Không cho phép hủy
+                .show();
+    }
+    // ---
 
     private int getCurrentCustomerId() {
         SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
@@ -429,27 +451,13 @@ public class CheckoutActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // ⭐ XỬ LÝ KẾT QUẢ VNPAY ⭐
-        if (requestCode == VNPAY_REQUEST_CODE) {
-            Toast.makeText(this, "Hoàn tất thanh toán. Vui lòng kiểm tra trạng thái đơn hàng.", Toast.LENGTH_LONG).show();
-
-            // Chuyển hướng về trang đơn hàng của tôi
-            Intent intent = new Intent(this, YourOrdersActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
+        // (Code onActivityResult giữ nguyên)
         if (resultCode != RESULT_OK || data == null) {
             if (requestCode == SELECT_VOUCHER_REQUEST_CODE) {
-                // Nếu người dùng đóng màn hình chọn voucher mà không chọn gì
                 this.selectedVoucher = null;
                 calculateAndDisplaySummary();
             }
-            // ⭐ MỚI: Nếu người dùng đóng màn hình chọn shipping rate mà không chọn gì
             if (requestCode == SELECT_SHIPPING_REQUEST_CODE && this.selectedShippingRate == null) {
-                // Giữ nguyên là null và cập nhật tổng tiền (để nó vẫn tính phí ship = 0 và nút đặt hàng bị vô hiệu hóa)
                 calculateAndDisplaySummary();
             }
             return;
@@ -466,9 +474,9 @@ public class CheckoutActivity extends AppCompatActivity {
             VoucherDto returnedVoucher = (VoucherDto) data.getSerializableExtra("SELECTED_VOUCHER");
             this.selectedVoucher = returnedVoucher;
             calculateAndDisplaySummary();
-        } else if (requestCode == SELECT_SHIPPING_REQUEST_CODE) { // ⭐ MỚI
+        } else if (requestCode == SELECT_SHIPPING_REQUEST_CODE) {
             ShippingRateDto returnedRate = (ShippingRateDto) data.getSerializableExtra("SELECTED_SHIPPING_RATE");
-            this.selectedShippingRate = returnedRate; // Có thể là null nếu người dùng chọn "Không chọn" (cần xử lý trong SelectionActivity)
+            this.selectedShippingRate = returnedRate;
             calculateAndDisplaySummary();
         }
     }

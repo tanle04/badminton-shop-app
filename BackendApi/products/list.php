@@ -1,4 +1,9 @@
 <?php
+// ⭐ BẮT BUỘC: THÊM 3 DÒNG NÀY ĐỂ CHỐNG CACHE
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // GET ?page=1&limit=10
 require_once '../bootstrap.php'; // mở db + headers
 // ⭐ THÊM: INCLUDE PRICE CALCULATOR
@@ -59,12 +64,13 @@ try {
         $productID = (int)$row['productID'];
         
         // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GHI ĐÈ GIÁ MIN
+        // (Hàm này sẽ lấy giá GỐC vì sale đã hết hạn)
         $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
 
-        $row['priceMin'] = $price_details['salePrice'];
+        $row['priceMin'] = $price_details['salePrice']; // Đây sẽ là 2,500,000đ
         // Gán các cờ sale cần thiết cho ProductDto chính
         $row['originalPriceMin'] = $price_details['originalPrice']; 
-        $row['isDiscounted'] = $price_details['isDiscounted'];
+        $row['isDiscounted'] = $price_details['isDiscounted']; // Sẽ là false
         
         $data[] = $row;
     }
@@ -80,3 +86,4 @@ try {
     // XỬ LÝ LỖI DB VÀ TRẢ VỀ isSuccess: false
     json_response(false, "Database Error: " . $e->getMessage());
 }
+?>

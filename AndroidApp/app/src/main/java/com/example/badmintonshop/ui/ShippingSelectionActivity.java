@@ -39,7 +39,10 @@ public class ShippingSelectionActivity extends AppCompatActivity implements Ship
     private List<ShippingRateDto> rateList = new ArrayList<>();
 
     private ShippingRateDto selectedRate = null;
-    private double subtotal = 0.0;
+
+    // ⭐ SỬA LỖI: Không dùng subtotal, dùng itemsJson
+    // private double subtotal = 0.0;
+    private String itemsJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,18 @@ public class ShippingSelectionActivity extends AppCompatActivity implements Ship
         setContentView(R.layout.activity_shipping_selection); // Cần tạo layout này
 
         api = ApiClient.getApiService();
-        subtotal = getIntent().getDoubleExtra("SUBTOTAL", 0.0);
+
+        // ⭐ SỬA LỖI: Lấy ITEMS_JSON thay vì SUBTOTAL
+        // subtotal = getIntent().getDoubleExtra("SUBTOTAL", 0.0);
+        itemsJson = getIntent().getStringExtra("ITEMS_JSON");
+
+        // Thêm kiểm tra
+        if (itemsJson == null || itemsJson.isEmpty()) {
+            Toast.makeText(this, "Lỗi: Không có sản phẩm để tính phí.", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "itemsJSON is null or empty. Cannot fetch rates.");
+            finish();
+            return;
+        }
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
@@ -79,8 +93,9 @@ public class ShippingSelectionActivity extends AppCompatActivity implements Ship
 
     private void fetchShippingRates() {
         tvLoadingError.setVisibility(View.GONE);
-        // Lời gọi API get_rates.php với subtotal
-        api.getShippingRates(subtotal, 0) // Giả định addressID = 0 nếu không dùng phí theo vùng
+
+        // ⭐ SỬA LỖI: Gọi API get_rates.php với itemsJson, không dùng subtotal
+        api.getShippingRates(itemsJson, 0) // Giả định addressID = 0
                 .enqueue(new Callback<ShippingRatesResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ShippingRatesResponse> call, @NonNull Response<ShippingRatesResponse> response) {
@@ -91,15 +106,10 @@ public class ShippingSelectionActivity extends AppCompatActivity implements Ship
                                 rateList.addAll(fetchedRates);
                                 adapter.notifyDataSetChanged();
 
-                                // ⭐ SỬA LỖI: Logic Tự động chọn Rate đầu tiên ⭐
+                                // Logic Tự động chọn Rate đầu tiên (Giữ nguyên, logic này tốt)
                                 selectedRate = fetchedRates.get(0);
-
-                                // 1. Cập nhật Adapter UI (sử dụng phương thức setter mới)
                                 adapter.setSelectedPosition(0);
-
-                                // 2. Kích hoạt Listener để cập nhật biến selectedRate (tùy chọn, nhưng an toàn hơn)
                                 onRateSelected(selectedRate);
-
                                 btnConfirm.setEnabled(true);
                             } else {
                                 tvLoadingError.setText("Không có phương thức vận chuyển khả dụng.");

@@ -39,7 +39,10 @@ function get_best_sale_price($mysqli, $variantID) {
     $salePrice = $originalPrice;
     $discountID = null;
     $isDiscounted = false;
-    $now = date('Y-m-d H:i:s');
+    
+    // ⭐ SỬA LỖI TIMEZONE: BẮT BUỘC SET MÚI GIỜ Ở ĐÂY
+    date_default_timezone_set('Asia/Ho_Chi_Minh');
+    $now = date('Y-m-d H:i:s'); // Bây giờ $now sẽ là 14:52 (chính xác)
     
     // 2. TÌM KIẾM CÁC CHƯƠNG TRÌNH SALE ĐANG HOẠT ĐỘNG
     // (Ưu tiên: VariantID, ProductID, BrandID, CategoryID)
@@ -65,6 +68,10 @@ function get_best_sale_price($mysqli, $variantID) {
     );
     $stmt_disc->execute();
     $result_disc = $stmt_disc->get_result();
+    
+    // Phép so sánh bây giờ sẽ là:
+    // endDate ('13:57') >= $now ('14:52')
+    // -> FALSE (KHÔNG CÓ SALE)
     
     $lowestPrice = $originalPrice;
     $bestDiscount = null;
@@ -100,6 +107,7 @@ function get_best_sale_price($mysqli, $variantID) {
         $isDiscounted = true;
     }
     
+    // Vì $bestDiscount sẽ là NULL, $salePrice sẽ giữ nguyên là $originalPrice
     return [
         'salePrice' => round($salePrice, 2),
         'originalPrice' => $originalPrice,
@@ -143,6 +151,7 @@ function get_best_sale_price_for_product_list($mysqli, $productID) {
         $originalPrice = (float)$variant['price']; // Giá gốc của variant
         
         // Dùng hàm tính giá sale đã định nghĩa ở trên
+        // Hàm này (ở trên) đã được sửa lỗi timezone
         $price_details = get_best_sale_price($mysqli, $variantID);
         
         $currentSalePrice = $price_details['salePrice'];
@@ -173,3 +182,4 @@ function get_best_sale_price_for_product_list($mysqli, $productID) {
         'isDiscounted' => $anyDiscounted
     ];
 }
+?>

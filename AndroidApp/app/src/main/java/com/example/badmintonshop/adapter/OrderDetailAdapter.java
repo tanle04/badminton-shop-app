@@ -46,6 +46,18 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         View view = LayoutInflater.from(context).inflate(R.layout.item_order_detail_product, parent, false);
         return new DetailViewHolder(view);
     }
+    public void updateData(List<OrderDetailDto> newItemList) {
+        // Xóa danh sách cũ (LƯU Ý: Phải xóa trực tiếp list cũ, không tạo list mới)
+        if (this.itemList != null) {
+            this.itemList.clear();
+            // Thêm tất cả item từ danh sách mới vào
+            if (newItemList != null) {
+                this.itemList.addAll(newItemList);
+            }
+        }
+        // Thông báo cho Adapter biết dữ liệu đã thay đổi hoàn toàn
+        notifyDataSetChanged();
+    }
 
     @Override
     public void onBindViewHolder(@NonNull DetailViewHolder holder, int position) {

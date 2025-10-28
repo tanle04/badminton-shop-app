@@ -1,4 +1,10 @@
 <?php
+// ⭐ THÊM 3 DÒNG NÀY ĐỂ CHỐNG CACHE
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
+header("Expires: 0");
+
+// Code gốc của bạn
 header("Content-Type: application/json; charset=UTF-8");
 require_once '../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
 require_once '../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
@@ -55,9 +61,9 @@ try {
         $variantID = (int)$row['variantID'];
         $quantity = (int)$row['quantity'];
         
-        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE (SẼ LẤY GIÁ GỐC VÌ SALE ĐÃ HẾT)
         $price_details = get_best_sale_price($mysqli, $variantID);
-        $salePrice = $price_details['salePrice'];
+        $salePrice = $price_details['salePrice']; // Đây sẽ là 2,500,000đ
         
         // Gắn các trường sale vào item giỏ hàng
         $row['variantPrice'] = $salePrice; // Ghi đè giá hiển thị bằng giá sale

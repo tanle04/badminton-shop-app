@@ -8,6 +8,8 @@ import com.example.badmintonshop.network.dto.AuthRegisterBody;
 import com.example.badmintonshop.network.dto.AuthResponse;
 import com.example.badmintonshop.network.dto.CartResponse;
 import com.example.badmintonshop.network.dto.CategoryListResponse;
+// ⭐ SỬA: Import OrderDto
+import com.example.badmintonshop.network.dto.OrderDto;
 import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
 import com.example.badmintonshop.network.dto.OrderListResponse;
 import com.example.badmintonshop.network.dto.ProductDetailResponse;
@@ -209,10 +211,7 @@ public interface ApiService {
 
     // 2. Lấy danh sách Phương thức Vận chuyển (ĐÃ CHUẨN HÓA)
     @GET("shipping/get_rates.php")
-    Call<ShippingRatesResponse> getShippingRates(
-            @Query("subtotal") double subtotal,
-            @Query("addressID") int addressId // Tùy chọn, nếu bạn triển khai phí theo vùng
-    );
+    Call<ShippingRatesResponse> getShippingRates(@Query("itemsJSON") String itemsJson, @Query("addressID") int addressID);
 
     // 3. ĐẶT HÀNG (ĐÃ SỬA LỖI: Cập nhật chữ ký lên 8 tham số)
     @FormUrlEncoded
@@ -228,12 +227,23 @@ public interface ApiService {
             @Field("shippingFee") double shippingFee // ⭐ THAM SỐ THỨ 8
     );
 
+    @FormUrlEncoded
+    @POST("orders/repay.php")
+    Call<ApiResponse> repayOrder(
+            @Field("customerID") int customerId,
+            @Field("orderID") int orderId
+    );
+
     @GET("orders/get_by_customer.php")
     Call<OrderListResponse> getCustomerOrders(@Query("customerID") int customerId, @Query("status") String statusFilter);
 
-    // Lấy chi tiết sản phẩm cần review
+    // ⭐ SỬA: Trả về OrderDto (cả đơn hàng) thay vì OrderDetailsListResponse (chỉ danh sách item)
+    // ⭐ SỬA: Thêm customerID để khớp với lệnh gọi
     @GET("orders/get_details.php")
-    Call<OrderDetailsListResponse> getOrderDetails(@Query("orderID") int orderId);
+    Call<OrderDto> getOrderDetails(
+            @Query("orderID") int orderId,
+            @Query("customerID") int customerId
+    );
 
     // Phương thức HỦY đơn hàng
     @FormUrlEncoded

@@ -111,11 +111,23 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btn_list_repay"
+                style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:paddingHorizontal="16dp"
+                android:text="Thanh toán lại"
+                android:textAllCaps="false"
+                android:backgroundTint="@color/green_700"
+                android:visibility="gone"
+                tools:visibility="visible" />
+            <Button
                 android:id="@+id/btn_return_refund"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="0dp"
+                android:layout_marginStart="8dp" android:minWidth="0dp"
                 android:paddingHorizontal="16dp"
                 android:text="Return/Refund"
                 android:textAllCaps="false"

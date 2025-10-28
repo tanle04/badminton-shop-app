@@ -6,10 +6,11 @@ ini_set('display_errors', 1);
 // Thiết lập JSON Header
 header('Content-Type: application/json');
 
-// Tải các file cần thiết (Đảm bảo bootstrap.php chứa kết nối $mysqli)
+// Tải các file cần thiết
 require_once __DIR__ . '/../bootstrap.php'; 
-// ⭐ THÊM REQUIRE CHO SHIPPING HELPER ĐỂ CÓ HÀM getSetting
-require_once __DIR__ . '/../utils/shipping_helper.php'; 
+require_once __DIR__ . '/../utils/shipping_helper.php'; // Chứa getSetting
+// ⭐ BẮT BUỘC: Thêm file này để tính giá an toàn
+require_once __DIR__ . '/../utils/price_calculator.php'; 
 
 // Hàm tiện ích trả về JSON lỗi và dừng script
 function sendError($message, $code = 400) {
@@ -19,30 +20,51 @@ function sendError($message, $code = 400) {
 }
 
 // 1. LẤY THAM SỐ ĐẦU VÀO
-$subtotal = (float)($_GET['subtotal'] ?? 0);
-$addressID = (int)($_GET['addressID'] ?? 0); 
+// ⭐ SỬA LỖI: Không dùng $_GET['subtotal']. Dùng $_GET['itemsJSON']
+$itemsJSON = $_GET['itemsJSON'] ?? '[]';
+$items = json_decode($itemsJSON, true);
 
-if ($subtotal <= 0) {
+if (empty($items) || !is_array($items)) {
+    sendError("Không có sản phẩm để tính phí vận chuyển (itemsJSON).", 422);
+}
+
+// 2. TÍNH TOÁN SUBTOTAL AN TOÀN TRÊN SERVER
+// (Logic này phải giống hệt logic trong create_order.php)
+$serverSubtotal = 0.0;
+try {
+    foreach ($items as $item) {
+        $variantID = (int)($item['variantID'] ?? 0);
+        $quantity = (int)($item['quantity'] ?? 0);
+        if ($variantID <= 0 || $quantity <= 0) continue;
+
+        // Gọi hàm tính giá "an toàn" (giống hệt create_order.php)
+        $price_details = get_best_sale_price($mysqli, $variantID);
+        $finalPrice = $price_details['salePrice'];
+        $serverSubtotal += $finalPrice * $quantity;
+    }
+} catch (Exception $e) {
+    sendError("Lỗi khi tính toán giá: " . $e->getMessage(), 500);
+}
+
+if ($serverSubtotal <= 0) {
     sendError("Giá trị đơn hàng không hợp lệ.", 422);
 }
+// ⭐ KẾT THÚC TÍNH SUBTOTAL AN TOÀN
 
 // Khởi tạo mảng kết quả
 $shippingRates = [];
 
-// 2. LOGIC TÍNH PHÍ VÀ LẤY DANH SÁCH RATE TỪ DB
-
-// ⭐ SỬA LỖI: ĐỌC NGƯỠNG TỪ DB (app_settings) ⭐
-// Giả định getSetting là hàm đã được định nghĩa trong shipping_helper.php
-$FREE_SHIP_THRESHOLD = getSetting($mysqli, 'free_ship_threshold', 2000000.00);
+// 3. LOGIC TÍNH PHÍ VÀ LẤY DANH SÁCH RATE TỪ DB
+// ⭐ SỬA LỖI: ĐỒNG BỘ GIÁ TRỊ DỰ PHÒNG
+$FREE_SHIP_THRESHOLD = getSetting($mysqli, 'free_ship_threshold', 2500000.00); // <-- ĐÃ SỬA
 $DEFAULT_SHIPPING_FEE = getSetting($mysqli, 'base_shipping_fee', 30000.00); 
 
-// Kiểm tra điều kiện Free Ship
-$isFreeShip = ($subtotal >= $FREE_SHIP_THRESHOLD);
+// ⭐ SỬA LỖI: Dùng $serverSubtotal (an toàn) thay vì $_GET['subtotal']
+$isFreeShip = ($serverSubtotal >= $FREE_SHIP_THRESHOLD);
 
-// Khóa cấu hình hiển thị (Giữ nguyên)
 $MAX_RATE_TO_DISPLAY = 100000.00; 
 
-// 3. TRUY VẤN DATABASE để lấy danh sách các dịch vụ đang hoạt động
+// 4. TRUY VẤN DATABASE để lấy danh sách các dịch vụ đang hoạt động
 $sql = "
     SELECT 
         r.rateID, 
@@ -60,24 +82,19 @@ if (!$stmt = $mysqli->prepare($sql)) {
     sendError("Lỗi chuẩn bị truy vấn: " . $mysqli->error, 500);
 }
 
-// Lấy các rate có giá gốc <= MAX_RATE_TO_DISPLAY
 $stmt->bind_param("d", $MAX_RATE_TO_DISPLAY); 
 $stmt->execute();
 $result = $stmt->get_result();
 
 while ($row = $result->fetch_assoc()) {
-    
     $rateBasePrice = (float)$row['basePrice'];
 
-    // 1. Nếu Free Ship: Phí luôn là 0.00.
     if ($isFreeShip) {
         $rateFee = 0.00;
     } else {
-        // 2. Nếu KHÔNG Free Ship: Phí là giá gốc của dịch vụ (basePrice).
         $rateFee = $rateBasePrice;
     }
     
-    // ⭐ XỬ LÝ LỖI DỮ LIỆU: Nếu phí gốc là 0 (hoặc rất nhỏ) và KHÔNG phải Freeship, dùng phí mặc định
     if ($rateFee < 0.01 && !$isFreeShip) { 
         $rateFee = $DEFAULT_SHIPPING_FEE;
     }
@@ -87,18 +104,16 @@ while ($row = $result->fetch_assoc()) {
         'carrierName' => $row['carrierName'],
         'serviceName' => $row['serviceName'],
         'estimatedDelivery' => $row['estimatedDelivery'],
-        'shippingFee' => round($rateFee, 2), // Phí đã được tính toán (0 nếu Freeship)
+        'shippingFee' => round($rateFee, 2),
         'isFreeShip' => $isFreeShip
     ];
 }
-
 $stmt->close();
 
-// 4. TRẢ VỀ KẾT QUẢ JSON
+// 5. TRẢ VỀ KẾT QUẢ JSON (Giữ nguyên logic dự phòng)
 if (empty($shippingRates)) {
-    // Nếu không tìm thấy rate nào trong DB, ta vẫn có thể trả về một lựa chọn mặc định.
     $shippingRates[] = [
-        'rateID' => 0, // ID 0 cho rate mặc định/khẩn cấp
+        'rateID' => 0,
         'carrierName' => 'Mặc định',
         'serviceName' => 'Giao hàng Tiêu chuẩn',
         'estimatedDelivery' => '5-7 ngày',
