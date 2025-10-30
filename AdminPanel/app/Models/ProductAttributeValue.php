@@ -2,31 +2,32 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductAttributeValue extends Model
 {
-    use HasFactory;
-
     protected $table = 'product_attribute_values';
     protected $primaryKey = 'valueID';
     public $timestamps = false;
     protected $fillable = ['attributeID', 'valueName'];
 
-    // Mối quan hệ: Giá trị thuộc về một Thuộc tính (Ví dụ: 'M' thuộc về 'Size')
+    /**
+     * Định nghĩa mối quan hệ n-1: Một giá trị thuộc về một thuộc tính.
+     */
     public function attribute()
     {
         return $this->belongsTo(ProductAttribute::class, 'attributeID', 'attributeID');
     }
 
-    // Mối quan hệ Many-to-Many: Giá trị được áp dụng cho nhiều Biến thể
+    /**
+     * Định nghĩa mối quan hệ n-n với ProductVariant thông qua bảng trung gian.
+     */
     public function variants()
     {
         return $this->belongsToMany(
-            ProductVariant::class, 
-            'variant_attribute_values', // Tên bảng trung gian
-            'valueID', 
+            ProductVariant::class,
+            'variant_attribute_values',
+            'valueID',
             'variantID'
         );
     }

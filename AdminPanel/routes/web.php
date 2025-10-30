@@ -1,21 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| These routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. 
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
 |
 */
 
-// Route mặc định cho trang chủ hoặc trang chào mừng
 Route::get('/', function () {
-    return view('welcome');
+    // Kiểm tra xem admin đã đăng nhập chưa
+    if (Auth::guard('admin')->check()) {
+        // Nếu đã đăng nhập, chuyển hướng đến dashboard
+        return redirect()->route('admin.dashboard');
+    }
+    // Nếu chưa, hiển thị trang login
+    return redirect()->route('admin.login');
 });
 
-// THÊM CÁC ROUTE PHÍA NGƯỜI DÙNG (CUSTOMER/FRONTEND) VÀO ĐÂY
-// (Tất cả các route Admin đã được chuyển sang routes/admin.php)
+// KHÔNG CÓ GÌ KHÁC Ở ĐÂY.
+// File admin.php đã được gọi trong RouteServiceProvider.

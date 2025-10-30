@@ -2,6 +2,7 @@ package com.example.badmintonshop.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,18 +11,37 @@ import com.example.badmintonshop.R;
 
 public class PaymentFailedActivity extends AppCompatActivity {
 
+    private int orderId = -1;
+    private static final String TAG = "PaymentFailedActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payment_failed); // Sẽ tạo ở Bước 5
+        setContentView(R.layout.activity_payment_failed);
+
+        // ⭐ Lấy OrderID từ Intent
+        orderId = getIntent().getIntExtra("ORDER_ID", -1);
+        if (orderId == -1) {
+            Log.e(TAG, "ORDER_ID not found in Intent.");
+        }
+
 
         Button btnTryAgain = findViewById(R.id.btn_try_again);
         Button btnBackToHome = findViewById(R.id.btn_back_to_home);
 
-        // Nút Thử lại
+        // ⭐ Nút Thử lại: Kích hoạt lại luồng thanh toán (Repay)
         btnTryAgain.setOnClickListener(v -> {
-            // Đóng Activity này, người dùng sẽ quay lại màn hình Checkout
-            finish();
+            if (orderId != -1) {
+                Intent resultIntent = new Intent();
+                // ⭐ TRUYỀN ORDER ID DƯỚI KEY "RETRY_ORDER_ID"
+                resultIntent.putExtra("RETRY_ORDER_ID", orderId);
+                setResult(RESULT_OK, resultIntent); // Kích hoạt failureLauncher.onResult(RESULT_OK)
+                finish();
+            } else {
+                // Nếu ID bị mất, trả về CANCELED
+                setResult(RESULT_CANCELED);
+                finish();
+            }
         });
 
         // Nút Quay về trang chủ
@@ -29,11 +49,13 @@ public class PaymentFailedActivity extends AppCompatActivity {
             goToHome();
         });
 
-        // Xử lý nút Back (quay lại Checkout)
+        // Xử lý nút Back (quay lại Activity cha YourOrdersActivity)
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // Giống như bấm "Thử lại"
+                // Trả về RESULT_CANCELED (không Repay)
+                Intent resultIntent = new Intent();
+                setResult(RESULT_CANCELED, resultIntent);
                 finish();
             }
         });

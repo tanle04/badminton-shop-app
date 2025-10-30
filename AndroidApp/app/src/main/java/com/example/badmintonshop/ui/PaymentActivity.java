@@ -11,7 +11,6 @@ import android.widget.ProgressBar;
 import android.util.Log;
 import android.widget.Toast;
 
-// THÊM IMPORT NÀY
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,6 +20,7 @@ import com.example.badmintonshop.R;
 public class PaymentActivity extends AppCompatActivity {
 
     // ⭐ URL này được lấy chính xác từ file vnpay_helper.php của bạn
+    // Cần đảm bảo đây là đường dẫn ngrok-free.dev chính xác mà bạn đang dùng.
     private static final String VNPAY_RETURN_URL = "https://slimiest-unmisgivingly-abdul.ngrok-free.dev/api/BadmintonShop/payments/vnpay_return.php";
 
     private static final String TAG = "PaymentActivity";
@@ -58,32 +58,25 @@ public class PaymentActivity extends AppCompatActivity {
         webView.loadUrl(vnpayUrl);
 
         // ⭐ SỬA LỖI DEPRECATED: Xử lý nút Back theo cách mới
-        // Tạo một callback mới để xử lý nút back
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* Bật mặc định */) {
             @Override
             public void handleOnBackPressed() {
-                // Đây là nơi đặt logic cũ của bạn
                 if (webView.canGoBack()) {
                     webView.goBack();
                 } else {
-                    // Nếu không thể quay lại trong WebView,
-                    // hãy báo hủy và đóng Activity
+                    // Nếu không thể quay lại trong WebView, báo hủy và đóng Activity
                     Log.d(TAG, "Back pressed. Setting result CANCELED.");
                     setResult(RESULT_CANCELED);
-
-                    // Vô hiệu hóa callback này
-                    setEnabled(false);
-                    // Và gọi lại hành động back mặc định (sẽ đóng Activity)
-                    getOnBackPressedDispatcher().onBackPressed();
+                    // Dùng finish() thay vì gọi lại onBackPressed()
+                    finish();
                 }
             }
         };
-        // Đăng ký callback này với dispatcher
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     private class MyWebViewClient extends WebViewClient {
-        // ... (Code của MyWebViewClient giữ nguyên)
+
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
@@ -102,6 +95,7 @@ public class PaymentActivity extends AppCompatActivity {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Log.d(TAG, "URL Override attempt: " + url);
 
+            // ⭐ BẮT URL SERVER TRẢ VỀ (ví dụ: https://slimiest-unmisgivingly-abdul.ngrok-free.dev/api/BadmintonShop/payments/vnpay_return.php?...)
             if (url.startsWith(VNPAY_RETURN_URL)) {
                 Log.i(TAG, "Intercepted VNPAY Return URL: " + url);
 
@@ -110,30 +104,43 @@ public class PaymentActivity extends AppCompatActivity {
 
                 if ("00".equals(responseCode)) {
                     Log.i(TAG, "Payment Success (Code 00).");
-                    setResult(RESULT_OK);
+                    setResult(RESULT_OK); // Trả về RESULT_OK
                 } else {
                     Log.w(TAG, "Payment Failed or Cancelled (Code: " + responseCode + ")");
+                    setResult(RESULT_CANCELED);
+                }
+
+                // Chú ý: Script PHP trên server sẽ redirect lần cuối
+                // sang 'badmintonshop://yourorders?status=success&orderID=96'.
+                // Nhưng vì script PHP được gọi đồng bộ, khi URL VNPAY_RETURN_URL được gọi
+                // và trả về, mọi thứ trên server đã xong. Chỉ cần trả về RESULT_OK là đủ.
+                finish();
+                return true;
+            }
+
+            // ⭐ BẮT URL DEEP LINK (badmintonshop://yourorders?...)
+            // Cần bắt URL Deep Link để kích hoạt làm mới, nếu PaymentActivity không phải là nơi cuối cùng.
+            if (url.startsWith("badmintonshop://")) {
+                Log.i(TAG, "Intercepted Deep Link URL: " + url);
+
+                // Mặc dù Deep Link có thể tự mở ứng dụng, việc xử lý nó trong WebView
+                // giúp chúng ta lấy thông tin status/orderID chính xác nhất.
+
+                Uri uri = Uri.parse(url);
+                String status = uri.getQueryParameter("status");
+
+                // Trả về RESULT_OK nếu status là 'success' hoặc 'already_processed_processing'
+                if (status != null && status.startsWith("success")) {
+                    setResult(RESULT_OK);
+                } else {
                     setResult(RESULT_CANCELED);
                 }
 
                 finish();
                 return true;
             }
+
             return false;
         }
     }
-
-    // ⭐ BẠN PHẢI XÓA HÀM CŨ NÀY ĐI
-    /*
-    @Override
-    public void onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack();
-        } else {
-            Log.d(TAG, "Back pressed. Setting result CANCELED.");
-            setResult(RESULT_CANCELED);
-            super.onBackPressed();
-        }
-    }
-    */
 }

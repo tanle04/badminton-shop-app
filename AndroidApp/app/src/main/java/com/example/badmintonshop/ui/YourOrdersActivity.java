@@ -18,8 +18,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.OrderAdapter;
 import com.example.badmintonshop.adapter.OrderPagerAdapter;
-import com.example.badmintonshop.network.ApiClient;
-import com.example.badmintonshop.network.ApiService;
+// Loại bỏ import không cần thiết
+// import com.example.badmintonshop.network.ApiClient;
+// import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.OrderDto;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -30,7 +31,7 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
     private ViewPager2 viewPagerOrders;
     private TabLayout tabLayoutOrders;
     private MaterialToolbar toolbar;
-    private ApiService apiService; // Not strictly needed here unless used directly
+    // private ApiService apiService; // Not strictly needed here unless used directly
 
     // Launcher for Reviews
     private ActivityResultLauncher<Intent> reviewActivityResultLauncher;
@@ -45,8 +46,6 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_orders);
 
-        // apiService = ApiClient.getApiService(); // Initialize if needed directly in Activity
-
         toolbar = findViewById(R.id.toolbar);
         viewPagerOrders = findViewById(R.id.view_pager_orders);
         tabLayoutOrders = findViewById(R.id.tab_layout_orders);
@@ -57,7 +56,7 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         Toast.makeText(this, "Order reviewed, updating list...", Toast.LENGTH_SHORT).show();
-                        refreshCurrentOrderFragment();
+                        refreshAllOrderFragments(); // ⭐ SỬ DỤNG HÀM LÀM MỚI TẤT CẢ
                     }
                 }
         );
@@ -68,9 +67,8 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
                         Toast.makeText(this, "Order status updated.", Toast.LENGTH_SHORT).show();
-                        // Optionally switch tabs, e.g., to "All orders" or "Cancelled"
-                        // viewPagerOrders.setCurrentItem(0, true);
-                        refreshCurrentOrderFragment(); // Refresh the list
+                        // Nếu có thay đổi trạng thái từ OrderDetailActivity
+                        refreshAllOrderFragments(); // ⭐ SỬ DỤNG HÀM LÀM MỚI TẤT CẢ
                     }
                 }
         );
@@ -107,19 +105,17 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
 
             Log.d("VNPAY_DEEPLINK", "Received status: " + status + ", OrderID: " + orderId);
 
-            if ("success".equals(status)) {
+            if (status != null && status.startsWith("success")) { // Bao gồm cả "success" và "success_..."
                 Toast.makeText(this, "Payment successful! Order #" + orderId + " is processing.", Toast.LENGTH_LONG).show();
                 viewPagerOrders.setCurrentItem(1, true); // Go to "Processing" tab
-            } else if ("failed".equals(status)) {
-                Toast.makeText(this, "Payment failed for order #" + orderId + ".", Toast.LENGTH_LONG).show();
-                // Optionally switch to "Cancelled" or stay on "All Orders"
-            } else if ("failed_cancelled".equals(status)) { // If PHP cancels on failure
+            } else if ("failed".equals(status) || "failed_cancelled".equals(status)) {
                 Toast.makeText(this, "Payment failed for order #" + orderId + " and it was cancelled.", Toast.LENGTH_LONG).show();
                 viewPagerOrders.setCurrentItem(4, true); // Go to "Cancelled" tab
             } else if ("security_error".equals(status)) {
                 Toast.makeText(this, "VNPay transaction security error.", Toast.LENGTH_LONG).show();
             }
-            refreshCurrentOrderFragment(); // Refresh the list regardless of status
+            // Gọi làm mới TẤT CẢ Fragments để đảm bảo trạng thái mới được lấy từ API
+            refreshAllOrderFragments();
         }
     }
 
@@ -152,16 +148,17 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
         viewPagerOrders.setCurrentItem(0, false); // Start at "All orders" initially
     }
 
-    // Refreshes data in the currently visible Fragment
-    private void refreshCurrentOrderFragment() {
-        // Fragment tag is usually "f" + position
-        Fragment fragment = getSupportFragmentManager()
-                .findFragmentByTag("f" + viewPagerOrders.getCurrentItem());
-
-        if (fragment instanceof OrderFragment) {
-            ((OrderFragment) fragment).fetchOrders();
-        } else {
-            Log.e("YourOrdersActivity", "Could not find OrderFragment at position: " + viewPagerOrders.getCurrentItem() + " to refresh.");
+    // ⭐ THAY THẾ HÀM CŨ: Làm mới dữ liệu trong TẤT CẢ các Fragment đang hoạt động
+    private void refreshAllOrderFragments() {
+        Log.d("YourOrdersActivity", "Forcing refresh on all active OrderFragments.");
+        // Duyệt qua tất cả các Fragment đang hoạt động
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof OrderFragment) {
+                // Kiểm tra xem Fragment đã được gắn vào Activity và có thể tương tác
+                if (fragment.isAdded()) {
+                    ((OrderFragment) fragment).fetchOrders();
+                }
+            }
         }
     }
 
@@ -234,4 +231,6 @@ public class YourOrdersActivity extends AppCompatActivity implements OrderAdapte
             Log.e("YourOrdersActivity", "Current fragment is not OrderFragment, cannot handle repay click.");
         }
     }
+
+    // ⭐ XÓA HÀM refreshCurrentOrderFragment CŨ (đã được thay thế bằng refreshAllOrderFragments)
 }

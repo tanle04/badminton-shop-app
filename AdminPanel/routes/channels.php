@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Broadcast;
 use App\Models\Employee; // BẮT BUỘC: Dòng này đã được thêm
+use Illuminate\Support\Facades\Log; // <-- THÊM DÒNG NÀY
 
+Log::info('File routes/channels.php ĐÃ ĐƯỢC TẢI.'); // <-- THÊM DÒNG NÀY
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -19,8 +21,6 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-// Kênh chat riêng tư cho Employee
 Broadcast::channel('employee.chat.{id}', function (Employee $user, $id) {
-    // Trả về true nếu ID của Employee đang đăng nhập khớp với ID của kênh
     return (int) $user->employeeID === (int) $id;
-});
+}, ['guards' => ['admin']]); // <--- THÊM DÒNG NÀY

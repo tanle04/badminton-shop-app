@@ -1,8 +1,8 @@
 package com.example.badmintonshop.ui;
 
-import android.content.Context; // ⭐ THÊM
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences; // ⭐ THÊM
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher; // ⭐ THÊM
-import androidx.activity.result.contract.ActivityResultContracts; // ⭐ THÊM
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity; // ⭐ THÊM
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,8 +28,7 @@ import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.OrderDto;
 import com.example.badmintonshop.network.dto.OrderDetailDto;
 import com.example.badmintonshop.network.dto.OrderListResponse;
-// ⭐ Import Gson if you uncomment parseErrorMessage
-// import com.google.gson.Gson;
+import com.google.gson.Gson; // Đảm bảo import Gson
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// ⭐ SỬA: Implement interface
 public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapterListener {
 
     private static final String ARG_STATUS = "status_filter";
@@ -52,8 +50,10 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
     private ApiService api;
     private int customerId;
 
-    private OrderAdapter.OrderAdapterListener orderListener; // Listener thực tế (Activity)
-    private ActivityResultLauncher<Intent> paymentLauncher; // ⭐ THÊM: Launcher
+    private OrderAdapter.OrderAdapterListener orderListener;
+    private ActivityResultLauncher<Intent> paymentLauncher;
+    private ActivityResultLauncher<Intent> failureLauncher; // ⭐ Launcher mới cho PaymentFailureActivity
+
 
     public OrderFragment() {
         // Required empty public constructor
@@ -77,21 +77,18 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
         }
 
         // Lấy Customer ID và Activity làm Listener thực tế
-        // Gắn listener từ Activity
         if (getActivity() instanceof OrderAdapter.OrderAdapterListener) {
             orderListener = (OrderAdapter.OrderAdapterListener) getActivity();
-            // Lấy customerId từ Activity thông qua phương thức public
             if (getActivity() instanceof YourOrdersActivity) {
                 customerId = ((YourOrdersActivity) getActivity()).getCurrentCustomerId();
             } else {
                 Log.e(TAG, "Activity is not YourOrdersActivity, cannot get customer ID directly.");
-                customerId = getCurrentCustomerIdFallback(); // Use fallback if needed
+                customerId = getCurrentCustomerIdFallback();
             }
 
         } else {
             Log.e(TAG, "Activity must implement OrderAdapter.OrderAdapterListener");
-            customerId = -1; // Indicate error or unknown customer
-            // Tạo listener giả để tránh crash khi gọi phương thức của nó
+            customerId = -1;
             orderListener = new OrderAdapter.OrderAdapterListener() {
                 @Override public void onReviewClicked(int orderId) { Log.e(TAG, "Listener not implemented in Activity");}
                 @Override public void onRefundClicked(int orderId) { Log.e(TAG, "Listener not implemented in Activity");}
@@ -102,21 +99,62 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
             };
         }
 
+        // ⭐ Khởi tạo FAILURE LAUNCHER (Để lắng nghe nút "Thử lại" từ PaymentFailureActivity)
+        failureLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
+                        // Nếu màn hình thất bại trả về RESULT_OK (nghĩa là user bấm THỬ LẠI)
+                        int retryOrderId = result.getData() != null ?
+                                result.getData().getIntExtra("RETRY_ORDER_ID", -1) :
+                                -1;
+
+                        if (retryOrderId != -1) {
+                            Log.i(TAG, "Retry requested for order ID: " + retryOrderId);
+                            // ⭐ GỌI LẠI QUY TRÌNH THANH TOÁN REPAY ⭐
+                            initiateRepayment(retryOrderId);
+                        }
+                    }
+                }
+        );
+
+
         // Khởi tạo paymentLauncher ở onCreate để đảm bảo nó sẵn sàng
         paymentLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    // ⭐ Lấy Order ID từ Intent trả về (Phải có do logic sửa trong PaymentActivity)
+                    String orderIdString = result.getData() != null ?
+                            result.getData().getStringExtra("ORDER_ID") :
+                            null;
+                    int completedOrderId = (orderIdString != null) ? Integer.parseInt(orderIdString) : -1;
+
                     if (result.getResultCode() == AppCompatActivity.RESULT_OK) {
-                        Log.i(TAG, "Repayment successful via launcher.");
-                        fetchOrders(); // Tải lại danh sách đơn hàng sau khi thanh toán thành công
-                    } else {
-                        Log.w(TAG, "Repayment failed or cancelled via launcher.");
-                        // Check if fragment is still added before showing Toast
+                        Log.i(TAG, "Repayment successful via launcher. REFRESHING ORDERS...");
+
+                        // 1. BUỘC TẢI LẠI DỮ LIỆU ĐỂ CẬP NHẬT TRẠNG THÁI DB
+                        fetchOrders();
+
                         if(isAdded() && getContext() != null) {
-                            Toast.makeText(getContext(), "Thanh toán đã bị hủy hoặc thất bại.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
+
+                            // 2. CHUYỂN HƯỚNG ĐẾN PAYMENT SUCCESS ACTIVITY MỚI
+                            Intent successIntent = new Intent(getContext(), PaymentSuccessActivity.class);
+                            successIntent.putExtra("ORDER_ID", completedOrderId); // Truyền ID sang màn hình thành công
+                            startActivity(successIntent);
                         }
-                        // Optionally call fetchOrders() here too to refresh the status (still pending)
-                        // fetchOrders();
+                    } else {
+                        // ⭐ LOGIC THẤT BẠI: KHỞI CHẠY MÀN HÌNH THẤT BẠI
+                        Log.w(TAG, "Repayment failed or cancelled via launcher. Launching Failure Activity.");
+
+                        if(isAdded() && getContext() != null && completedOrderId != -1) {
+                            // Khởi chạy PaymentFailureActivity và lắng nghe kết quả "Thử lại"
+                            Intent failureIntent = new Intent(getContext(), PaymentFailedActivity.class);
+                            failureIntent.putExtra("ORDER_ID", completedOrderId);
+                            failureLauncher.launch(failureIntent); // ⭐ Dùng LAUNCHER MỚI
+                        } else {
+                            if(isAdded() && getContext() != null) Toast.makeText(getContext(), "Thanh toán thất bại.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
         );
@@ -139,7 +177,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
         fetchOrders();
     }
 
-    // ⭐ SỬA: Truyền "this" (Fragment) làm listener cho Adapter
+    // SỬA: Truyền "this" (Fragment) làm listener cho Adapter
     private void setupRecyclerView() {
         // Ensure context is not null before proceeding
         if (getContext() == null) {
@@ -265,10 +303,6 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
                 @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) { Log.e(TAG, "Network failure adding variant " + variantID + ": " + t.getMessage()); }
             });
         }
-        // Optional confirmation toast
-        // new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-        //    if(isAdded() && getContext() != null) Toast.makeText(getContext(), "Đã thêm các sản phẩm vào giỏ!", Toast.LENGTH_SHORT).show();
-        // }, 1500); // Delay slightly
     }
 
     // (updateUIState - Giữ nguyên)
@@ -293,7 +327,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
 
     // --- TRIỂN KHAI INTERFACE OrderAdapter.OrderAdapterListener ---
 
-    // ⭐ THÊM: Implement phương thức mới và gọi hàm thanh toán lại
+    // THÊM: Implement phương thức mới và gọi hàm thanh toán lại
     @Override
     public void onListRepayClicked(int orderId) {
         Log.d(TAG, "List Repay clicked for order ID: " + orderId + ". Calling initiateRepayment...");
@@ -334,14 +368,14 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
     }
 
 
-    // ⭐ SỬA: Hàm lấy Customer ID (fallback nếu Activity không đúng type)
+    // SỬA: Hàm lấy Customer ID (fallback nếu Activity không đúng type)
     private int getCurrentCustomerIdFallback() {
         if(getActivity() == null) return -1;
         SharedPreferences prefs = getActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
         return prefs.getInt("customerID", -1);
     }
 
-    // ⭐ SỬA Ở ĐÂY: Hàm initiateRepayment ĐÃ LÀ public ⭐
+    // SỬA Ở ĐÂY: Hàm initiateRepayment ĐÃ LÀ public ⭐
     public void initiateRepayment(int orderId) {
         // customerId đã được lấy ở onCreate
         if (customerId <= 0) {
@@ -378,7 +412,8 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
                             Log.i(TAG, "Launching PaymentActivity (Repay from List) with URL: " + vnpayUrl);
                             Intent intent = new Intent(getContext(), PaymentActivity.class);
                             intent.putExtra("VNPAY_URL", vnpayUrl);
-                            paymentLauncher.launch(intent); // ⭐ Dùng launcher của Fragment
+                            intent.putExtra("ORDER_ID_RET", orderId + ""); // ⭐ Truyền Order ID
+                            paymentLauncher.launch(intent); // Dùng launcher của Fragment
                         } else {
                             Toast.makeText(getContext(), "Lỗi: Không nhận được URL VNPay.", Toast.LENGTH_LONG).show();
                         }
@@ -402,7 +437,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OrderAdapter
         });
     }
 
-    // ⭐ THÊM: Hàm parseErrorMessage (đã sao chép từ OrderDetailActivity)
+    // THÊM: Hàm parseErrorMessage (đã sao chép từ OrderDetailActivity)
     private String parseErrorMessage(Response<?> response) {
         String defaultError = "Lỗi không xác định (Code: " + response.code() + ")";
         if (response.errorBody() != null) {

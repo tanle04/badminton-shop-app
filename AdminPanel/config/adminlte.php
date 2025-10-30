@@ -141,15 +141,15 @@ return [
             'icon' => 'fas fa-fw fa-gift',
             'can'  => 'marketing', // Marketing và Admin
         ],
-        
-        // === MỤC MỚI: CHƯƠNG TRÌNH GIẢM GIÁ SẢN PHẨM ===
+
+        // MỤC MỚI: CHƯƠNG TRÌNH GIẢM GIÁ SẢN PHẨM
         [
             'text' => 'Chương trình Giảm giá SP',
-            'url'  => 'admin/product-discounts', // URL đã được định nghĩa trong routes/admin.php
-            'icon' => 'fas fa-fw fa-percent', // Sử dụng icon phần trăm
+            'url'  => 'admin/product-discounts',
+            'icon' => 'fas fa-fw fa-percent',
             'can'  => 'marketing', // Marketing và Admin
         ],
-        
+
         [
             'text' => 'Slider/Banner', // Đã thêm module Slider
             'url'  => 'admin/sliders',
@@ -185,7 +185,16 @@ return [
                     'url'  => 'admin/categories',
                     'icon' => 'fas fa-fw fa-layer-group',
                 ],
-                // ⭐ QUẢN LÝ CẤU HÌNH VẬN CHUYỂN ⭐
+                // ⭐ MỤC THUỘC TÍNH SẢN PHẨM MỚI ⭐
+                [
+                    'text' => 'Thuộc tính Sản phẩm',
+                    'url'  => 'admin/attributes', // Dùng route admin/attributes đã định nghĩa
+                    'icon' => 'fas fa-fw fa-list-ul', // Icon gợi ý: list-ul hoặc tag
+                    'active' => ['admin/attributes*'],
+                ],
+                // ⭐ HẾT MỤC THUỘC TÍNH SẢN PHẨM MỚI ⭐
+
+                // QUẢN LÝ CẤU HÌNH VẬN CHUYỂN 
                 [
                     'text' => 'Cấu hình Vận chuyển',
                     'icon' => 'fas fa-fw fa-sliders-h',
@@ -237,13 +246,35 @@ return [
     */
 
     'plugins' => [
-        // ⭐ BỔ SUNG TOASTR CHO THÔNG BÁO AJAX
-        'Toastr' => [
-            'active' => true,
+        // ⭐ ĐÃ CHUYỂN VỀ DATATABLES CHUẨN ⭐
+        'Datatables' => [
+            'active' => true,  // <-- ĐỔI THÀNH TRUE
             'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true, // Đảm bảo asset là true để nó tự động copy
+                    'location' => 'vendor/datatables-bs4/js/dataTables.bootstrap4.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/datatables/js/dataTables.bootstrap4.min.js',
+                ],
                 [
                     'type' => 'css',
                     'asset' => true,
+                    'location' => 'vendor/datatables/css/dataTables.bootstrap4.min.css',
+                ],
+            ],
+        ],
+
+        // BỔ SUNG TOASTR CHO THÔNG BÁO AJAX
+        'Toastr' => [
+            'active' => true,  // <-- ĐỔI THÀNH TRUE
+            'files' => [
+                [
+                    'type' => 'css',
+                    'asset' => true, // Đảm bảo asset là true
                     'location' => 'vendor/toastr/toastr.min.css',
                 ],
                 [
