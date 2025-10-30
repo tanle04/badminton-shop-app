@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class RenameStatisticsCounters extends Migration
 {
@@ -13,15 +14,23 @@ class RenameStatisticsCounters extends Migration
      */
     public function up()
     {
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('peak_connection_count', 'peak_connections_count');
-        });
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('websocket_message_count', 'websocket_messages_count');
-        });
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('api_message_count', 'api_messages_count');
-        });
+        // Check if table exists before attempting to rename columns
+        if (!Schema::hasTable('websockets_statistics_entries')) {
+            return;
+        }
+
+        // Use raw SQL for MariaDB compatibility
+        if (Schema::hasColumn('websockets_statistics_entries', 'peak_connection_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `peak_connection_count` `peak_connections_count` INTEGER NOT NULL');
+        }
+
+        if (Schema::hasColumn('websockets_statistics_entries', 'websocket_message_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `websocket_message_count` `websocket_messages_count` INTEGER NOT NULL');
+        }
+
+        if (Schema::hasColumn('websockets_statistics_entries', 'api_message_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `api_message_count` `api_messages_count` INTEGER NOT NULL');
+        }
     }
 
     /**
@@ -31,14 +40,22 @@ class RenameStatisticsCounters extends Migration
      */
     public function down()
     {
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('peak_connections_count', 'peak_connection_count');
-        });
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('websocket_messages_count', 'websocket_message_count');
-        });
-        Schema::table('websockets_statistics_entries', function (Blueprint $table) {
-            $table->renameColumn('api_messages_count', 'api_message_count');
-        });
+        // Check if table exists before attempting to rename columns
+        if (!Schema::hasTable('websockets_statistics_entries')) {
+            return;
+        }
+
+        // Use raw SQL for MariaDB compatibility
+        if (Schema::hasColumn('websockets_statistics_entries', 'peak_connections_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `peak_connections_count` `peak_connection_count` INTEGER NOT NULL');
+        }
+
+        if (Schema::hasColumn('websockets_statistics_entries', 'websocket_messages_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `websocket_messages_count` `websocket_message_count` INTEGER NOT NULL');
+        }
+
+        if (Schema::hasColumn('websockets_statistics_entries', 'api_messages_count')) {
+            DB::statement('ALTER TABLE `websockets_statistics_entries` CHANGE `api_messages_count` `api_message_count` INTEGER NOT NULL');
+        }
     }
 }
