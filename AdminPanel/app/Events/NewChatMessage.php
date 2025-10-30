@@ -5,11 +5,11 @@ namespace App\Events;
 use App\Models\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewChatMessage implements ShouldBroadcast
+class NewChatMessage implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -17,26 +17,47 @@ class NewChatMessage implements ShouldBroadcast
 
     public function __construct(Message $message)
     {
-        // Khi event được tạo, Laravel sẽ tự động gọi $message->load('sender') 
-        // vì bạn đã định nghĩa protected $with trong Model Message
-        $this->message = $message;
+        $this->message = $message->load('sender');
     }
 
     /**
-     * Định nghĩa kênh mà tin nhắn sẽ được broadcast (gửi) đến.
+     * ⭐ FIX: Gửi tin nhắn đến CẢ 2 NGƯỜI (sender và receiver)
+     * Trả về ARRAY of channels thay vì 1 channel
      */
-    public function broadcastOn(): PrivateChannel
+    public function broadcastOn(): array
     {
-        // Gửi tin nhắn đến kênh riêng tư của người nhận (ID của người nhận)
-        // Kênh này chỉ có thể được lắng nghe bởi người dùng có ID tương ứng.
-        return new PrivateChannel('employee.chat.' . $this->message->receiver_id);
+        return [
+            // Gửi đến người NHẬN
+            new PrivateChannel('employee.chat.' . $this->message->receiver_id),
+
+            // Gửi đến người GỬI (để họ thấy tin nhắn của chính mình)
+            new PrivateChannel('employee.chat.' . $this->message->sender_id),
+        ];
     }
 
     /**
-     * Định nghĩa tên event mà Front-end (JavaScript) sẽ lắng nghe.
+     * Tên event mà JavaScript sẽ lắng nghe
      */
     public function broadcastAs(): string
     {
         return 'message.sent';
+    }
+    
+
+    public function broadcastWith(): array
+    {
+        return [
+            'message' => [
+                'id' => $this->message->id,
+                'sender_id' => $this->message->sender_id,
+                'receiver_id' => $this->message->receiver_id,
+                'message' => $this->message->message,
+                'created_at' => $this->message->created_at->toISOString(),
+                'sender' => [
+                    'employeeID' => $this->message->sender->employeeID,
+                    'fullName' => $this->message->sender->fullName,
+                ]
+            ]
+        ];
     }
 }

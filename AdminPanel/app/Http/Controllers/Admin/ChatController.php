@@ -38,32 +38,86 @@ class ChatController extends Controller
      * Gửi và lưu tin nhắn vào database, sau đó broadcast qua Websocket.
      */
     public function sendMessage(Request $request)
-    {
-        Log::info('Bắt đầu gửi tin nhắn...', $request->all()); // <-- LOG 1
-
-        $request->validate([
+{
+    // Debug log
+    \Log::info('📥 Received message request', [
+        'receiver_id' => $request->receiver_id,
+        'message' => $request->message,
+        'sender_id' => auth()->guard('admin')->id()
+    ]);
+    
+    try {
+        $validated = $request->validate([
             'receiver_id' => 'required|exists:employees,employeeID',
-            'message' => 'required|string|max:1000',
+            'message' => 'required|string|max:1000'
         ]);
 
-        $sender = Auth::guard('admin')->user();
-
+        $senderId = auth()->guard('admin')->id();
+        
+        \Log::info('✅ Validation passed', [
+            'sender_id' => $senderId,
+            'receiver_id' => $validated['receiver_id']
+        ]);
+        
+        // Tạo message
         $message = Message::create([
-            'sender_id' => $sender->employeeID,
-            'receiver_id' => $request->receiver_id,
-            'message' => $request->message,
+            'sender_id' => $senderId,
+            'receiver_id' => $validated['receiver_id'],
+            'message' => $validated['message']
         ]);
 
-        Log::info('Tin nhắn đã lưu vào DB. Đang broadcast...', $message->toArray()); // <-- LOG 2
+        \Log::info('✅ Message created', ['message_id' => $message->id]);
 
-        // Gửi event đến WebSocket server, toOthers() để người gửi không tự nhận lại tin nhắn
+        // Load relationships
+        $message->load('sender', 'receiver');
+
+        // Broadcast CHỈ cho receiver
         broadcast(new NewChatMessage($message))->toOthers();
+        
+        \Log::info('✅ Message broadcasted');
 
-        Log::info('Đã broadcast xong.'); // <-- LOG 3
+        // ✅ QUAN TRỌNG: Trả về JSON rõ ràng
+        $response = [
+            'success' => true,
+            'message' => [
+                'id' => $message->id,
+                'sender_id' => $message->sender_id,
+                'receiver_id' => $message->receiver_id,
+                'message' => $message->message,
+                'created_at' => $message->created_at->toISOString(),
+                'sender' => [
+                    'employeeID' => $message->sender->employeeID,
+                    'fullName' => $message->sender->fullName,
+                    'img_url' => $message->sender->img_url,
+                ]
+            ]
+        ];
+        
+        \Log::info('✅ Returning response', $response);
 
-        // Trả về tin nhắn đã lưu (Model Message đã tự động nạp sender)
-        return response()->json(['status' => 'success', 'message' => $message]);
+        return response()->json($response, 200);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        \Log::error('❌ Validation error', ['errors' => $e->errors()]);
+        
+        return response()->json([
+            'success' => false,
+            'error' => 'Dữ liệu không hợp lệ',
+            'errors' => $e->errors()
+        ], 422);
+        
+    } catch (\Exception $e) {
+        \Log::error('❌ Send message error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Lấy lịch sử chat giữa người gửi và người nhận.

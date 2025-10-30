@@ -145,12 +145,12 @@
                     <div class="card-body">
                         <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Lưu ý quan trọng:</strong> 
-                            Hệ thống sẽ tự động so sánh và cập nhật biến thể dựa trên tổ hợp thuộc tính được chọn.
+                            <strong>Lưu ý quan trọng (Đã cập nhật):</strong> 
+                            Hệ thống sẽ tự động so sánh và cập nhật biến thể.
                             <ul class="mb-0 mt-2">
-                                <li>Biến thể cũ khớp với tổ hợp mới sẽ được giữ nguyên</li>
-                                <li>Biến thể mới sẽ được tạo tự động</li>
-                                <li>Biến thể không còn trong danh sách sẽ bị xóa</li>
+                                <li>Biến thể cũ khớp với tổ hợp mới sẽ được giữ nguyên (hoặc kích hoạt lại).</li>
+                                <li>Biến thể mới sẽ được tạo tự động.</li>
+                                <li>Biến thể không còn trong danh sách sẽ bị <strong>vô hiệu hóa</strong> (thay vì xóa) để bảo toàn dữ liệu đơn hàng.</li>
                             </ul>
                         </div>
                         
@@ -294,13 +294,18 @@
                             <dd class="col-sm-6">
                                 <span class="badge badge-primary">{{ $product->variants->count() }}</span>
                             </dd>
+                            
+                            <dt class="col-sm-6">Biến thể hoạt động:</dt>
+                            <dd class="col-sm-6">
+                                <span class="badge badge-info">{{ $product->variants->where('is_active', 1)->count() }}</span>
+                            </dd>
 
-                            <dt class="col-sm-6">Tổng tồn kho:</dt>
+                            <dt class="col-sm-6">Tổng tồn kho (Active):</dt>
                             <dd class="col-sm-6">
                                 <span class="badge badge-success">{{ $product->stock }}</span>
                             </dd>
 
-                            <dt class="col-sm-6">Giá từ:</dt>
+                            <dt class="col-sm-6">Giá từ (Active):</dt>
                             <dd class="col-sm-6">
                                 <span class="badge badge-info">{{ number_format($product->price) }}đ</span>
                             </dd>
@@ -397,6 +402,7 @@ const PRODUCT_ID = {{ $product->productID }};
 const CURRENT_CATEGORY_ID = {{ $product->categoryID }};
 
 // Dữ liệu variants hiện tại (key = tổ hợp valueIDs)
+// *** UPDATED: Thêm 'is_active' vào object ***
 const CURRENT_VARIANTS = {!! json_encode($product->variants->mapWithKeys(function($item) {
     $key = collect($item->attributeValues)->pluck('valueID')->sort()->join('_');
     return [$key => [
@@ -404,6 +410,7 @@ const CURRENT_VARIANTS = {!! json_encode($product->variants->mapWithKeys(functio
         'sku' => $item->sku,
         'price' => $item->price,
         'stock' => $item->stock,
+        'is_active' => $item->is_active, // <-- ĐÃ THÊM
         'attribute_values' => collect($item->attributeValues)->pluck('valueID')->toArray()
     ]];
 })) !!};
@@ -412,7 +419,7 @@ const CURRENT_VARIANTS = {!! json_encode($product->variants->mapWithKeys(functio
 const CATEGORY_ATTRIBUTES_MAP = @json($categoryAttributes);
 
 console.log('🎯 Product ID:', PRODUCT_ID);
-console.log('📦 Current Variants:', CURRENT_VARIANTS);
+console.log('📦 Current Variants (đã có is_active):', CURRENT_VARIANTS);
 console.log('🗂️ Category Mapping:', CATEGORY_ATTRIBUTES_MAP);
 
 // ============================================================================
@@ -446,17 +453,17 @@ $(document).ready(function() {
         }
     });
     
-    // Xử lý preview file upload
-    $('#new_main_image').on('change', function() {
-        const fileName = $(this).val().split('\\').pop();
-        $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
-    });
-    
-    $('#new_gallery_images').on('change', function() {
-        const fileCount = this.files.length;
-        const label = fileCount > 1 ? `${fileCount} files đã chọn` : $(this).val().split('\\').pop();
-        $(this).siblings('.custom-file-label').addClass('selected').html(label);
-    });
+    // Xử lý preview file upload (sử dụng bs-custom-file-input)
+    // Đảm bảo bạn đã load plugin này trong adminlte config
+    if (typeof bsCustomFileInput !== 'undefined') {
+        bsCustomFileInput.init();
+    } else {
+        // Fallback cho adminlte cũ
+        $('.custom-file-input').on('change', function() {
+            const fileName = $(this).val().split('\\').pop();
+            $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
+        });
+    }
 });
 
 // ============================================================================
@@ -503,11 +510,13 @@ function renderAttributes(attributes) {
         return;
     }
     
-    // Lấy tất cả valueIDs đang được dùng trong variants hiện tại
+    // *** UPDATED: Chỉ lấy valueIDs từ các variants đang ACTIVE ***
+    // Lấy tất cả valueIDs đang được dùng trong variants hiện tại VÀ ĐANG ACTIVE
     const currentValueIDs = Object.values(CURRENT_VARIANTS)
+        .filter(v => v.is_active == 1) // <-- CHỈ LỌC CÁC VARIANT ACTIVE
         .flatMap(v => v.attribute_values);
     
-    console.log('📋 Current value IDs:', currentValueIDs);
+    console.log('📋 Current ACTIVE value IDs (để check):', currentValueIDs);
     
     attributes.forEach(attr => {
         let html = `
@@ -519,6 +528,7 @@ function renderAttributes(attributes) {
         `;
         
         attr.values.forEach(value => {
+            // Check box sẽ chỉ được check nếu nó thuộc về một variant đang active
             const isChecked = currentValueIDs.includes(value.valueID) ? 'checked' : '';
             
             html += `
@@ -550,7 +560,7 @@ function renderAttributes(attributes) {
         $container.append(html);
     });
     
-    console.log('✅ Attributes rendered');
+    console.log('✅ Attributes rendered (chỉ check các variant active)');
 }
 
 // ============================================================================
@@ -572,7 +582,7 @@ function generateVariants() {
         }
         
         selectedValues[attrId].push({
-            id: valueId,
+            id: parseInt(valueId), // Đảm bảo là số
             name: valueName
         });
     });
@@ -643,7 +653,7 @@ function renderVariantMatrix(variants) {
     
     variants.forEach((variantCombo, index) => {
         // Tạo key để tra cứu variant cũ
-        const valueIds = variantCombo.map(v => v.id).sort();
+        const valueIds = variantCombo.map(v => v.id).sort((a, b) => a - b);
         const lookupKey = valueIds.join('_');
         
         // Tên tổ hợp
@@ -667,9 +677,17 @@ function renderVariantMatrix(variants) {
             ? `<input type="hidden" name="variants[${index}][id]" value="${existingVariant.variantID}">`
             : `<input type="hidden" name="variants[${index}][id]" value="NEW">`;
         
-        const statusBadge = existingVariant 
-            ? '<span class="badge badge-success">Đã tồn tại</span>'
-            : '<span class="badge badge-primary">Mới</span>';
+        // *** UPDATED: Logic badge trạng thái thông minh hơn ***
+        let statusBadge;
+        if (existingVariant) {
+            if (existingVariant.is_active == 1) {
+                statusBadge = '<span class="badge badge-success">Đã tồn tại</span>';
+            } else {
+                statusBadge = '<span class="badge badge-info">Kích hoạt lại</span>';
+            }
+        } else {
+            statusBadge = '<span class="badge badge-primary">Mới</span>';
+        }
         
         html += `
             <tr>
@@ -748,7 +766,12 @@ function deleteImage(imageId) {
         },
         error: function(xhr) {
             console.error('❌ Error deleting image:', xhr);
-            const response = JSON.parse(xhr.responseText);
+            let response = {};
+            try {
+                response = JSON.parse(xhr.responseText);
+            } catch (e) {
+                response.message = 'Lỗi server không xác định';
+            }
             toastr.error(response.message || 'Lỗi server khi xóa ảnh');
         }
     });

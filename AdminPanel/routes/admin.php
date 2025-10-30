@@ -53,8 +53,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::prefix('chat')->name('chat.')->controller(ChatController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/employees', 'getEmployees')->name('employees');
+            Route::post('/chat/send', [ChatController::class, 'sendMessage'])
+                ->name('admin.chat.send');
             Route::post('/send', 'sendMessage')->name('send');
             Route::get('/history/{receiverId}', 'getHistory')->name('history');
+            Route::get('/chat/unread-count', [ChatController::class, 'getUnreadCount']);
+            Route::post('/chat/mark-read/{employeeId}', [ChatController::class, 'markAsRead']);
         });
 
         // =================================================================
@@ -151,16 +155,41 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::middleware('can:marketing')->group(function () {
 
             // Mã giảm giá (Vouchers)
+            // ============================================================================
+            // WEB ROUTES (Hiển thị views)
+            // ============================================================================
             Route::resource('vouchers', VoucherController::class);
-            // 1. Route để lấy dữ liệu JSON cho bảng
-            Route::get('vouchers-api', [VoucherController::class, 'apiIndex'])
+
+            // ============================================================================
+            // API ROUTES (Cho AJAX)
+            // ============================================================================
+
+            // GET: Lấy danh sách vouchers với search & filter
+            Route::get('vouchers-api/list', [VoucherController::class, 'apiIndex'])
                 ->name('vouchers.apiIndex');
 
-            // 2. Route để bật/tắt trạng thái
+            // GET: Lấy thống kê vouchers
+            Route::get('vouchers-api/stats', [VoucherController::class, 'apiStats'])
+                ->name('vouchers.apiStats');
+
+            // PUT: Bật/tắt voucher
             Route::put('vouchers/{voucher}/toggle-active', [VoucherController::class, 'toggleActive'])
                 ->name('vouchers.toggleActive');
             // Slider/Banner
+            // Resource routes (CRUD cơ bản)
             Route::resource('sliders', SliderController::class);
+
+            // API routes (cho AJAX)
+            Route::get('sliders-api/list', [SliderController::class, 'apiIndex'])
+                ->name('sliders.apiIndex');
+
+            // Cập nhật thứ tự hiển thị (drag & drop)
+            Route::post('sliders/update-order', [SliderController::class, 'updateOrder'])
+                ->name('sliders.updateOrder');
+
+            // Toggle status (active/inactive)
+            Route::post('sliders/{slider}/toggle-status', [SliderController::class, 'toggleStatus'])
+                ->name('sliders.toggleStatus');
 
             // Chương trình Giảm giá Sản phẩm
             Route::prefix('product-discounts')->name('product-discounts.')->controller(AdminDiscountController::class)->group(function () {

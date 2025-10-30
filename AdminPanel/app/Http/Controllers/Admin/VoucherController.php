@@ -4,146 +4,223 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Voucher; // Model Voucher
+use App\Models\Voucher;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class VoucherController extends Controller
 {
-    // LƯU Ý: Các route này được bảo vệ bởi Gate 'can:marketing' hoặc 'can:admin'
-
-    /**
-     * Hiển thị danh sách tất cả Vouchers.
-     */
+    // ============================================================================
+    // WEB VIEWS
+    // ============================================================================
+    
     public function index()
     {
-        $vouchers = Voucher::latest('voucherID')->paginate(10);
-        return view('admin.vouchers.index', compact('vouchers'));
+        return view('admin.vouchers.index');
     }
 
-    /**
-     * Hiển thị form tạo Voucher mới.
-     */
     public function create()
     {
         return view('admin.vouchers.create');
     }
 
-    /**
-     * Lưu trữ Voucher mới vào DB.
-     */
-    public function store(Request $request)
-    {
-        $request->validate($this->voucherValidationRules($request));
-
-        // Lấy dữ liệu và xử lý checkbox (isActive, isPrivate)
-        $data = $request->all();
-        $data['isActive'] = $request->has('isActive');
-        $data['isPrivate'] = $request->has('isPrivate');
-
-        Voucher::create($data);
-
-        return redirect()->route('admin.vouchers.index')
-            ->with('success', 'Mã giảm giá mới đã được tạo thành công!');
-    }
-
-    /**
-     * Hiển thị form chỉnh sửa Voucher.
-     */
     public function edit(Voucher $voucher)
     {
         return view('admin.vouchers.edit', compact('voucher'));
     }
 
+    // ============================================================================
+    // API ENDPOINTS (CHO AJAX)
+    // ============================================================================
+    
     /**
-     * Cập nhật Voucher đã tồn tại.
+     * 🔍 API: Lấy danh sách vouchers với search & filter
      */
-    public function update(Request $request, Voucher $voucher)
+    public function apiIndex(Request $request)
     {
-        // Sử dụng voucherValidationRules và bỏ qua ID của voucher đang sửa
-        $request->validate($this->voucherValidationRules($request, $voucher->voucherID));
+        $query = Voucher::query();
 
-        // Lấy dữ liệu và xử lý checkbox (isActive, isPrivate)
-        $data = $request->all();
-        $data['isActive'] = $request->has('isActive');
-        $data['isPrivate'] = $request->has('isPrivate');
+        // === 🔍 SEARCH ===
+        if ($search = $request->get('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('voucherCode', 'LIKE', "%{$search}%")
+                  ->orWhere('voucherName', 'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%");
+            });
+        }
 
-        $voucher->update($data);
+        // === 🎯 FILTERS ===
+        
+        // Filter theo trạng thái
+        if ($status = $request->get('status')) {
+            $now = now();
+            
+            switch ($status) {
+                case 'active':
+                    $query->where('isActive', true)
+                          ->where('startDate', '<=', $now)
+                          ->where('endDate', '>=', $now);
+                    break;
+                    
+                case 'inactive':
+                    $query->where('isActive', false);
+                    break;
+                    
+                case 'expired':
+                    $query->where('endDate', '<', $now);
+                    break;
+                    
+                case 'upcoming':
+                    $query->where('startDate', '>', $now);
+                    break;
+            }
+        }
 
-        return redirect()->route('admin.vouchers.index')
-            ->with('success', 'Mã giảm giá đã được cập nhật thành công!');
+        // Filter theo loại giảm giá
+        if ($type = $request->get('type')) {
+            $query->where('discountType', $type);
+        }
+
+        // Filter theo phạm vi (public/private)
+        if ($scope = $request->get('scope')) {
+            if ($scope === 'public') {
+                $query->where('isPrivate', false);
+            } elseif ($scope === 'private') {
+                $query->where('isPrivate', true);
+            }
+        }
+
+        // Filter theo khoảng thời gian
+        if ($request->has('date_from')) {
+            $query->where('startDate', '>=', $request->date_from);
+        }
+        if ($request->has('date_to')) {
+            $query->where('endDate', '<=', $request->date_to);
+        }
+
+        // === 📊 SORTING ===
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDir = $request->get('sort_dir', 'desc');
+        
+        // Validate sort column
+        $allowedSorts = ['voucherCode', 'voucherName', 'startDate', 'endDate', 'created_at', 'discountValue', 'usedCount'];
+        if (in_array($sortBy, $allowedSorts)) {
+            $query->orderBy($sortBy, $sortDir);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        // === 📄 PAGINATION ===
+        $perPage = $request->get('per_page', 15);
+        $vouchers = $query->paginate($perPage);
+
+        return response()->json($vouchers);
     }
 
     /**
-     * Xóa Voucher khỏi DB.
+     * 📊 API: Lấy thống kê vouchers
      */
+    public function apiStats()
+    {
+        $now = now();
+        
+        $stats = [
+            'total' => Voucher::count(),
+            
+            'active' => Voucher::where('isActive', true)
+                              ->where('startDate', '<=', $now)
+                              ->where('endDate', '>=', $now)
+                              ->count(),
+            
+            'expired' => Voucher::where('endDate', '<', $now)->count(),
+            
+            'inactive' => Voucher::where('isActive', false)->count(),
+            
+            'upcoming' => Voucher::where('startDate', '>', $now)->count(),
+        ];
+
+        return response()->json($stats);
+    }
+
+    // ============================================================================
+    // CRUD OPERATIONS
+    // ============================================================================
+    
+    public function store(Request $request)
+    {
+        $validated = $request->validate($this->voucherValidationRules($request));
+
+        // Xử lý checkboxes
+        $validated['isActive'] = $request->has('isActive');
+        $validated['isPrivate'] = $request->has('isPrivate');
+
+        Voucher::create($validated);
+
+        return redirect()
+            ->route('admin.vouchers.index')
+            ->with('success', 'Mã giảm giá mới đã được tạo thành công!');
+    }
+
+    public function update(Request $request, Voucher $voucher)
+    {
+        $validated = $request->validate($this->voucherValidationRules($request, $voucher->voucherID));
+
+        // Xử lý checkboxes
+        $validated['isActive'] = $request->has('isActive');
+        $validated['isPrivate'] = $request->has('isPrivate');
+
+        $voucher->update($validated);
+
+        return redirect()
+            ->route('admin.vouchers.index')
+            ->with('success', 'Mã giảm giá đã được cập nhật thành công!');
+    }
+
     public function destroy(Voucher $voucher)
     {
         try {
-            // Xóa Voucher (Order FK sẽ tự động set NULL nhờ DB config)
+            $code = $voucher->voucherCode;
             $voucher->delete();
-            return redirect()->route('admin.vouchers.index')
+
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Đã xóa voucher {$code}"
+                ]);
+            }
+
+            return redirect()
+                ->route('admin.vouchers.index')
                 ->with('success', 'Mã giảm giá đã được xóa.');
+                
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Không thể xóa mã giảm giá này: ' . $e->getMessage());
+            if (request()->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Không thể xóa: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()
+                ->back()
+                ->with('error', 'Không thể xóa mã giảm giá: ' . $e->getMessage());
         }
     }
 
     /**
-     * Hàm phụ trợ định nghĩa quy tắc Validation cho Voucher.
+     * 🔄 Bật/tắt voucher
      */
-    protected function voucherValidationRules(Request $request, $ignoreId = null)
-    {
-        return [
-            'voucherCode' => [
-                'required',
-                'string',
-                'max:50',
-                // Đảm bảo voucherCode là duy nhất, loại trừ voucher đang được sửa (nếu có)
-                Rule::unique('vouchers', 'voucherCode')->ignore($ignoreId, 'voucherID'),
-            ],
-            'description' => 'nullable|string|max:255',
-            'discountType' => 'required|in:percentage,fixed',
-            'discountValue' => 'required|numeric|min:1',
-            'minOrderValue' => 'required|numeric|min:0',
-            'maxDiscountAmount' => [
-                'nullable',
-                'numeric',
-                // Yêu cầu maxDiscountAmount nếu discountType là percentage
-                Rule::requiredIf($request->discountType == 'percentage'),
-                'gt:0'
-            ],
-            'maxUsage' => 'required|integer|min:1',
-            // Sử dụng định dạng datetime-local (Y-m-d\TH:i)
-            'startDate' => 'required|date|before_or_equal:endDate',
-            'endDate' => 'required|date|after_or_equal:startDate',
-        ];
-    }
-    // ⭐ HÀM MỚI 1: Cung cấp dữ liệu JSON
-    public function apiIndex()
-    {
-        // Lấy tất cả vouchers, sắp xếp theo ngày tạo mới nhất
-        $vouchers = Voucher::orderBy('created_at', 'desc')->get();
-
-        // Trả về JSON, bao bọc trong key 'data'
-        return response()->json(['data' => $vouchers]);
-    }
-
-    // ⭐ HÀM MỚI 2: Xử lý bật/tắt
     public function toggleActive(Voucher $voucher)
     {
         try {
-            // Đảo ngược trạng thái
             $voucher->isActive = !$voucher->isActive;
             $voucher->save();
 
-            // Trả về trạng thái mới
             return response()->json([
                 'success' => true,
                 'message' => 'Cập nhật trạng thái thành công.',
-                'isActive' => $voucher->isActive // Gửi trạng thái mới về cho JS
+                'isActive' => $voucher->isActive
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -151,5 +228,49 @@ class VoucherController extends Controller
                 'message' => 'Lỗi: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    // ============================================================================
+    // VALIDATION RULES
+    // ============================================================================
+    
+    protected function voucherValidationRules(Request $request, $ignoreId = null)
+    {
+        return [
+            'voucherCode' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('vouchers', 'voucherCode')->ignore($ignoreId, 'voucherID'),
+            ],
+            'voucherName' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'discountType' => 'required|in:percentage,fixed',
+            'discountValue' => 'required|numeric|min:1',
+            'minOrderValue' => 'required|numeric|min:0',
+            'maxDiscountAmount' => [
+                'nullable',
+                'numeric',
+                Rule::requiredIf($request->discountType == 'percentage'),
+                'gt:0'
+            ],
+            'maxUsage' => 'required|integer|min:1',
+            'startDate' => 'required|date|before_or_equal:endDate',
+            'endDate' => 'required|date|after_or_equal:startDate',
+        ];
+    }
+    
+    /**
+     * 🔧 Override boot để tự động set voucherName nếu chưa có
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        
+        static::creating(function ($voucher) {
+            if (empty($voucher->voucherName)) {
+                $voucher->voucherName = $voucher->voucherCode;
+            }
+        });
     }
 }

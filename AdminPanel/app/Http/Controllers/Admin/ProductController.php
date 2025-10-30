@@ -90,6 +90,8 @@ class ProductController extends Controller
                 'brandID' => $request->brandID,
                 'price' => $request->variants[0]['price'],
                 'stock' => 0,
+                // Mặc định sản phẩm mới là active
+                'is_active' => 1, 
             ]);
 
             foreach ($request->variants as $variantData) {
@@ -98,6 +100,7 @@ class ProductController extends Controller
                     'price' => $variantData['price'],
                     'stock' => $variantData['stock'],
                     'reservedStock' => 0,
+                    'is_active' => 1, // <-- THÊM MỚI: Đặt là active
                 ]);
 
                 $totalStock += $variant->stock;
@@ -134,7 +137,8 @@ class ProductController extends Controller
         $product->load([
             'category',
             'brand',
-            'variants.attributeValues.attribute',
+            // Load TẤT CẢ variants, bao gồm cả active và inactive
+            'variants.attributeValues.attribute', 
             'images'
         ]);
 
@@ -181,7 +185,8 @@ class ProductController extends Controller
             'variants' => 'required|array',
             'variants.*.id' => [
                 'required',
-                'in:NEW,' . $product->variants->pluck('variantID')->implode(','),
+                // Cho phép 'NEW' hoặc ID của bất kỳ variant nào (kể cả inactive)
+                'in:NEW,' . $product->variants()->pluck('variantID')->implode(','),
             ],
             'variants.*.price' => 'required|numeric|min:1000',
             'variants.*.stock' => 'required|integer|min:0',
@@ -217,54 +222,72 @@ class ProductController extends Controller
                 'brandID' => $request->brandID,
             ]);
 
-            $totalStock = 0;
-            $minPrice = PHP_INT_MAX;
+            // Lấy TẤT CẢ variant IDs hiện tại của sản phẩm
+            $allCurrentVariantIds = $product->variants->pluck('variantID')->toArray();
 
-            $submittedVariantIds = collect($request->variants)
+            // Lấy các variant IDs được submit từ form (chỉ những cái đã tồn tại, không phải "NEW")
+            $submittedExistingVariantIds = collect($request->variants)
                 ->where('id', '!=', 'NEW')
                 ->pluck('id')
+                ->map(fn($id) => (int)$id) // Đảm bảo là integer
                 ->toArray();
 
-            // Xóa variants không còn trong form
-            $variantsToDelete = $product->variants()
-                ->whereNotIn('variantID', $submittedVariantIds)
-                ->get();
-
-            foreach ($variantsToDelete as $variantToDelete) {
-                $variantToDelete->attributeValues()->detach();
-                $variantToDelete->delete();
+            // 1. Vô hiệu hóa (disable) các variants không còn trong form
+            // Đây là những variant BỊ BỎ TICK
+            $variantIdsToDisable = array_diff($allCurrentVariantIds, $submittedExistingVariantIds);
+            
+            if (!empty($variantIdsToDisable)) {
+                ProductVariant::whereIn('variantID', $variantIdsToDisable)
+                              ->update(['is_active' => 0]);
             }
 
-            // Cập nhật hoặc tạo mới variants
+            // 2. Cập nhật hoặc Tạo mới / Kích hoạt lại variants
             foreach ($request->variants as $variantData) {
                 $variantPayload = [
                     'sku' => $variantData['sku'],
                     'price' => $variantData['price'],
                     'stock' => $variantData['stock'],
+                    'is_active' => 1, // <-- QUAN TRỌNG: Luôn set là active khi submit
                 ];
 
+                $attributeValues = $variantData['attribute_values'] ?? [];
+
                 if ($variantData['id'] === 'NEW') {
+                    // Tạo mới
                     $variantPayload['reservedStock'] = 0;
                     $variant = $product->variants()->create($variantPayload);
+                    $variant->attributeValues()->sync($attributeValues);
+
                 } else {
-                    $variant = $product->variants()->find($variantData['id']);
+                    // Cập nhật (hoặc kích hoạt lại)
+                    $variant = ProductVariant::find($variantData['id']);
 
                     if (!$variant) {
                         throw new \Exception("Variant ID {$variantData['id']} không được tìm thấy.");
                     }
+
+                    // Cập nhật thông tin và set is_active = 1
                     $variant->update($variantPayload);
+                    $variant->attributeValues()->sync($attributeValues);
                 }
-
-                if (isset($variantData['attribute_values'])) {
-                    $variant->attributeValues()->sync($variantData['attribute_values']);
-                }
-
-                $totalStock += $variant->stock;
-                $minPrice = min($minPrice, $variant->price);
             }
 
+            // 3. Tính toán lại stock và price cho SẢN PHẨM CHÍNH
+            // Dựa trên các biến thể ACTIVE
+            $activeVariants = $product->variants()->where('is_active', 1)->get();
+            
+            $totalStock = $activeVariants->sum('stock');
+            $minPrice = $activeVariants->min('price');
+
+            // Nếu không có variant nào active, set stock=0
+            // và lấy giá min của tất cả (kể cả inactive) để hiển thị "Giá từ..."
+            if ($activeVariants->isEmpty()) {
+                $totalStock = 0;
+                $minPrice = $product->variants()->min('price') ?? 0; 
+            }
+            
             $product->stock = $totalStock;
-            $product->price = $product->variants()->min('price') ?? 0;
+            $product->price = $minPrice;
             $product->save();
 
             $this->handleImageUpdate($request, $product);
@@ -299,6 +322,9 @@ class ProductController extends Controller
 
             $product->is_active = 0;
             $product->save();
+            
+            // Tùy chọn: Cũng vô hiệu hóa tất cả các biến thể của nó
+            // $product->variants()->update(['is_active' => 0]);
 
             DB::commit();
 
