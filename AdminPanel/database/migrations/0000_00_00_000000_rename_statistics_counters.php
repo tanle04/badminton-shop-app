@@ -41,4 +41,8 @@ class RenameStatisticsCounters extends Migration
             $table->renameColumn('api_messages_count', 'api_message_count');
         });
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ff7d64dca424a2dfe45ffecdd3edae15b4b199eb
