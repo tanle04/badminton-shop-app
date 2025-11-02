@@ -1,105 +1,71 @@
 # ============================================
-# 🔹 GLOBAL IGNORE SETTINGS (Windows + Editor)
+# 🔹 ENVIRONMENT FILES
 # ============================================
-.DS_Store
-Thumbs.db
-desktop.ini
-ehthumbs.db
-*.lnk
-*.tmp
-*.bak
-*.swp
-*.lock
-*.log
+.env
+.env.local
+.env.production
+.env.testing
 
-# VS Code
-.vscode/
-.history/
-.idea/
+# ⚠️ KEEP .env.example in repository
+!.env.example
+!AdminPanel/.env.example
+!BackendApi/.env.example
 
 # ============================================
-# 🔹 ANDROID PROJECT (Android Studio)
+# 🔹 DEPENDENCIES & BUILD
 # ============================================
-.gradle/
-local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build/
-captures/
-.externalNativeBuild/
-.cxx/
-output.json
-
-# Android Studio build outputs
-**/build/
-**/captures/
-**/outputs/
-**/gradle/
-**/.gradle/
-
-# Keystore files (do not commit your signing keys)
-*.jks
-*.keystore
-*.pem
-
-# Gradle Wrapper (optional to ignore)
-.gradle/
-gradle-app.setting
-gradlew
-gradlew.bat
-
-# ============================================
-# 🔹 BACKEND API (PHP - XAMPP)
-# ============================================
-# Cache and temp files
-/vendor/
+vendor/
 node_modules/
 composer.lock
 package-lock.json
-.env
-.env.*
+
+# ============================================
+# 🔹 LARAVEL SPECIFIC
+# ============================================
+AdminPanel/storage/*.key
+AdminPanel/storage/framework/cache/**
+AdminPanel/storage/framework/sessions/**
+AdminPanel/storage/framework/views/**
+AdminPanel/storage/logs/**
+AdminPanel/bootstrap/cache/**
+
+# ============================================
+# 🔹 UPLOADS & TEMP FILES
+# ============================================
+uploads/
+images/uploads/
 *.log
 *.cache
+*.tmp
 *.bak
 *.old
 *.sql
 *.zip
-*.rar
-
-# IDE & Debug files
-/.idea/
-/nbproject/
-/.vscode/
-
-# Upload or image folders (optional - keep local only)
-uploads/
-images/uploads/
-uploads/tmp/
 
 # ============================================
-# 🔹 SYSTEM FILES
+# 🔹 IDE & SYSTEM
 # ============================================
-# Windows
-ehthumbs.db
-Thumbs.db
-Desktop.ini
-
-# macOS
+.vscode/
+.idea/
 .DS_Store
-.AppleDouble
-.LSOverride
+Thumbs.db
+desktop.ini
+*.swp
 
 # ============================================
-# 🔹 CUSTOM LOCAL TOOLS
+# 🔹 ANDROID
 # ============================================
-# Batch scripts, optional sync tools
-BackendApi/xampp-sync.bat
+AndroidApp/.gradle/
+AndroidApp/local.properties
+AndroidApp/build/
+AndroidApp/.idea/
+*.apk
+*.aab
 
 # ============================================
-# ✅ END OF FILE
+# 🔹 SECURITY
 # ============================================
+*.pem
+*.key
+*.jks
+*.keystore
