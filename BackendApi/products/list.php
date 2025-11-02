@@ -1,58 +1,72 @@
 <?php
-// ⭐ BẮT BUỘC: THÊM 3 DÒNG NÀY ĐỂ CHỐNG CACHE
+header("Content-Type: application/json; charset=UTF-8");
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// GET ?page=1&limit=10
-require_once '../bootstrap.php'; // mở db + headers
-// ⭐ THÊM: INCLUDE PRICE CALCULATOR
+require_once '../bootstrap.php';
 require_once '../utils/price_calculator.php';
 
-// Hàm trả về JSON nhất quán
-function json_response($isSuccess, $message, $page = null, $items = null) {
-    $response = [
-        'isSuccess' => $isSuccess,
-        'message' => $message
-    ];
-    if ($page !== null) {
-        $response['page'] = $page;
-    }
-    if ($items !== null) {
-        $response['items'] = $items;
-    }
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($response, JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-$page   = max(1, (int)($_GET['page'] ?? 1));
-$limit = max(1, min(50, (int)($_GET['limit'] ?? 10)));
-$offset = ($page-1)*$limit;
-
-$sql = "
-SELECT 
-    p.productID, p.productName, p.description,
-    p.price AS priceMin, /* Dùng p.price làm giá trị ban đầu (sẽ bị ghi đè) */
-    COALESCE(SUM(v.stock), p.stock) AS stockTotal,
-    b.brandName, c.categoryName,
-    (SELECT pi.imageUrl FROM productimages pi 
-        WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl
-FROM products p
-LEFT JOIN product_variants v ON v.productID = p.productID
-LEFT JOIN brands b ON b.brandID = p.brandID
-LEFT JOIN categories c ON c.categoryID = p.categoryID
-WHERE p.is_active = 1 
-GROUP BY p.productID
-ORDER BY p.createdDate DESC
-LIMIT ? OFFSET ?";
-
 try {
-    // ... (Prepare và execute SQL) ...
+    if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+        respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
+    }
+
+    // Phân trang
+    $page = max(1, (int)($_GET['page'] ?? 1));
+    $limit = max(1, min(50, (int)($_GET['limit'] ?? 20)));
+    $offset = ($page - 1) * $limit;
     
+    // Sorting (mới)
+    $sortBy = $_GET['sortBy'] ?? 'newest'; // newest, price_asc, price_desc, popular
+    
+    // Xác định ORDER BY
+    $orderClause = match($sortBy) {
+        'price_asc' => 'p.price ASC',
+        'price_desc' => 'p.price DESC',
+        'popular' => 'p.productID DESC', // Có thể thay bằng số lượng đã bán
+        default => 'p.createdDate DESC' // newest
+    };
+
+    $sql = "
+    SELECT 
+        p.productID, p.productName, p.description,
+        p.price AS basePrice,
+        p.stock,
+        b.brandName, c.categoryName,
+        (SELECT pi.imageUrl FROM productimages pi 
+            WHERE pi.productID = p.productID 
+            ORDER BY 
+                CASE pi.imageType 
+                    WHEN 'main' THEN 1 
+                    ELSE 2 
+                END, 
+                pi.imageID ASC 
+            LIMIT 1
+        ) AS imageUrl,
+        (SELECT COALESCE(SUM(v.stock - v.reservedStock), 0) 
+         FROM product_variants v 
+         WHERE v.productID = p.productID AND v.is_active = 1
+        ) AS totalAvailableStock,
+        (SELECT COALESCE(AVG(r.rating), 0) 
+         FROM reviews r 
+         WHERE r.productID = p.productID AND r.status = 'published'
+        ) AS averageRating,
+        (SELECT COUNT(*) 
+         FROM reviews r 
+         WHERE r.productID = p.productID AND r.status = 'published'
+        ) AS reviewCount
+    FROM products p
+    LEFT JOIN brands b ON b.brandID = p.brandID
+    LEFT JOIN categories c ON c.categoryID = p.categoryID
+    WHERE p.is_active = 1
+    GROUP BY p.productID
+    ORDER BY {$orderClause}
+    LIMIT ? OFFSET ?";
+
     $stmt = $mysqli->prepare($sql);
     if (!$stmt) {
-        json_response(false, "SQL Prepare failed: " . $mysqli->error);
+        respond(['isSuccess' => false, 'message' => 'SQL Prepare failed: ' . $mysqli->error], 500);
     }
     
     $stmt->bind_param("ii", $limit, $offset);
@@ -63,27 +77,49 @@ try {
     while ($row = $res->fetch_assoc()) {
         $productID = (int)$row['productID'];
         
-        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE VÀ GHI ĐÈ GIÁ MIN
-        // (Hàm này sẽ lấy giá GỐC vì sale đã hết hạn)
+        // Tính giá sale
         $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
 
-        $row['priceMin'] = $price_details['salePrice']; // Đây sẽ là 2,500,000đ
-        // Gán các cờ sale cần thiết cho ProductDto chính
+        $row['priceMin'] = $price_details['salePrice'];
         $row['originalPriceMin'] = $price_details['originalPrice']; 
-        $row['isDiscounted'] = $price_details['isDiscounted']; // Sẽ là false
+        $row['isDiscounted'] = $price_details['isDiscounted'];
+        
+        // Xử lý stock
+        $totalStock = (int)$row['totalAvailableStock'];
+        $row['totalAvailableStock'] = $totalStock;
+        $row['isInStock'] = $totalStock > 0;
+        $row['stockStatus'] = $totalStock > 10 ? 'in_stock' : ($totalStock > 0 ? 'low_stock' : 'out_of_stock');
+        
+        // Xử lý rating
+        $row['averageRating'] = round((float)$row['averageRating'], 1);
+        $row['reviewCount'] = (int)$row['reviewCount'];
+        
+        // Loại bỏ trường không cần thiết
+        unset($row['basePrice']);
+        unset($row['stock']);
         
         $data[] = $row;
     }
     
     $stmt->close();
 
-    // GỌI HÀM TRẢ VỀ JSON HỢP LỆ VỚI isSuccess
-    json_response(true, "Products listed successfully.", $page, $data);
+    // Lấy tổng số sản phẩm để tính tổng số trang
+    $countSql = "SELECT COUNT(*) as total FROM products WHERE is_active = 1";
+    $countResult = $mysqli->query($countSql);
+    $totalProducts = $countResult->fetch_assoc()['total'];
+    $totalPages = ceil($totalProducts / $limit);
 
-} catch (Exception $e) {
-    if (isset($stmt)) $stmt->close();
-    
-    // XỬ LÝ LỖI DB VÀ TRẢ VỀ isSuccess: false
-    json_response(false, "Database Error: " . $e->getMessage());
+    respond([
+        "isSuccess" => true,
+        "message" => "Products listed successfully.",
+        "page" => $page,
+        "limit" => $limit,
+        "totalPages" => $totalPages,
+        "totalProducts" => (int)$totalProducts,
+        "items" => $data
+    ]);
+
+} catch (Throwable $e) {
+    error_log("Product List API Error: " . $e->getMessage());
+    respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-?>

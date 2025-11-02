@@ -99,10 +99,10 @@
                                             class="form-control @error('discountType') is-invalid @enderror" 
                                             required>
                                         <option value="percentage" {{ old('discountType', $discount->discountType) == 'percentage' ? 'selected' : '' }}>
-                                            <i class="fas fa-percent"></i> Phần trăm (%)
+                                            Phần trăm (%)
                                         </option>
                                         <option value="fixed" {{ old('discountType', $discount->discountType) == 'fixed' ? 'selected' : '' }}>
-                                            <i class="fas fa-dollar-sign"></i> Cố định (VNĐ)
+                                            Cố định (VNĐ)
                                         </option>
                                     </select>
                                     @error('discountType')
@@ -164,7 +164,7 @@
 
                         <hr>
 
-                        {{-- Thời gian --}}
+                        {{-- ⭐ SỬA PHẦN THỜI GIAN - Định dạng đúng múi giờ --}}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -177,16 +177,32 @@
                                                 <i class="fas fa-calendar-alt"></i>
                                             </span>
                                         </div>
+                                        {{-- ⭐ QUAN TRỌNG: Sử dụng Carbon với timezone Asia/Ho_Chi_Minh --}}
+                                        @php
+                                            $startDateFormatted = '';
+                                            if ($discount->startDate) {
+                                                try {
+                                                    $startDateFormatted = \Carbon\Carbon::parse($discount->startDate)
+                                                        ->setTimezone('Asia/Ho_Chi_Minh')
+                                                        ->format('Y-m-d\TH:i');
+                                                } catch (\Exception $e) {
+                                                    $startDateFormatted = '';
+                                                }
+                                            }
+                                        @endphp
                                         <input type="datetime-local" 
                                                name="startDate" 
                                                id="startDate" 
                                                class="form-control @error('startDate') is-invalid @enderror" 
-                                               value="{{ old('startDate', $discount->startDate ? \Carbon\Carbon::parse($discount->startDate)->format('Y-m-d\TH:i') : '') }}" 
+                                               value="{{ old('startDate', $startDateFormatted) }}" 
                                                required>
                                     </div>
                                     @error('startDate')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-clock"></i> Múi giờ: Việt Nam (UTC+7)
+                                    </small>
                                 </div>
                             </div>
 
@@ -201,16 +217,31 @@
                                                 <i class="fas fa-calendar-times"></i>
                                             </span>
                                         </div>
+                                        @php
+                                            $endDateFormatted = '';
+                                            if ($discount->endDate) {
+                                                try {
+                                                    $endDateFormatted = \Carbon\Carbon::parse($discount->endDate)
+                                                        ->setTimezone('Asia/Ho_Chi_Minh')
+                                                        ->format('Y-m-d\TH:i');
+                                                } catch (\Exception $e) {
+                                                    $endDateFormatted = '';
+                                                }
+                                            }
+                                        @endphp
                                         <input type="datetime-local" 
                                                name="endDate" 
                                                id="endDate" 
                                                class="form-control @error('endDate') is-invalid @enderror" 
-                                               value="{{ old('endDate', $discount->endDate ? \Carbon\Carbon::parse($discount->endDate)->format('Y-m-d\TH:i') : '') }}" 
+                                               value="{{ old('endDate', $endDateFormatted) }}" 
                                                required>
                                     </div>
                                     @error('endDate')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
+                                    <small class="form-text text-muted">
+                                        <i class="fas fa-clock"></i> Múi giờ: Việt Nam (UTC+7)
+                                    </small>
                                 </div>
                             </div>
                         </div>
@@ -339,18 +370,18 @@
 
                             <dt class="col-sm-6">Ngày tạo:</dt>
                             <dd class="col-sm-6">
-                                <small>{{ \Carbon\Carbon::parse($discount->created_at)->format('d/m/Y H:i') }}</small>
+                                <small>{{ \Carbon\Carbon::parse($discount->created_at)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</small>
                             </dd>
 
                             <dt class="col-sm-6">Cập nhật:</dt>
                             <dd class="col-sm-6">
-                                <small>{{ \Carbon\Carbon::parse($discount->updated_at)->format('d/m/Y H:i') }}</small>
+                                <small>{{ \Carbon\Carbon::parse($discount->updated_at)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</small>
                             </dd>
 
                             @php
-                                $today = now();
-                                $start = \Carbon\Carbon::parse($discount->startDate);
-                                $end = \Carbon\Carbon::parse($discount->endDate);
+                                $today = now()->setTimezone('Asia/Ho_Chi_Minh');
+                                $start = \Carbon\Carbon::parse($discount->startDate)->setTimezone('Asia/Ho_Chi_Minh');
+                                $end = \Carbon\Carbon::parse($discount->endDate)->setTimezone('Asia/Ho_Chi_Minh');
                             @endphp
 
                             <dt class="col-sm-6">Trạng thái:</dt>
@@ -421,7 +452,7 @@
 @section('js')
 <script>
 $(document).ready(function() {
-    console.log('✅ Form ready');
+    console.log('✅ Form ready with timezone: Asia/Ho_Chi_Minh');
     
     const $maxDiscountField = $('#maxDiscountAmountField');
     const $discountType = $('#discountType');
@@ -470,7 +501,7 @@ $(document).ready(function() {
     $appliedToType.on('change', updateAppliedToHint);
 
     // ============================================================================
-    // Form validation
+    // Form validation với timezone
     // ============================================================================
     $('#discountForm').on('submit', function(e) {
         const startDate = new Date($('#startDate').val());
@@ -491,7 +522,8 @@ $(document).ready(function() {
             return false;
         }
         
-        console.log('✅ Form validation passed, submitting...');
+        console.log('✅ Form validation passed with timezone Asia/Ho_Chi_Minh');
+        console.log('Start:', startDate, 'End:', endDate);
         return true;
     });
 });

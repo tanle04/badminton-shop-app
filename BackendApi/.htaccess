@@ -1,0 +1,16 @@
+RewriteEngine On
+
+# Bật CORS
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+# Handle preflight requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# Support API routes
+RewriteRule ^support/init$ support.php?action=init [L,QSA]
+RewriteRule ^support/send$ support.php?action=send [L,QSA]
+RewriteRule ^support/history$ support.php?action=history [L,QSA]
+RewriteRule ^support/unread-count$ support.php?action=unread-count [L,QSA]

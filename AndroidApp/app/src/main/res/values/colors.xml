@@ -44,4 +44,5 @@
     <color name="gray_strikethrough">#757575</color>
     <color name="colorBlack">#FF000000</color>
     <color name="colorSecondaryText">#757575</color>
+    <color name="colorGray">#9E9E9E</color>
 </resources>

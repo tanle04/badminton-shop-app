@@ -68,7 +68,7 @@
                     <p>Đã hết hạn</p>
                 </div>
                 <div class="icon">
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-calendar-times"></i>
                 </div>
             </div>
         </div>
@@ -222,6 +222,7 @@ const ROUTES = {
 };
 
 console.log('🎯 Routes configured:', ROUTES);
+console.log('⏰ Timezone: Asia/Ho_Chi_Minh (UTC+7)');
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -233,25 +234,53 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
+/**
+ * ⭐ SỬA HÀM formatDate - Hiển thị đúng múi giờ Việt Nam
+ */
 const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN', {
-        year: 'numeric',
+    if (!dateString) return 'N/A';
+    
+    // Parse date từ backend (đã là Asia/Ho_Chi_Minh)
+    const date = new Date(dateString);
+    
+    // Format theo múi giờ Việt Nam
+    return date.toLocaleString('vi-VN', {
+        day: '2-digit',
         month: '2-digit',
-        day: '2-digit'
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh'
     });
 };
 
+/**
+ * ⭐ SỬA HÀM getStatusBadge - So sánh với thời gian Việt Nam
+ */
 const getStatusBadge = (discount) => {
-    const today = new Date();
+    // Lấy thời gian hiện tại (JS tự động dùng timezone của máy)
+    const now = new Date();
+    const startDate = new Date(discount.startDate);
     const endDate = new Date(discount.endDate);
     
+    // 1. KIỂM TRA TRẠNG THÁI TẮT (isActive = 0)
     if (!discount.isActive) {
         return '<span class="badge badge-danger badge-status"><i class="fas fa-ban"></i> Tạm ngưng</span>';
-    } else if (endDate < today) {
-        return '<span class="badge badge-warning badge-status"><i class="fas fa-clock"></i> Hết hạn</span>';
-    } else {
-        return '<span class="badge badge-success badge-status"><i class="fas fa-check-circle"></i> Hoạt động</span>';
     }
+    
+    // 2. KIỂM TRA HẾT HẠN (endDate < now)
+    if (endDate < now) {
+        return '<span class="badge badge-warning badge-status"><i class="fas fa-calendar-times"></i> Đã hết hạn</span>';
+    }
+    
+    // 3. KIỂM TRA CHƯA BẮT ĐẦU (startDate > now)
+    if (startDate > now) {
+        return '<span class="badge badge-info badge-status"><i class="fas fa-hourglass-start"></i> Chưa bắt đầu</span>';
+    }
+    
+    // 4. ĐANG HOẠT ĐỘNG (isActive = 1 và trong khoảng thời gian)
+    return '<span class="badge badge-success badge-status"><i class="fas fa-check-circle"></i> Đang hoạt động</span>';
 };
 
 const getValueDisplay = (discount) => {
@@ -294,22 +323,34 @@ const getAppliedToDisplay = (discount) => {
 // ============================================================================
 // MAIN FUNCTIONS
 // ============================================================================
+/**
+ * ⭐ SỬA HÀM updateStats - Thống kê chính xác hơn
+ */
 function updateStats(data) {
     let total = data.length;
-    let active = 0;
-    let expired = 0;
-    let inactive = 0;
+    let active = 0;      // Đang hoạt động (isActive=1 và trong thời gian)
+    let expired = 0;     // Đã hết hạn (endDate < now)
+    let inactive = 0;    // Tạm ngưng (isActive=0)
+    let upcoming = 0;    // Chưa bắt đầu (startDate > now)
     
-    const today = new Date();
+    const now = new Date();
     
     data.forEach(discount => {
+        const startDate = new Date(discount.startDate);
         const endDate = new Date(discount.endDate);
         
         if (!discount.isActive) {
+            // Tạm ngưng
             inactive++;
-        } else if (endDate < today) {
+        } else if (endDate < now) {
+            // Đã hết hạn
             expired++;
+        } else if (startDate > now) {
+            // Chưa bắt đầu (có thể tính vào active hoặc tạo stat riêng)
+            upcoming++;
+            active++; // Hoặc không tính vào active
         } else {
+            // Đang hoạt động
             active++;
         }
     });
@@ -318,6 +359,8 @@ function updateStats(data) {
     $('#stat-active').text(active);
     $('#stat-expired').text(expired);
     $('#stat-inactive').text(inactive);
+    
+    console.log('📊 Stats:', {total, active, expired, inactive, upcoming});
 }
 
 function renderDiscounts(data) {
@@ -438,6 +481,7 @@ function loadDiscounts() {
 // ============================================================================
 $(document).ready(function() {
     console.log('✅ Document ready');
+    console.log('⏰ Client timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
     
     // Load initial data
     loadDiscounts();
@@ -483,9 +527,8 @@ $(document).ready(function() {
     $(document).on('click', '.btn-toggle', function() {
         const discountId = $(this).data('id');
         const currentStatus = $(this).data('status');
-        const newStatus = currentStatus ? 0 : 1;
         
-        console.log('🔄 Toggle clicked:', discountId, 'Current:', currentStatus, 'New:', newStatus);
+        console.log('🔄 Toggle clicked:', discountId, 'Current:', currentStatus);
         
         toggleDiscount(discountId);
     });

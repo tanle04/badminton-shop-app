@@ -2,74 +2,51 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class Employee extends Authenticatable
 {
-    use HasFactory, Notifiable;
-
-    // Tên bảng trong CSDL
     protected $table = 'employees';
-
-    // Khóa chính trong CSDL là employeeID
-    protected $primaryKey = 'employeeID'; 
-
-    // Disable timestamps vì bảng 'employees' không có created_at và updated_at
-    public $timestamps = false; 
-
+    protected $primaryKey = 'employeeID';
+    
+    protected $guard = 'admin';
+    
     protected $fillable = [
-        // Sử dụng 'fullName' để khớp với CSDL
-        'fullName', 
+        'fullName',
         'email',
         'password',
-        'role', // 'admin', 'staff', 'marketing'
-        'img_url', // Thêm vào fillable nếu Controller có thể tạo hoặc sửa url ảnh
+        'img_url',
+        'role',
     ];
-
+    
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-    protected $casts = [
-        // ĐÃ LOẠI BỎ 'password' => 'hashed' để tránh lỗi InvalidCastException
-        'email_verified_at' => 'datetime', 
-    ];
-
-    /**
-     * Override getter để Controller có thể truy cập $employee->name
-     * Mặc dù cột CSDL là 'fullName'
-     */
-    public function getNameAttribute(): ?string
+    
+    public $timestamps = false; // Nếu bảng không có created_at, updated_at
+    
+    // ============================================================================
+    // RELATIONSHIPS
+    // ============================================================================
+    
+    public function assignedConversations()
     {
-        return $this->attributes['fullName'] ?? null;
+        return $this->hasMany(SupportConversation::class, 'assigned_employee_id', 'employeeID');
     }
     
-    /**
-     * Override setter để Controller có thể gán $employee->name = '...'
-     * và lưu vào cột 'fullName'
-     */
-    public function setNameAttribute($value)
+    public function supportMessages()
     {
-        $this->attributes['fullName'] = $value;
+        return $this->hasMany(SupportMessage::class, 'sender_id', 'employeeID')
+            ->where('sender_type', 'employee');
     }
-
-    /**
-     * Kiểm tra quyền hạn của nhân viên.
-     * @param string $role
-     * @return bool
-     */
-    public function hasRole(string $role): bool
+    
+    // ============================================================================
+    // METHODS
+    // ============================================================================
+    
+    public function activeConversations()
     {
-        return $this->role === $role;
-    }
-
-    // Thiết lập mối quan hệ: Nhân viên quản lý các Sliders
-    public function sliders()
-    {
-        // Quan hệ hasMany: (Model liên quan, khóa ngoại trong bảng Sliders, khóa cục bộ trong bảng Employees)
-        return $this->hasMany(Slider::class, 'employeeID', 'employeeID');
+        return $this->assignedConversations()->where('status', 'open');
     }
 }

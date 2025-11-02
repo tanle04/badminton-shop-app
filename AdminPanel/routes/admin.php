@@ -61,6 +61,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
             Route::post('/chat/mark-read/{employeeId}', [ChatController::class, 'markAsRead']);
         });
 
+        // Support Chat Routes
+        Route::prefix('support-chat')->name('support-chat.')->controller(\App\Http\Controllers\Admin\SupportChatController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/conversations', 'getConversations')->name('conversations');
+            Route::get('/conversation/{conversationId}/history', 'getConversationHistory')->name('conversation.history');
+            Route::post('/send', 'sendMessage')->name('send');
+            Route::post('/conversation/{conversationId}/assign', 'assignConversation')->name('conversation.assign');
+            Route::post('/conversation/{conversationId}/close', 'closeConversation')->name('conversation.close');
+            Route::post('/conversation/{conversationId}/mark-read', 'markAsRead')->name('conversation.markRead');
+            Route::get('/stats', 'getStats')->name('stats');
+        });
         // =================================================================
         // 2.1. ADMIN ONLY: Cấu hình Hệ thống
         // =================================================================

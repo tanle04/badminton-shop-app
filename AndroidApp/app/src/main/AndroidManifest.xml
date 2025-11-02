@@ -22,6 +22,9 @@
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.SupportChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.PaymentFailedActivity"
             android:exported="false" />
         <activity

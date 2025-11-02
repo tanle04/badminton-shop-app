@@ -9,10 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
-// ⭐ THÊM MỚI: Import cho AlertDialog
 import androidx.appcompat.app.AlertDialog;
-// ---
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
@@ -51,7 +48,6 @@ public class CheckoutActivity extends AppCompatActivity {
     private static final int SELECT_SHIPPING_REQUEST_CODE = 105;
     private static final String TAG = "CHECKOUT_DEBUG";
 
-    // (Các biến giữ nguyên)
     private ArrayList<CartItem> selectedItems;
     private AddressDto selectedAddress;
     private VoucherDto selectedVoucher = null;
@@ -65,31 +61,18 @@ public class CheckoutActivity extends AppCompatActivity {
     private MaterialButton btnPlaceOrder;
     private MaterialToolbar toolbar;
 
+    // ⭐ LAUNCHER CHO PAYMENT ACTIVITY (Nhận kết quả từ VNPay WebView)
+    private ActivityResultLauncher<Intent> paymentLauncher;
 
-    // (Launcher giữ nguyên)
-    private final ActivityResultLauncher<Intent> paymentLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == RESULT_OK) {
-                    Log.i(TAG, "Payment successful via WebView. Launching Success Screen.");
-                    Intent intent = new Intent(this, PaymentSuccessActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Log.w(TAG, "Payment was cancelled or failed via WebView. Launching Failed Screen.");
-                    Intent intent = new Intent(this, PaymentFailedActivity.class);
-                    startActivity(intent);
-                }
-            }
-    );
+    // ⭐ LAUNCHER CHO PAYMENT FAILED ACTIVITY (Nhận "Thử lại")
+    private ActivityResultLauncher<Intent> failureLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
 
-        // (Code onCreate giữ nguyên)
+        // Lấy danh sách sản phẩm từ Intent
         selectedItems = (ArrayList<CartItem>) getIntent().getSerializableExtra("SELECTED_ITEMS");
         if (selectedItems == null || selectedItems.isEmpty()) {
             Toast.makeText(this, "Không có sản phẩm để thanh toán.", Toast.LENGTH_SHORT).show();
@@ -98,9 +81,77 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         api = ApiClient.getApiService();
+
+        // ⭐ KHỞI TẠO FAILURE LAUNCHER TRƯỚC (Xử lý nút "Thử lại")
+        failureLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        // User bấm "Thử lại" từ PaymentFailedActivity
+                        int retryOrderId = result.getData() != null ?
+                                result.getData().getIntExtra("RETRY_ORDER_ID", -1) :
+                                -1;
+
+                        if (retryOrderId != -1) {
+                            Log.i(TAG, "User requested retry for OrderID: " + retryOrderId);
+                            // ⭐ GỌI API REPAY
+                            initiateRepayment(retryOrderId);
+                        } else {
+                            Log.w(TAG, "Retry requested but no valid OrderID.");
+                        }
+                    } else {
+                        // User bấm "Quay về trang chủ" hoặc Back
+                        Log.d(TAG, "Payment failure dismissed without retry.");
+                        // Không làm gì, để user tự quay lại
+                    }
+                }
+        );
+
+        // ⭐ KHỞI TẠO PAYMENT LAUNCHER (Xử lý kết quả từ PaymentActivity)
+        paymentLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    // Lấy OrderID từ Intent trả về
+                    String orderIdString = result.getData() != null ?
+                            result.getData().getStringExtra("ORDER_ID") :
+                            null;
+                    int completedOrderId = (orderIdString != null) ? Integer.parseInt(orderIdString) : -1;
+
+                    Log.d(TAG, "Payment result received. ResultCode: " + result.getResultCode() + ", OrderID: " + completedOrderId);
+
+                    if (result.getResultCode() == RESULT_OK) {
+                        // ✅ THANH TOÁN THÀNH CÔNG
+                        Log.i(TAG, "Payment successful for OrderID: " + completedOrderId);
+                        Toast.makeText(this, "Thanh toán thành công!", Toast.LENGTH_SHORT).show();
+
+                        // Chuyển sang màn hình Success
+                        Intent successIntent = new Intent(CheckoutActivity.this, PaymentSuccessActivity.class);
+                        successIntent.putExtra("ORDER_ID", completedOrderId);
+                        successIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(successIntent);
+                        finish(); // Đóng CheckoutActivity
+
+                    } else {
+                        // ❌ THANH TOÁN THẤT BẠI
+                        Log.w(TAG, "Payment failed/cancelled for OrderID: " + completedOrderId);
+
+                        if (completedOrderId != -1) {
+                            // Mở màn hình thất bại với nút "Thử lại"
+                            Intent failureIntent = new Intent(CheckoutActivity.this, PaymentFailedActivity.class);
+                            failureIntent.putExtra("ORDER_ID", completedOrderId);
+                            failureLauncher.launch(failureIntent); // Dùng failureLauncher để nhận callback
+                        } else {
+                            Toast.makeText(this, "Thanh toán thất bại.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+        );
+
+        // Setup UI
         bindViews();
         toolbar.setNavigationOnClickListener(v -> finish());
 
+        // Click listeners cho các section
         addressSection.setOnClickListener(v -> {
             Intent intent = new Intent(CheckoutActivity.this, AddressActivity.class);
             intent.putExtra("IS_FOR_SELECTION", true);
@@ -131,8 +182,6 @@ public class CheckoutActivity extends AppCompatActivity {
         btnPlaceOrder.setOnClickListener(v -> placeOrder());
     }
 
-    // (Các hàm bindViews, setupProductList, fetchDefaultAddress, displayAddress,
-    // calculateSubtotalValue, calculateVoucherDiscount giữ nguyên)
     private void bindViews() {
         toolbar = findViewById(R.id.toolbar);
         tvRecipientInfo = findViewById(R.id.tv_recipient_info);
@@ -190,7 +239,9 @@ public class CheckoutActivity extends AppCompatActivity {
                     Log.e(TAG, "Failed to fetch addresses. Response code: " + response.code());
                 }
             }
-            @Override public void onFailure(Call<AddressListResponse> call, Throwable t) {
+
+            @Override
+            public void onFailure(Call<AddressListResponse> call, Throwable t) {
                 Log.e(TAG, "Address fetch failed: " + t.getMessage());
             }
         });
@@ -204,7 +255,6 @@ public class CheckoutActivity extends AppCompatActivity {
         Log.d(TAG, "Address displayed: " + address.getAddressID());
     }
 
-    // (Hàm calculateAndDisplaySummary giữ nguyên)
     private void calculateAndDisplaySummary() {
         BigDecimal subtotal = calculateSubtotalValue();
         BigDecimal discount = calculateVoucherDiscount(subtotal);
@@ -296,9 +346,7 @@ public class CheckoutActivity extends AppCompatActivity {
         return discount.setScale(0, RoundingMode.DOWN);
     }
 
-
     private void placeOrder() {
-        // (Code kiểm tra giữ nguyên)
         if (selectedAddress == null) {
             Toast.makeText(this, "Vui lòng chọn địa chỉ giao hàng", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Order failed: No address selected.");
@@ -306,9 +354,9 @@ public class CheckoutActivity extends AppCompatActivity {
         }
         if (selectedShippingRate == null) {
             Toast.makeText(this, "Vui lòng chọn phương thức vận chuyển", Toast.LENGTH_SHORT).show();
-            btnPlaceOrder.setEnabled(true);
             return;
         }
+
         btnPlaceOrder.setEnabled(false);
         int customerId = getCurrentCustomerId();
         String paymentMethod;
@@ -330,59 +378,61 @@ public class CheckoutActivity extends AppCompatActivity {
         int rateId = selectedShippingRate.getRateID();
         String itemsJson = new Gson().toJson(selectedItems);
 
-        Log.d(TAG, String.format("Placing Order. Rate ID: %d, Ship Fee: %.0f, Total: %.0f",
+        Log.d(TAG, String.format("📤 Placing Order. Rate ID: %d, Ship Fee: %.0f, Total: %.0f",
                 rateId, shippingFeeValue.doubleValue(), totalPayment.doubleValue()));
 
-        // Gọi API createOrder
         api.createOrder(
                 customerId,
                 selectedAddress.getAddressID(),
                 paymentMethod,
-                totalPayment.doubleValue(), // Gửi TỔNG TIỀN CUỐI CÙNG
+                totalPayment.doubleValue(),
                 itemsJson,
                 voucherId,
                 rateId,
-                shippingFeeValue.doubleValue() // Gửi phí ship
+                shippingFeeValue.doubleValue()
         ).enqueue(new Callback<ApiResponse>() {
 
-            // ⭐ SỬA ĐỔI CHÍNH: Cập nhật onResponse
             @Override
             public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
                 btnPlaceOrder.setEnabled(true);
-                Log.d(TAG, "API Response Code: " + response.code());
+                Log.d(TAG, "📥 API Response Code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
-                    // SERVER TRẢ VỀ 200 OK
+                    // ✅ SERVER TRẢ VỀ 200 OK
                     if (response.body().isSuccess()) {
                         if ("VNPAY_REDIRECT".equalsIgnoreCase(response.body().getMessage())) {
+                            // TRƯỜNG HỢP VNPAY
                             String vnpayUrl = response.body().getVnpayUrl();
+                            int orderId = response.body().getOrderID();
+
                             if (vnpayUrl != null && !vnpayUrl.isEmpty()) {
-                                Log.i(TAG, "Launching PaymentActivity with URL: " + vnpayUrl);
+                                Log.i(TAG, "🔗 Launching PaymentActivity (Create) with URL for OrderID: " + orderId);
                                 Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
                                 intent.putExtra("VNPAY_URL", vnpayUrl);
-                                paymentLauncher.launch(intent);
+                                intent.putExtra("ORDER_ID_RET", String.valueOf(orderId)); // ⭐ Truyền OrderID
+                                paymentLauncher.launch(intent); // ⭐ Dùng launcher
                             } else {
                                 Toast.makeText(CheckoutActivity.this, "Lỗi tạo link thanh toán VNPay.", Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            // COD thành công
-                            Log.i(TAG, "Order placed successfully! (COD). Launching Success Screen.");
+                            // TRƯỜNG HỢP COD - Thành công ngay
+                            Log.i(TAG, "✅ Order placed successfully (COD)! Launching Success Screen.");
                             Intent intent = new Intent(CheckoutActivity.this, PaymentSuccessActivity.class);
+                            intent.putExtra("ORDER_ID", response.body().getOrderID());
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
                             finish();
                         }
                     } else {
-                        // Server trả về 200 OK, nhưng {isSuccess: false}
+                        // Server trả về 200 OK nhưng {isSuccess: false}
                         String errorMessage = response.body().getMessage();
-                        Log.e(TAG, "Order failed by server logic (200 OK). Message: " + errorMessage);
+                        Log.e(TAG, "⚠️ Order failed by server logic (200 OK). Message: " + errorMessage);
                         Toast.makeText(CheckoutActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    // SERVER TRẢ VỀ LỖI (4xx, 5xx)
-                    // ⭐ BẮT ĐẦU KHỐI LỖI MỚI ⭐
+                    // ❌ SERVER TRẢ VỀ LỖI (4xx, 5xx)
                     if (response.code() == 409) {
-                        // Đây là lỗi 409 (Conflict) - GIÁ ĐÃ THAY ĐỔI
+                        // ⚠️ LỖI 409 (Conflict) - GIÁ THAY ĐỔI
                         String errorMessage = "Giá hoặc khuyến mãi đã thay đổi";
                         try {
                             if (response.errorBody() != null) {
@@ -396,11 +446,11 @@ public class CheckoutActivity extends AppCompatActivity {
                             Log.e(TAG, "Failed to parse 409 error body", e);
                         }
 
-                        // Hiển thị dialog thông báo
+                        Log.e(TAG, "⚠️ 409 Conflict: " + errorMessage);
                         showPriceMismatchDialog(errorMessage);
 
                     } else {
-                        // Đây là các lỗi 500, 400, 404... khác
+                        // Các lỗi 500, 400, 404... khác
                         String errorBody = "";
                         try {
                             if (response.errorBody() != null) {
@@ -409,38 +459,94 @@ public class CheckoutActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             errorBody = "Error body unreadable.";
                         }
-                        Log.e(TAG, "API call failed. HTTP Code: " + response.code() + ", Error Body: " + errorBody);
+                        Log.e(TAG, "❌ API call failed. HTTP Code: " + response.code() + ", Error Body: " + errorBody);
                         Toast.makeText(CheckoutActivity.this, "Đặt hàng thất bại. Vui lòng thử lại. (Code: " + response.code() + ")", Toast.LENGTH_LONG).show();
                     }
-                    // ⭐ KẾT THÚC KHỐI LỖI MỚI ⭐
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse> call, Throwable t) {
-                // (Code xử lý lỗi mạng giữ nguyên)
                 btnPlaceOrder.setEnabled(true);
-                Log.e(TAG, "Network failure during placeOrder: " + t.getMessage(), t);
+                Log.e(TAG, "🔴 Network failure during placeOrder: " + t.getMessage(), t);
                 Toast.makeText(CheckoutActivity.this, "Lỗi kết nối mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    // ⭐ THÊM MỚI: Hàm hiển thị Dialog khi giá thay đổi
+    // ⭐ HÀM HIỂN THỊ DIALOG KHI GIÁ THAY ĐỔI (Lỗi 409)
     private void showPriceMismatchDialog(String message) {
         new AlertDialog.Builder(this)
                 .setTitle("😥 Có thay đổi về giá")
                 .setMessage(message + "\n\nVui lòng quay lại giỏ hàng để kiểm tra và cập nhật lại đơn hàng của bạn.")
                 .setPositiveButton("OK", (dialog, which) -> {
                     dialog.dismiss();
-                    // Đóng CheckoutActivity để buộc người dùng quay lại CartActivity
-                    // CartActivity PHẢI tải lại dữ liệu trong onResume()
-                    finish();
+                    finish(); // Đóng CheckoutActivity để buộc user quay lại Cart
                 })
-                .setCancelable(false) // Không cho phép hủy
+                .setCancelable(false)
                 .show();
     }
-    // ---
+
+    // ⭐ HÀM INITIATE REPAYMENT (Được gọi khi user bấm "Thử lại")
+    private void initiateRepayment(int orderId) {
+        int customerId = getCurrentCustomerId();
+        if (customerId <= 0) {
+            Toast.makeText(this, "Lỗi xác thực người dùng.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(this, "Đang tạo lại link thanh toán...", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "🔄 Calling Repay API for OrderID: " + orderId);
+
+        api.repayOrder(customerId, orderId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    if ("VNPAY_REDIRECT".equalsIgnoreCase(response.body().getMessage())) {
+                        String vnpayUrl = response.body().getVnpayUrl();
+                        if (vnpayUrl != null && !vnpayUrl.isEmpty()) {
+                            Log.i(TAG, "✅ Launching PaymentActivity (Repay) with URL");
+                            Intent intent = new Intent(CheckoutActivity.this, PaymentActivity.class);
+                            intent.putExtra("VNPAY_URL", vnpayUrl);
+                            intent.putExtra("ORDER_ID_RET", String.valueOf(orderId));
+                            paymentLauncher.launch(intent);
+                        } else {
+                            Toast.makeText(CheckoutActivity.this, "Lỗi: Không nhận được URL VNPay.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(CheckoutActivity.this, response.body().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    String errorMsg = parseErrorMessage(response);
+                    Toast.makeText(CheckoutActivity.this, "Không thể thanh toán lại: " + errorMsg, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "❌ Repay API failed: " + errorMsg + " (Code: " + response.code() + ")");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Toast.makeText(CheckoutActivity.this, "Lỗi kết nối mạng: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "🔴 Repay network failure: ", t);
+            }
+        });
+    }
+
+    // ⭐ HÀM PARSE ERROR MESSAGE
+    private String parseErrorMessage(Response<?> response) {
+        String defaultError = "Lỗi không xác định (Code: " + response.code() + ")";
+        if (response.errorBody() != null) {
+            try {
+                Gson gson = new Gson();
+                ApiResponse errorResponse = gson.fromJson(response.errorBody().string(), ApiResponse.class);
+                if (errorResponse != null && errorResponse.getMessage() != null && !errorResponse.getMessage().isEmpty()) {
+                    return errorResponse.getMessage();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error parsing error body", e);
+            }
+        }
+        return defaultError;
+    }
 
     private int getCurrentCustomerId() {
         SharedPreferences prefs = getSharedPreferences("auth", MODE_PRIVATE);
@@ -451,7 +557,6 @@ public class CheckoutActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // (Code onActivityResult giữ nguyên)
         if (resultCode != RESULT_OK || data == null) {
             if (requestCode == SELECT_VOUCHER_REQUEST_CODE) {
                 this.selectedVoucher = null;

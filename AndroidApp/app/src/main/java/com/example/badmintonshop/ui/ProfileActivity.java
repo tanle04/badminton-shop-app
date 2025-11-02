@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log; // Thêm Log
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,6 @@ import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
 import com.example.badmintonshop.network.dto.WishlistGetResponse;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,6 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvFullName = findViewById(R.id.tvFullName);
         TextView tvYourOrders = findViewById(R.id.tvYourOrders);
         TextView tvAddresses = findViewById(R.id.tvAddresses);
+        TextView tvSupport = findViewById(R.id.tvSupport); // ⭐ MỚI
         TextView tvLogout = findViewById(R.id.tvLogout);
         recyclerRecommended = findViewById(R.id.recyclerRecommended);
         bottomNav = findViewById(R.id.bottomNav);
@@ -79,7 +79,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Thiết lập sự kiện click
         tvYourOrders.setOnClickListener(v -> {
-            // Kiểm tra đăng nhập trước khi chuyển hướng (nên làm ở mọi chức năng chính)
             if (isLoggedIn()) {
                 startActivity(new Intent(ProfileActivity.this, YourOrdersActivity.class));
             } else {
@@ -87,8 +86,31 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
             }
         });
+
         tvAddresses.setOnClickListener(v -> {
             startActivity(new Intent(this, AddressActivity.class));
+        });
+
+        // ⭐ MỚI: Sự kiện click cho Support Chat
+        tvSupport.setOnClickListener(v -> {
+            if (isLoggedIn()) {
+                // Lưu customer_id và token vào SharedPreferences để SupportChatActivity dùng
+                SharedPreferences userPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = userPrefs.edit();
+                editor.putInt("customer_id", getCurrentCustomerId());
+
+                // Lấy token từ auth preferences (nếu có)
+                String token = sp.getString("token", "");
+                editor.putString("auth_token", token);
+                editor.apply();
+
+                // Mở SupportChatActivity
+                Intent intent = new Intent(ProfileActivity.this, SupportChatActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Vui lòng đăng nhập để sử dụng hỗ trợ", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            }
         });
 
         tvLogout.setOnClickListener(v -> showLogoutConfirmDialog());
@@ -97,7 +119,6 @@ public class ProfileActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
-                // Sử dụng FLAG_ACTIVITY_CLEAR_TOP để quay về HomeActivity đã có trong stack
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
@@ -120,7 +141,6 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Tải lại để cập nhật danh sách yêu thích
         loadFavoriteIdsAndThenProducts();
     }
 
@@ -159,7 +179,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadRecommendedProducts() {
-        // Tải 10 sản phẩm ngẫu nhiên/mới nhất để làm gợi ý
         api.getProducts(1, 10).enqueue(new Callback<ProductListResponse>() {
             @Override
             public void onResponse(Call<ProductListResponse> call, Response<ProductListResponse> response) {
@@ -246,11 +265,14 @@ public class ProfileActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences("auth", MODE_PRIVATE);
         sp.edit().clear().apply();
 
+        // Xóa cả user_prefs khi logout
+        SharedPreferences userPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        userPrefs.edit().clear().apply();
+
         favoriteProductIds.clear();
 
         Toast.makeText(this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
 
-        // Chuyển hướng về màn hình đăng nhập và xóa sạch stack
         Intent i = new Intent(this, LoginActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);

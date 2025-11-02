@@ -1,0 +1,161 @@
+let currentConversationId = null;
+
+// Load conversations
+async function loadConversations(filter = 'all') {
+    try {
+        const response = await fetch(`/api/support/conversations?filter=${filter}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderConversations(data.conversations);
+        }
+    } catch (error) {
+        console.error('Load error:', error);
+    }
+}
+
+// Render conversations list
+function renderConversations(conversations) {
+    const container = document.getElementById('conversations-list');
+    
+    if (!conversations || conversations.length === 0) {
+        container.innerHTML = '<p class="text-center text-muted p-3">Chưa có conversation nào</p>';
+        return;
+    }
+    
+    container.innerHTML = conversations.map(conv => `
+        <div class="conversation-item ${conv.conversation_id === currentConversationId ? 'active' : ''}" 
+             data-id="${conv.conversation_id}" 
+             onclick="selectConversation('${conv.conversation_id}')">
+            <div class="d-flex align-items-center p-3">
+                <img src="${conv.customer_avatar || '/images/default-avatar.png'}" 
+                     class="rounded-circle me-3" 
+                     width="50" height="50">
+                <div class="flex-grow-1">
+                    <div class="fw-bold">${conv.customer_name}</div>
+                    <div class="text-muted small text-truncate">${conv.last_message || 'Chưa có tin nhắn'}</div>
+                </div>
+                <div class="text-muted small">${formatTime(conv.last_message_at)}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Select conversation
+async function selectConversation(conversationId) {
+    currentConversationId = conversationId;
+    
+    // Update UI
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.classList.toggle('active', item.dataset.id === conversationId);
+    });
+    
+    // Load messages
+    await loadMessages(conversationId);
+}
+
+// Load messages
+async function loadMessages(conversationId) {
+    try {
+        const response = await fetch(`/api/support/conversations/${conversationId}/messages`);
+        const data = await response.json();
+        
+        if (data.success) {
+            renderMessages(data.messages);
+        }
+    } catch (error) {
+        console.error('Load messages error:', error);
+    }
+}
+
+// Render messages
+function renderMessages(messages) {
+    const container = document.getElementById('messages-container');
+    
+    container.innerHTML = messages.map(msg => `
+        <div class="message ${msg.sender_type === 'employee' ? 'message-employee' : 'message-customer'}">
+            <div class="d-flex mb-2">
+                <img src="${msg.sender_avatar || '/images/default-avatar.png'}" 
+                     class="rounded-circle me-2" 
+                     width="32" height="32">
+                <div>
+                    <div class="fw-bold small">${msg.sender_name}</div>
+                    <div class="message-bubble">${escapeHtml(msg.message)}</div>
+                    <div class="text-muted small">${formatTime(msg.created_at)}</div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    scrollToBottom();
+}
+
+// Send message
+async function sendMessage() {
+    const input = document.getElementById('message-input');
+    const message = input.value.trim();
+    
+    if (!message || !currentConversationId) return;
+    
+    try {
+        const response = await fetch('/api/support/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                conversation_id: currentConversationId,
+                message: message,
+                employee_id: 1  // TODO: Get from session
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            input.value = '';
+            await loadMessages(currentConversationId);
+        }
+    } catch (error) {
+        console.error('Send error:', error);
+    }
+}
+
+// Utility functions
+function formatTime(datetime) {
+    if (!datetime) return '';
+    const date = new Date(datetime);
+    return date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('messages-container');
+    container.scrollTop = container.scrollHeight;
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    loadConversations();
+    
+    // Auto refresh
+    setInterval(() => {
+        if (currentConversationId) {
+            loadMessages(currentConversationId);
+        }
+    }, 5000);
+    
+    // Send on enter
+    document.getElementById('message-input')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+});

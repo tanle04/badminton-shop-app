@@ -8,14 +8,13 @@ require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond
 function format_voucher_data($voucher, $customerID, $mysqli) {
     if (!$voucher) return null;
 
-    // Tính toán phần trăm sử dụng còn lại
-    $remainingUsagePercent = $voucher['maxUsage'] > 0
-        ? round((($voucher['maxUsage'] - $voucher['usedCount']) / $voucher['maxUsage']) * 100)
-        : 0;
+    // (Đã xóa tính toán remainingUsagePercent ở đây)
 
     // Kiểm tra trạng thái customer_vouchers nếu là voucher riêng
     $customerVoucherStatus = null;
-    if ((bool)$voucher['isPrivate']) {
+    $isPrivate = (bool)$voucher['isPrivate']; // Lấy isPrivate ở đây
+
+    if ($isPrivate) {
         $sql_status = "SELECT status FROM customer_vouchers WHERE customerID = ? AND voucherID = ?";
         $stmt_status = $mysqli->prepare($sql_status);
         $stmt_status->bind_param("ii", $customerID, $voucher['voucherID']);
@@ -33,8 +32,20 @@ function format_voucher_data($voucher, $customerID, $mysqli) {
     $voucher['maxUsage'] = (int) $voucher['maxUsage'];
     $voucher['usedCount'] = (int) $voucher['usedCount'];
     $voucher['isActive'] = (bool) $voucher['isActive'];
-    $voucher['isPrivate'] = (bool) $voucher['isPrivate'];
-    $voucher['usageLimitPercent'] = $remainingUsagePercent;
+    $voucher['isPrivate'] = $isPrivate; // Gán lại giá trị bool
+
+    // ⭐ SỬA LOGIC TÍNH %: (Giống file get_vouchers.php)
+    // Nếu là voucher riêng VÀ 'available' cho user, luôn hiển thị là còn hàng (100%)
+    // để app không vô hiệu hóa nó, bất kể usedCount/maxUsage toàn cục là bao nhiêu.
+    if ($isPrivate && $customerVoucherStatus === 'available') {
+        $voucher['usageLimitPercent'] = 100;
+    } else {
+        // Logic cũ cho voucher chung
+        $voucher['usageLimitPercent'] = $voucher['maxUsage'] > 0
+            ? round((($voucher['maxUsage'] - $voucher['usedCount']) / $voucher['maxUsage']) * 100)
+            : 0;
+    }
+    
     $voucher['customerVoucherStatus'] = $customerVoucherStatus; // Thêm trạng thái cá nhân
     
     return $voucher;
@@ -83,7 +94,7 @@ try {
 
     // 2. Xử lý logic GÁN (REDEEM)
     if ($isPrivate) {
-        // --- LOGIC CHO VOUCHER CÁ NHÂN (Cần gán và tăng usedCount) ---
+        // --- LOGIC CHO VOUCHER CÁ NHÂN (Chỉ cần gán, KHÔNG tăng usedCount) ---
 
         // Bắt đầu giao dịch (Transaction)
         $mysqli->begin_transaction();
@@ -127,27 +138,19 @@ try {
             $stmt_insert->execute();
 
             if ($stmt_insert->affected_rows === 0) {
-                 throw new Exception("Lỗi gán mã voucher cho khách hàng.");
+                throw new Exception("Lỗi gán mã voucher cho khách hàng.");
             }
             $stmt_insert->close();
 
 
-            // C. Tăng usedCount (giới hạn toàn cầu)
-            $sql_update_used_count = "UPDATE vouchers SET usedCount = usedCount + 1 WHERE voucherID = ?";
-            $stmt_update = $mysqli->prepare($sql_update_used_count);
-            $stmt_update->bind_param("i", $voucherID);
-            $stmt_update->execute();
+            // ⭐ ĐÃ XÓA KHỐI C: TĂNG usedCount TẠI ĐÂY.
+            // Logic tăng usedCount sẽ được chuyển sang API Thanh Toán (Checkout).
 
-            if ($stmt_update->affected_rows === 0) {
-                throw new Exception("Lỗi cập nhật lượt sử dụng voucher.");
-            }
-            $stmt_update->close();
 
             // Commit giao dịch
             $mysqli->commit();
 
-            // Cập nhật thông tin voucher sau khi commit
-            $voucher['usedCount'] = (int)$voucher['usedCount'] + 1;
+            // Lấy thông tin voucher sau khi commit (không còn +1 usedCount nữa)
             $formattedVoucher = format_voucher_data($voucher, $customerID, $mysqli);
 
             respond([

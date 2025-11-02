@@ -636,6 +636,7 @@ let currentSort = { by: 'created_at', dir: 'desc' };
 let searchTimeout;
 
 console.log('🎯 Routes configured:', ROUTES);
+console.log('⏰ Timezone: Asia/Ho_Chi_Minh (UTC+7)');
 
 // ============================================================================
 // UTILITY FUNCTIONS
@@ -647,25 +648,41 @@ const formatCurrency = (amount) => {
     }).format(amount);
 };
 
+/**
+ * ⭐ SỬA HÀM formatDate - Hiển thị đúng múi giờ Việt Nam
+ */
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('vi-VN', {
+    
+    // Parse date từ backend (đã là Asia/Ho_Chi_Minh)
+    const date = new Date(dateString);
+    
+    // Format theo múi giờ Việt Nam
+    return date.toLocaleString('vi-VN', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric'
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Ho_Chi_Minh'
     });
 };
 
+/**
+ * ⭐ SỬA HÀM getStatusBadge - So sánh với thời gian Việt Nam
+ */
 const getStatusBadge = (voucher) => {
-    const today = new Date();
+    // Lấy thời gian hiện tại theo múi giờ Việt Nam
+    const now = new Date();
     const endDate = new Date(voucher.endDate);
     const startDate = new Date(voucher.startDate);
     
     if (!voucher.isActive) {
         return '<span class="badge badge-danger badge-status"><i class="fas fa-ban"></i> Tạm ngưng</span>';
-    } else if (endDate < today) {
+    } else if (endDate < now) {
         return '<span class="badge badge-warning badge-status"><i class="fas fa-clock"></i> Hết hạn</span>';
-    } else if (startDate > today) {
+    } else if (startDate > now) {
         return '<span class="badge badge-info badge-status"><i class="fas fa-calendar-alt"></i> Sắp diễn ra</span>';
     } else {
         return '<span class="badge badge-success badge-status"><i class="fas fa-check-circle"></i> Hoạt động</span>';
@@ -767,8 +784,6 @@ function renderVouchers(data) {
         `);
         return;
     }
-    
-    // ⚠️ XÓA: Không tự tính stats ở client nữa, lấy từ API
     
     let rows = '';
     
@@ -1055,6 +1070,7 @@ function toggleVoucher(id) {
 // ============================================================================
 $(document).ready(function() {
     console.log('✅ Document ready');
+    console.log('⏰ Client timezone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
     
     // Load initial data
     loadVouchers();

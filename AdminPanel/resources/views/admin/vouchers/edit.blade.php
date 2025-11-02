@@ -17,7 +17,7 @@
                 <div class="alert alert-warning">
                     Đã sử dụng: <strong>{{ $voucher->usedCount }}</strong> / {{ $voucher->maxUsage }} lần. (Mã đã dùng không thể thay đổi Code.)
                 </div>
-                {{-- BAO GỒM FORM CHUNG (đã xóa JS bên trong) --}}
+                {{-- BAO GỒM FORM CHUNG --}}
                 @include('admin.vouchers._form', ['voucher' => $voucher])
             </div>
             <div class="card-footer">
@@ -32,6 +32,8 @@
 @section('js')
     <script>
         $(document).ready(function() {
+            console.log('✅ Form edit ready - Timezone: Asia/Ho_Chi_Minh');
+            
             // Hàm xử lý ẩn hiện trường Giảm tối đa
             $('#discountType').change(function() {
                 const selectedType = $(this).val();

@@ -6,8 +6,8 @@ header("Expires: 0");
 
 // Code gốc của bạn
 header("Content-Type: application/json; charset=UTF-8");
-require_once '../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
-require_once '../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
+require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
+require_once __DIR__ . '/../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -41,6 +41,7 @@ try {
         LEFT JOIN product_attributes pa ON pav.attributeID = pa.attributeID
         WHERE sc.customerID = ?
         AND p.is_active = 1 
+        AND pv.stock > 0 /* ⭐ SỬA: Chỉ lấy các sản phẩm có stock > 0 (còn hàng) */
         GROUP BY sc.cartID, sc.quantity, p.productID, p.productName, pv.variantID, pv.price, pv.stock, imageUrl
         ORDER BY sc.addedDate DESC
     ";
@@ -61,9 +62,9 @@ try {
         $variantID = (int)$row['variantID'];
         $quantity = (int)$row['quantity'];
         
-        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE (SẼ LẤY GIÁ GỐC VÌ SALE ĐÃ HẾT)
+        // ⭐ BƯỚC QUAN TRỌNG: GỌI HÀM TÍNH GIÁ SALE
         $price_details = get_best_sale_price($mysqli, $variantID);
-        $salePrice = $price_details['salePrice']; // Đây sẽ là 2,500,000đ
+        $salePrice = $price_details['salePrice'];
         
         // Gắn các trường sale vào item giỏ hàng
         $row['variantPrice'] = $salePrice; // Ghi đè giá hiển thị bằng giá sale
@@ -79,6 +80,7 @@ try {
         
         $img = $row['imageUrl'] ?? "";
         if ($img && preg_match('/^http/', $img)) {
+            // Giả định bạn chỉ muốn lấy tên file, tùy chỉnh nếu cần
             $img = basename($img); 
         }
         $row['imageUrl'] = $img ?: "no_image.png";

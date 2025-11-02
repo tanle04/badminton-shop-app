@@ -8,10 +8,17 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
-     * Define the application's command schedule.
+     * The Artisan commands provided by your application.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
+     * @var array
+     */
+    protected $commands = [
+        // ✅ THÊM DÒNG NÀY
+        Commands\BroadcastSupportMessage::class,
+    ];
+
+    /**
+     * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule)
     {
@@ -20,8 +27,6 @@ class Kernel extends ConsoleKernel
 
     /**
      * Register the commands for the application.
-     *
-     * @return void
      */
     protected function commands()
     {

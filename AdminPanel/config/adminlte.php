@@ -107,6 +107,12 @@ return [
             'icon' => 'fas fa-fw fa-comments',
             'active' => ['admin/chat'],
         ],
+        [
+            'text' => 'Hỗ trợ Khách hàng',
+            'url'  => 'admin/support-chat',
+            'icon' => 'fas fa-fw fa-headset',
+            'active' => ['admin/support-chat'],
+        ],
         // =========================================================================
 
         ['header' => 'QUẢN LÝ NGHIỆP VỤ', 'can' => 'auth:admin'], // Tất cả đều thấy header này

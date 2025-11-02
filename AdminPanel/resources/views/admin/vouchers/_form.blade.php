@@ -47,17 +47,56 @@
                    value="{{ old('maxDiscountAmount', $voucher->maxDiscountAmount ?? '') }}">
         </div>
 
+        {{-- ⭐ SỬA PHẦN THỜI GIAN - Format đúng múi giờ Việt Nam --}}
         <div class="form-group">
             <div class="row">
                 <div class="col-6">
                     <label for="startDate">Ngày bắt đầu (*)</label>
-                    <input type="datetime-local" name="startDate" class="form-control" required
-                           value="{{ old('startDate', optional($voucher->startDate ?? null)->format('Y-m-d\TH:i')) }}">
+                    @php
+                        $startDateFormatted = '';
+                        if (isset($voucher->startDate) && $voucher->startDate) {
+                            try {
+                                $startDateFormatted = \Carbon\Carbon::parse($voucher->startDate)
+                                    ->setTimezone('Asia/Ho_Chi_Minh')
+                                    ->format('Y-m-d\TH:i');
+                            } catch (\Exception $e) {
+                                $startDateFormatted = '';
+                            }
+                        }
+                    @endphp
+                    <input type="datetime-local" 
+                           name="startDate" 
+                           id="startDate"
+                           class="form-control" 
+                           required
+                           value="{{ old('startDate', $startDateFormatted) }}">
+                    <small class="form-text text-muted">
+                        <i class="fas fa-clock"></i> Múi giờ: Việt Nam (UTC+7)
+                    </small>
                 </div>
                 <div class="col-6">
                     <label for="endDate">Ngày kết thúc (*)</label>
-                    <input type="datetime-local" name="endDate" class="form-control" required
-                           value="{{ old('endDate', optional($voucher->endDate ?? null)->format('Y-m-d\TH:i')) }}">
+                    @php
+                        $endDateFormatted = '';
+                        if (isset($voucher->endDate) && $voucher->endDate) {
+                            try {
+                                $endDateFormatted = \Carbon\Carbon::parse($voucher->endDate)
+                                    ->setTimezone('Asia/Ho_Chi_Minh')
+                                    ->format('Y-m-d\TH:i');
+                            } catch (\Exception $e) {
+                                $endDateFormatted = '';
+                            }
+                        }
+                    @endphp
+                    <input type="datetime-local" 
+                           name="endDate" 
+                           id="endDate"
+                           class="form-control" 
+                           required
+                           value="{{ old('endDate', $endDateFormatted) }}">
+                    <small class="form-text text-muted">
+                        <i class="fas fa-clock"></i> Múi giờ: Việt Nam (UTC+7)
+                    </small>
                 </div>
             </div>
         </div>
@@ -79,28 +118,16 @@
     </div>
 </div>
 
-@section('js')
-    @parent
-    <script>
-        $(document).ready(function() {
-            // Hàm xử lý ẩn hiện trường Giảm tối đa
-            $('#discountType').change(function() {
-                const selectedType = $(this).val();
-                const $maxDiscountGroup = $('#maxDiscountGroup');
-                const $maxDiscountAmount = $('#maxDiscountAmount');
-                
-                if (selectedType === 'percentage') {
-                    $maxDiscountGroup.slideDown(); // Hiện field
-                    $maxDiscountAmount.attr('required', true); // Bắt buộc nhập khi là %
-                } else {
-                    $maxDiscountGroup.slideUp(); // Ẩn field
-                    $maxDiscountAmount.attr('required', false);
-                    $maxDiscountAmount.val(''); // Xóa giá trị khi ẩn
-                }
-            });
-            
-            // Chạy lần đầu để thiết lập trạng thái chính xác (dành cho form edit)
-            $('#discountType').trigger('change');
-        });
-    </script>
-@endsection
+{{-- ⭐ THÊM THÔNG TIN DEBUG (Chỉ hiển thị khi có $voucher) --}}
+@if(isset($voucher) && $voucher->exists)
+<div class="alert alert-info">
+    <strong><i class="fas fa-info-circle"></i> Thông tin debug (Múi giờ):</strong><br>
+    <small>
+        - Thời gian hiện tại (Server): {{ \Carbon\Carbon::now('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') }}<br>
+        - Start Date (UTC): {{ $voucher->getAttributes()['startDate'] ?? 'N/A' }}<br>
+        - Start Date (VN): {{ \Carbon\Carbon::parse($voucher->startDate)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') }}<br>
+        - End Date (UTC): {{ $voucher->getAttributes()['endDate'] ?? 'N/A' }}<br>
+        - End Date (VN): {{ \Carbon\Carbon::parse($voucher->endDate)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s') }}
+    </small>
+</div>
+@endif

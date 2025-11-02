@@ -1,0 +1,415 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\SupportMessage;
+use App\Models\SupportConversation;
+use App\Models\Customer;
+use App\Events\NewSupportMessage;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class SupportChatController extends Controller
+{
+    public function index()
+    {
+        return view('admin.support-chat.index');
+    }
+
+    public function getConversations(Request $request)
+    {
+        try {
+            $employeeId = Auth::guard('admin')->id();
+            $filter = $request->get('filter', 'all');
+
+            $query = DB::table('support_conversations as sc')
+                ->leftJoin('customers as c', 'sc.customer_id', '=', 'c.customerID')
+                ->leftJoin('employees as e', 'sc.assigned_employee_id', '=', 'e.employeeID')
+                ->select(
+                    'sc.*',
+                    'c.customerID',
+                    'c.fullName as customer_name',
+                    'c.email as customer_email',
+                    'c.phone as customer_phone',
+                    'e.employeeID as emp_id',
+                    'e.fullName as emp_name',
+                    'e.img_url as emp_img'
+                )
+                ->orderBy('sc.last_message_at', 'desc');
+
+            switch ($filter) {
+                case 'assigned':
+                    $query->where('sc.assigned_employee_id', $employeeId);
+                    break;
+                case 'unassigned':
+                    $query->whereNull('sc.assigned_employee_id');
+                    break;
+                case 'open':
+                    $query->where('sc.status', 'open');
+                    break;
+                case 'closed':
+                    $query->where('sc.status', 'closed');
+                    break;
+            }
+
+            $conversations = $query->get();
+
+            $result = $conversations->map(function ($conv) {
+                $latestMessage = DB::table('support_messages')
+                    ->where('conversation_id', $conv->conversation_id)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+
+                $unreadCount = DB::table('support_messages')
+                    ->where('conversation_id', $conv->conversation_id)
+                    ->where('sender_type', 'customer')
+                    ->where('is_read', false)
+                    ->count();
+
+                return [
+                    'conversation_id' => $conv->conversation_id,
+                    'customer' => [
+                        'customerID' => $conv->customerID,
+                        'fullName' => $conv->customer_name,
+                        'email' => $conv->customer_email,
+                        'phone' => $conv->customer_phone ?? 'N/A',
+                    ],
+                    'assigned_employee' => $conv->emp_id ? [
+                        'employeeID' => $conv->emp_id,
+                        'fullName' => $conv->emp_name,
+                        'img_url' => $conv->emp_img,
+                    ] : null,
+                    'status' => $conv->status,
+                    'priority' => $conv->priority,
+                    'subject' => $conv->subject,
+                    'last_message_at' => $conv->last_message_at,
+                    'unread_count' => $unreadCount,
+                    'latest_message' => $latestMessage ? [
+                        'message' => $latestMessage->message,
+                        'sender_type' => $latestMessage->sender_type,
+                        'created_at' => $latestMessage->created_at,
+                    ] : null,
+                ];
+            });
+
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            \Log::error('❌ Get conversations error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getConversationHistory($conversationId)
+    {
+        try {
+            $conversation = DB::table('support_conversations as sc')
+                ->leftJoin('customers as c', 'sc.customer_id', '=', 'c.customerID')
+                ->leftJoin('employees as e', 'sc.assigned_employee_id', '=', 'e.employeeID')
+                ->where('sc.conversation_id', $conversationId)
+                ->select(
+                    'sc.*',
+                    'c.customerID',
+                    'c.fullName as customer_name',
+                    'c.email as customer_email',
+                    'c.phone as customer_phone',
+                    'e.employeeID as emp_id',
+                    'e.fullName as emp_name'
+                )
+                ->first();
+
+            if (!$conversation) {
+                return response()->json(['error' => 'Conversation not found'], 404);
+            }
+
+            $messages = DB::table('support_messages as sm')
+                ->leftJoin('customers as c', function($join) {
+                    $join->on('sm.sender_id', '=', 'c.customerID')
+                         ->where('sm.sender_type', '=', 'customer');
+                })
+                ->leftJoin('employees as e', function($join) {
+                    $join->on('sm.sender_id', '=', 'e.employeeID')
+                         ->where('sm.sender_type', '=', 'employee');
+                })
+                ->where('sm.conversation_id', $conversationId)
+                ->orderBy('sm.created_at', 'asc')
+                ->select(
+                    'sm.*',
+                    'c.customerID as c_id',
+                    'c.fullName as c_name',
+                    'c.email as c_email',
+                    'e.employeeID as e_id',
+                    'e.fullName as e_name',
+                    'e.img_url as e_img'
+                )
+                ->get()
+                ->map(function ($msg) {
+                    $senderInfo = null;
+
+                    if ($msg->sender_type === 'customer' && $msg->c_id) {
+                        $senderInfo = [
+                            'id' => $msg->c_id,
+                            'fullName' => $msg->c_name,
+                            'email' => $msg->c_email,
+                        ];
+                    } elseif ($msg->sender_type === 'employee' && $msg->e_id) {
+                        $senderInfo = [
+                            'id' => $msg->e_id,
+                            'fullName' => $msg->e_name,
+                            'img_url' => $msg->e_img,
+                        ];
+                    }
+
+                    return [
+                        'id' => $msg->id,
+                        'conversation_id' => $msg->conversation_id,
+                        'sender_type' => $msg->sender_type,
+                        'sender_id' => $msg->sender_id,
+                        'message' => $msg->message,
+                        'attachment_path' => $msg->attachment_path,
+                        'attachment_name' => $msg->attachment_name,
+                        'is_read' => (bool) $msg->is_read,
+                        'created_at' => $msg->created_at,
+                        'sender' => $senderInfo,
+                    ];
+                });
+
+            return response()->json([
+                'conversation' => [
+                    'conversation_id' => $conversation->conversation_id,
+                    'customer' => [
+                        'customerID' => $conversation->customerID,
+                        'fullName' => $conversation->customer_name,
+                        'email' => $conversation->customer_email,
+                        'phone' => $conversation->customer_phone ?? 'N/A',
+                    ],
+                    'assigned_employee' => $conversation->emp_id ? [
+                        'employeeID' => $conversation->emp_id,
+                        'fullName' => $conversation->emp_name,
+                    ] : null,
+                    'status' => $conversation->status,
+                    'priority' => $conversation->priority,
+                    'subject' => $conversation->subject,
+                ],
+                'messages' => $messages,
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('❌ Get history error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * ✅ FIXED: Broadcast event khi gửi tin nhắn
+     */
+    public function sendMessage(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'conversation_id' => 'required',
+                'message' => 'required|string|max:2000',
+                'attachment' => 'nullable|file|max:10240',
+            ]);
+
+            $employeeId = Auth::guard('admin')->id();
+
+            $conversation = DB::table('support_conversations')
+                ->where('conversation_id', $validated['conversation_id'])
+                ->first();
+
+            if (!$conversation) {
+                return response()->json(['error' => 'Conversation not found'], 404);
+            }
+
+            $attachmentPath = null;
+            $attachmentName = null;
+
+            if ($request->hasFile('attachment')) {
+                $file = $request->file('attachment');
+                $attachmentName = $file->getClientOriginalName();
+                $attachmentPath = $file->store('support-attachments', 'public');
+            }
+
+            // Insert message
+            $messageId = DB::table('support_messages')->insertGetId([
+                'conversation_id' => $validated['conversation_id'],
+                'sender_type' => 'employee',
+                'sender_id' => $employeeId,
+                'message' => $validated['message'],
+                'attachment_path' => $attachmentPath,
+                'attachment_name' => $attachmentName,
+                'is_read' => false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // ✅ QUAN TRỌNG: Load message để broadcast
+            $message = SupportMessage::with(['employee', 'customer'])->find($messageId);
+
+            // Update conversation
+            DB::table('support_conversations')
+                ->where('conversation_id', $validated['conversation_id'])
+                ->update(['last_message_at' => now()]);
+
+            // Auto-assign
+            if (!$conversation->assigned_employee_id) {
+                DB::table('support_conversations')
+                    ->where('conversation_id', $validated['conversation_id'])
+                    ->update(['assigned_employee_id' => $employeeId]);
+            }
+
+            // ✅ BROADCAST EVENT
+            \Log::info('📤 [ADMIN] Broadcasting message', [
+                'id' => $messageId,
+                'conversation_id' => $validated['conversation_id']
+            ]);
+            
+            broadcast(new NewSupportMessage($message))->toOthers();
+            
+            \Log::info('✅ [ADMIN] Broadcast completed');
+
+            $employee = DB::table('employees')
+                ->where('employeeID', $employeeId)
+                ->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => [
+                    'id' => $messageId,
+                    'conversation_id' => $validated['conversation_id'],
+                    'sender_type' => 'employee',
+                    'sender_id' => $employeeId,
+                    'message' => $validated['message'],
+                    'attachment_path' => $attachmentPath,
+                    'attachment_name' => $attachmentName,
+                    'created_at' => now()->toIso8601String(),
+                    'sender' => [
+                        'id' => $employee->employeeID,
+                        'fullName' => $employee->fullName,
+                        'img_url' => $employee->img_url ?? null,
+                        'type' => 'employee'
+                    ]
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('❌ [ADMIN] Send message error: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function assignConversation(Request $request, $conversationId)
+    {
+        try {
+            $validated = $request->validate([
+                'employee_id' => 'required|exists:employees,employeeID'
+            ]);
+
+            DB::table('support_conversations')
+                ->where('conversation_id', $conversationId)
+                ->update([
+                    'assigned_employee_id' => $validated['employee_id'],
+                    'status' => 'open'
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã assign cuộc hội thoại'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function closeConversation($conversationId)
+    {
+        try {
+            DB::table('support_conversations')
+                ->where('conversation_id', $conversationId)
+                ->update(['status' => 'closed']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã đóng cuộc hội thoại'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function markAsRead($conversationId)
+    {
+        try {
+            DB::table('support_messages')
+                ->where('conversation_id', $conversationId)
+                ->where('sender_type', 'customer')
+                ->where('is_read', false)
+                ->update([
+                    'is_read' => true,
+                    'read_at' => now()
+                ]);
+
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getStats()
+    {
+        try {
+            $employeeId = Auth::guard('admin')->id();
+
+            $stats = [
+                'total_open' => DB::table('support_conversations')
+                    ->where('status', 'open')
+                    ->count(),
+                'assigned_to_me' => DB::table('support_conversations')
+                    ->where('assigned_employee_id', $employeeId)
+                    ->count(),
+                'unassigned' => DB::table('support_conversations')
+                    ->whereNull('assigned_employee_id')
+                    ->count(),
+                'total_unread' => DB::table('support_messages')
+                    ->where('sender_type', 'customer')
+                    ->where('is_read', false)
+                    ->count(),
+            ];
+
+            return response()->json($stats);
+
+        } catch (\Exception $e) {
+            \Log::error('❌ Get stats error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+}
