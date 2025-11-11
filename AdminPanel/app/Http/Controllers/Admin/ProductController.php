@@ -152,16 +152,23 @@ class ProductController extends Controller
         $categoryAttributes = $this->getCategoryAttributesMapping();
         
         // Lấy các thuộc tính đã được gán cho category hiện tại
-        $currentCategoryAttributes = $this->getAttributesByCategory($product->categoryID);
+      // ✅ MỚI - Kiểm tra và log
+$currentCategoryAttributes = $this->getAttributesData($product->categoryID);
 
-        return view('admin.products.edit', compact(
-            'product',
-            'categories',
-            'brands',
-            'attributes',
-            'categoryAttributes',
-            'currentCategoryAttributes'
-        ));
+// Debug log (xóa sau khi fix xong)
+\Log::info('🎯 Current Category Attributes:', [
+    'categoryID' => $product->categoryID,
+    'data' => $currentCategoryAttributes
+]);
+
+return view('admin.products.edit', compact(
+    'product',
+    'categories',
+    'brands',
+    'attributes',
+    'categoryAttributes',
+    'currentCategoryAttributes'
+));
     }
 
     /**
@@ -336,81 +343,115 @@ class ProductController extends Controller
                 ->with('error', 'Lỗi khi vô hiệu hóa sản phẩm: ' . $e->getMessage());
         }
     }
+/**
+ * Xóa ảnh (Ajax)
+ */
+public function deleteImage($productID, $imageID)
+{
+    // Tìm product theo ID
+    $product = Product::findOrFail($productID);
+    
+    // Tìm ảnh thuộc về product này
+    $image = ProductImage::where('productID', $product->productID)
+        ->where('imageID', $imageID)
+        ->first();
 
-    /**
-     * Xóa ảnh (Ajax)
-     */
-    public function deleteImage(Product $product, $imageID)
-    {
-        $image = ProductImage::where('productID', $product->productID)
-            ->where('imageID', $imageID)
-            ->first();
+    if (!$image) {
+        return response()->json([
+            'success' => false, 
+            'message' => 'Ảnh không tìm thấy hoặc không thuộc về sản phẩm này.'
+        ], 404);
+    }
 
-        if (!$image) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'Ảnh không tìm thấy hoặc không thuộc về sản phẩm này.'
-            ], 404);
-        }
-
-        try {
+    try {
+        // Xóa file vật lý
+        if (Storage::disk('public')->exists($image->imageUrl)) {
             Storage::disk('public')->delete($image->imageUrl);
-            Storage::disk('api_legacy_uploads')->delete($image->imageUrl);
-
-            $image->delete();
-            return response()->json([
-                'success' => true, 
-                'message' => 'Ảnh đã được xóa thành công.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false, 
-                'message' => 'Lỗi khi xóa ảnh: ' . $e->getMessage()
-            ], 500);
         }
-    }
-
-    /**
-     * API: Lấy thuộc tính theo category (Ajax)
-     */
-    public function getAttributesByCategory($categoryID)
-    {
-        $categoryAttributes = DB::table('category_attributes as ca')
-            ->join('product_attributes as pa', 'ca.attributeID', '=', 'pa.attributeID')
-            ->where('ca.categoryID', $categoryID)
-            ->select('pa.attributeID', 'pa.attributeName', 'ca.valueID_start', 'ca.valueID_end')
-            ->get();
-
-        $result = [];
         
-        foreach ($categoryAttributes as $catAttr) {
-            $valuesQuery = DB::table('product_attribute_values')
-                ->where('attributeID', $catAttr->attributeID);
-
-            // Lọc theo range nếu có
-            if ($catAttr->valueID_start && $catAttr->valueID_end) {
-                $valuesQuery->whereBetween('valueID', [
-                    $catAttr->valueID_start,
-                    $catAttr->valueID_end
-                ]);
-            }
-
-            $values = $valuesQuery->orderBy('valueID')->get();
-
-            $result[] = [
-                'attributeID' => $catAttr->attributeID,
-                'attributeName' => $catAttr->attributeName,
-                'values' => $values->map(function($v) {
-                    return [
-                        'valueID' => $v->valueID,
-                        'valueName' => $v->valueName
-                    ];
-                })
-            ];
+        if (Storage::disk('api_legacy_uploads')->exists($image->imageUrl)) {
+            Storage::disk('api_legacy_uploads')->delete($image->imageUrl);
         }
 
-        return response()->json($result);
+        // Xóa record trong DB
+        $image->delete();
+        
+        return response()->json([
+            'success' => true, 
+            'message' => 'Ảnh đã được xóa thành công.'
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Error deleting image: ' . $e->getMessage());
+        
+        return response()->json([
+            'success' => false, 
+            'message' => 'Lỗi khi xóa ảnh: ' . $e->getMessage()
+        ], 500);
     }
+}
+
+   
+/**
+ * API: Lấy thuộc tính theo category (Ajax)
+ */
+public function getAttributesByCategory($categoryID)
+{
+    try {
+        $data = $this->getAttributesData($categoryID);
+        
+        return response()->json($data, 200, [], JSON_UNESCAPED_UNICODE);
+        
+    } catch (\Exception $e) {
+        \Log::error('Error in getAttributesByCategory: ' . $e->getMessage());
+        
+        return response()->json([
+            'error' => 'Không thể tải thuộc tính',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
+
+/**
+ * Helper private: Lấy dữ liệu thuộc tính (dạng mảng)
+ */
+private function getAttributesData($categoryID)
+{
+    $categoryAttributes = DB::table('category_attributes as ca')
+        ->join('product_attributes as pa', 'ca.attributeID', '=', 'pa.attributeID')
+        ->where('ca.categoryID', $categoryID)
+        ->select('pa.attributeID', 'pa.attributeName', 'ca.valueID_start', 'ca.valueID_end')
+        ->get();
+
+    $result = [];
+
+    foreach ($categoryAttributes as $catAttr) {
+        $valuesQuery = DB::table('product_attribute_values')
+            ->where('attributeID', $catAttr->attributeID);
+
+        // Lọc theo range nếu có
+        if ($catAttr->valueID_start && $catAttr->valueID_end) {
+            $valuesQuery->whereBetween('valueID', [
+                $catAttr->valueID_start,
+                $catAttr->valueID_end
+            ]);
+        }
+
+        $values = $valuesQuery->orderBy('valueID')->get();
+
+        $result[] = [
+            'attributeID' => $catAttr->attributeID,
+            'attributeName' => $catAttr->attributeName,
+            'values' => $values->map(function($v) {
+                return [
+                    'valueID' => $v->valueID,
+                    'valueName' => $v->valueName
+                ];
+            })->toArray()
+        ];
+    }
+
+    return $result;
+}
 
     /**
      * Helper: Lấy mapping category -> attributes từ DB

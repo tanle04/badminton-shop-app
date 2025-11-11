@@ -1,0 +1,86 @@
+[03-Nov-2025 20:04:42 Asia/Ho_Chi_Minh] [VNPAY_INVALID] Invalid OrderID: 0 or DB connection failed
+[03-Nov-2025 20:04:42 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=invalid_id
+[05-Nov-2025 20:34:40 Asia/Ho_Chi_Minh] [VNPAY_INVALID] Invalid OrderID: 0 or DB connection failed
+[05-Nov-2025 20:34:40 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=invalid_id
+[05-Nov-2025 20:34:43 Asia/Ho_Chi_Minh] [VNPAY_INVALID] Invalid OrderID: 0 or DB connection failed
+[05-Nov-2025 20:34:43 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=invalid_id
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 108 from TxnRef: ORDER_108_1762349748
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 108, ResponseCode: 00
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 108
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 108 updated successfully
+[05-Nov-2025 20:36:22 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[05-Nov-2025 20:36:25 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[05-Nov-2025 20:36:25 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 108
+[05-Nov-2025 20:36:25 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=108
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 91 from TxnRef: ORDER_91_1762349964
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 91, ResponseCode: 00
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 91
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 91 updated successfully
+[05-Nov-2025 20:39:49 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[05-Nov-2025 20:39:53 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[05-Nov-2025 20:39:53 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 91
+[05-Nov-2025 20:39:53 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=91
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 110 from TxnRef: ORDER_110_1762427737
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 110, ResponseCode: 00
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 110
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 110 updated successfully
+[06-Nov-2025 18:16:31 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[06-Nov-2025 18:16:35 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[06-Nov-2025 18:16:35 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 110
+[06-Nov-2025 18:16:35 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=110
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 111 from TxnRef: ORDER_111_1762503324
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 111, ResponseCode: 00
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 111
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 111 updated successfully
+[07-Nov-2025 15:16:40 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[07-Nov-2025 15:16:44 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[07-Nov-2025 15:16:44 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 111
+[07-Nov-2025 15:16:44 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=111
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 113 from TxnRef: ORDER_113_1762507134
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 113, ResponseCode: 00
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 113
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 113 updated successfully
+[07-Nov-2025 16:19:54 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[07-Nov-2025 16:19:58 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to dinh48967@gmail.com
+[07-Nov-2025 16:19:58 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 113
+[07-Nov-2025 16:19:58 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=113
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 87 from TxnRef: ORDER_87_1762767773
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 87, ResponseCode: 00
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 87
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 87 updated successfully
+[10-Nov-2025 16:43:48 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[10-Nov-2025 16:43:52 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[10-Nov-2025 16:43:52 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 87
+[10-Nov-2025 16:43:52 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=87
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 112 from TxnRef: ORDER_112_1762807370
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 112, ResponseCode: 00
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 112
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 112 updated successfully
+[11-Nov-2025 03:43:21 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[11-Nov-2025 03:43:25 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[11-Nov-2025 03:43:25 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 112
+[11-Nov-2025 03:43:25 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=112
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Extracted OrderID: 113 from TxnRef: ORDER_113_1762807475
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Processing OrderID: 113, ResponseCode: 00
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Order Status: Pending, PaymentStatus: 
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_RETURN] Hash Verified ✓
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_SUCCESS] Payment successful for Order 113
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_UPDATE] Order 113 updated successfully
+[11-Nov-2025 03:45:02 Asia/Ho_Chi_Minh] [VNPAY_PAYMENT] Payment record inserted
+[11-Nov-2025 03:45:06 Asia/Ho_Chi_Minh] [VNPAY_EMAIL] Confirmation sent to tanle07112004@gmail.com
+[11-Nov-2025 03:45:06 Asia/Ho_Chi_Minh] [VNPAY_COMMIT] Transaction committed for Order 113
+[11-Nov-2025 03:45:06 Asia/Ho_Chi_Minh] [VNPAY_REDIRECT] Redirecting to: badmintonshop://yourorders?status=success&orderID=113

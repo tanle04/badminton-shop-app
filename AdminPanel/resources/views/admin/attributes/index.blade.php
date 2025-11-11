@@ -363,7 +363,7 @@
         $('#modalAttributeID').val(attributeID);
         $('#modalAttributeName').text(attributeName);
         
-        const actionUrl = `/admin/attributes/${attributeID}/assign-categories`;
+const actionUrl = '{{ route("admin.attributes.categories.assign", ["attributeID" => ":id"]) }}'.replace(':id', attributeID);
         $('#assignCategoryForm').attr('action', actionUrl);
         console.log('Form action set to:', actionUrl);
         
@@ -372,7 +372,7 @@
         console.log('All checkboxes unchecked');
         
         // Load danh mục hiện tại đã được gán
-        const getUrl = `/admin/attributes/${attributeID}/categories`;
+const getUrl = '{{ route("admin.attributes.categories.get", ["attributeID" => ":id"]) }}'.replace(':id', attributeID);
         console.log('Fetching assigned categories from:', getUrl);
         
         $.ajax({

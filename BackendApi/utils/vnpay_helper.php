@@ -8,8 +8,7 @@ const VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
 
 // QUAN TRỌNG: URL CALLBACK PHẢI LÀ HTTPS CÔNG KHAI CỦA NGROK
 // Chú ý: Bạn cần thay thế 'slimiest-unmisgivingly-abdul.ngrok-free.dev' nếu ngrok của bạn đổi domain.
-const VNPAY_RETURN_URL = "https://slimiest-unmisgivingly-abdul.ngrok-free.dev/api/BadmintonShop/payments/vnpay_return.php"; 
-
+const VNPAY_RETURN_URL = "https://tanbadminton.id.vn/api/payments/vnpay_return.php";
 /**
  * Tạo URL thanh toán VNPay với chữ ký bảo mật (SHA512).
  *

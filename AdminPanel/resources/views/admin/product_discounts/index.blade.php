@@ -215,10 +215,10 @@
 // ============================================================================
 const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
 const ROUTES = {
-    apiIndex: '{{ route("admin.product-discounts.apiIndex") }}',
-    edit: '/admin/product-discounts/:id/edit',
-    delete: '/admin/product-discounts/:id',
-    toggle: '/admin/product-discounts/:id/toggle-active'
+    apiIndex: '{{ route("admin.product-discounts.apiIndex") }}',
+    edit: '{{ route("admin.product-discounts.edit", ["id" => ":id"]) }}',         // <-- ĐÃ SỬA
+    delete: '{{ route("admin.product-discounts.destroy", ["id" => ":id"]) }}',   // <-- ĐÃ SỬA
+    toggle: '{{ route("admin.product-discounts.toggleActive", ["id" => ":id"]) }}' // <-- ĐÃ SỬA
 };
 
 console.log('🎯 Routes configured:', ROUTES);

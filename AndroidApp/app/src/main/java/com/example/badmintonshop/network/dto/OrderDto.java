@@ -61,7 +61,11 @@ public class OrderDto implements Serializable {
     // --- Product Details ---
     @SerializedName("items")
     private List<OrderDetailDto> items;
+    @SerializedName("shippingMethod")
+    private String shippingMethod;
 
+    @SerializedName("trackingCode")
+    private String trackingCode;
     // --- Empty Constructor (Important for libraries like Gson) ---
     public OrderDto() {
     }
@@ -121,7 +125,13 @@ public class OrderDto implements Serializable {
     public double getDiscountAmount() {
         return voucherDiscountAmount;
     }
+    public String getShippingMethod() {
+        return shippingMethod;
+    }
 
+    public String getTrackingCode() {
+        return trackingCode;
+    }
 
     // --- Setters ---
     public void setOrderID(int orderID) {
@@ -177,6 +187,13 @@ public class OrderDto implements Serializable {
     // Maps setDiscountAmount to the correct field
     public void setDiscountAmount(double discountAmount) {
         this.voucherDiscountAmount = discountAmount;
+    }
+    public void setShippingMethod(String shippingMethod) {
+        this.shippingMethod = shippingMethod;
+    }
+
+    public void setTrackingCode(String trackingCode) {
+        this.trackingCode = trackingCode;
     }
 
     // --- Utility Method ---

@@ -23,7 +23,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private final Context context;
     private final List<OrderDetailDto> itemList;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
+//    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // ⭐ Định nghĩa màu Sale (Cần định nghĩa trong colors.xml)
     private static final int COLOR_SALE = R.color.red_sale;
@@ -68,7 +68,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         int quantity = item.getQuantity();
 
         // 1. Tải ảnh sản phẩm
-        String imageUrl = BASE_IMAGE_URL + item.getImageUrl();
+        String imageUrl =   item.getImageUrl();
         Glide.with(context)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_badminton_logo)

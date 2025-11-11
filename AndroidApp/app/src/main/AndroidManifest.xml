@@ -22,6 +22,18 @@
         android:theme="@style/Theme.BadmintonShop"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ui.OrderTrackingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.RequestRefundActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ResetPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.SupportChatActivity"
             android:exported="false" />
         <activity

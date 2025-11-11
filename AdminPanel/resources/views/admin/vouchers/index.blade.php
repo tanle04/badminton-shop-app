@@ -19,6 +19,9 @@
 @stop
 
 @section('content')
+    {{-- CSRF Token cho AJAX --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     {{-- Alert Messages --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeInDown">
@@ -623,13 +626,17 @@
 // CONSTANTS & GLOBAL VARIABLES
 // ============================================================================
 const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+
+// ⭐️⭐️⭐️ BƯỚC SỬA LỖI ⭐️⭐️⭐️
+// Thay thế các URL cứng bằng hàm route() của Laravel
 const ROUTES = {
     apiIndex: '{{ route("admin.vouchers.apiIndex") }}',
     apiStats: '{{ route("admin.vouchers.apiStats") }}',
-    edit: '/admin/vouchers/:id/edit',
-    delete: '/admin/vouchers/:id',
-    toggle: '/admin/vouchers/:id/toggle-active'
+    edit: '{{ route("admin.vouchers.edit", ["voucher" => ":id"]) }}',         // <-- ĐÃ SỬA
+    delete: '{{ route("admin.vouchers.destroy", ["voucher" => ":id"]) }}',   // <-- ĐÃ SỬA
+    toggle: '{{ route("admin.vouchers.toggleActive", ["voucher" => ":id"]) }}' // <-- ĐÃ SỬA
 };
+// ⭐️⭐️⭐️ KẾT THÚC BƯỚC SỬA LỖI ⭐️⭐️⭐️
 
 let currentPage = 1;
 let currentSort = { by: 'created_at', dir: 'desc' };
@@ -788,6 +795,7 @@ function renderVouchers(data) {
     let rows = '';
     
     data.forEach(voucher => {
+        // ⭐️ SỬA LỖI: Dùng replace() trên hằng số ROUTES đã được sửa
         const editUrl = ROUTES.edit.replace(':id', voucher.voucherID);
         
         rows += `
@@ -991,6 +999,7 @@ function deleteVoucher(id) {
     });
     
     $.ajax({
+        // ⭐️ SỬA LỖI: Dùng replace() trên hằng số ROUTES đã được sửa
         url: ROUTES.delete.replace(':id', id),
         method: 'POST',
         data: {
@@ -1030,6 +1039,7 @@ function toggleVoucher(id) {
     console.log('🔄 Toggling voucher:', id);
     
     $.ajax({
+        // ⭐️ SỬA LỖI: Dùng replace() trên hằng số ROUTES đã được sửa
         url: ROUTES.toggle.replace(':id', id),
         method: 'POST',
         data: {

@@ -27,7 +27,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     private final Context context;
     private List<ReviewItemModel> reviewItems;
     private final ReviewAdapterListener listener;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
+//    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // 1. INTERFACE CHO SỰ KIỆN CLICK (Giao tiếp với Activity)
     public interface ReviewAdapterListener {
@@ -61,7 +61,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         holder.tvProductName.setText(String.format("%s%s x%d", detail.getProductName(), variantInfo, detail.getQuantity()));
 
         Glide.with(context)
-                .load(BASE_IMAGE_URL + detail.getImageUrl())
+                .load(detail.getImageUrl())
                 .placeholder(R.drawable.ic_badminton_logo)
                 .error(R.drawable.ic_badminton_logo)
                 .into(holder.imgProduct);

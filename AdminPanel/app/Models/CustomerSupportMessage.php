@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class CustomerSupportMessage extends Model
 {
+    use HasFactory;
+    protected $table = 'support_messages';
     protected $fillable = [
         'conversation_id',
         'sender_type',
@@ -18,7 +20,7 @@ class CustomerSupportMessage extends Model
         'is_read',
         'read_at',
         'assigned_employee_id',
-        'status'
+        'status',
     ];
 
     protected $casts = [

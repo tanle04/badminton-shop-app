@@ -3,6 +3,8 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond() và $mysqli
 require_once __DIR__ . '/../utils/price_calculator.php'; // ⭐ THÊM: Logic tính giá sale
 
+// Hàm respond(data, status_code) được giả định đã tồn tại trong bootstrap.php
+
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
         respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
@@ -13,7 +15,7 @@ try {
         respond(['isSuccess' => false, 'message' => 'ID sản phẩm không hợp lệ.'], 400);
     }
 
-    // 1. Lấy thông tin sản phẩm chính và thống kê reviews (Cần sửa SQL để lấy AVG/COUNT reviews)
+    // 1. Lấy thông tin sản phẩm chính và thống kê reviews
     $sqlProduct = "
         SELECT 
             p.productID, p.productName, p.description, p.price, p.stock AS stockTotal, 
@@ -49,24 +51,34 @@ try {
     $product['stockTotal'] = (int)$product['stockTotal']; // Đảm bảo đúng kiểu
 
 
-    // 2. Lấy danh sách ảnh (Giữ nguyên)
+    // ✅ BƯỚC SỬA LỖI: Lấy Ảnh sản phẩm và sửa URL
     $imgs = [];
-    $st2 = $mysqli->prepare("SELECT imageUrl FROM productimages WHERE productID=? ORDER BY imageID ASC");
+    // Lấy thêm imageType để sắp xếp ảnh main lên đầu
+    $st2 = $mysqli->prepare("SELECT imageUrl, imageType FROM productimages WHERE productID=? ORDER BY (imageType = 'main') DESC, imageID ASC");
     $st2->bind_param("i", $id);
     $st2->execute();
     $res2 = $st2->get_result();
     
+    // Định nghĩa base URL của storage admin
+    $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+    
     while($r = $res2->fetch_assoc()) {
-        $imgs[] = ['imageUrl' => $r['imageUrl']];
+        if (!empty($r['imageUrl'])) {
+            // $r['imageUrl'] từ DB là "products/ten_file.jpg"
+            $r['imageUrl'] = $base_url . $r['imageUrl'];
+        }
+        // Thêm mảng đã sửa vào $imgs
+        $imgs[] = $r;
     }
     $st2->close();
+    // ✅ KẾT THÚC SỬA LỖI
+    
     
     // 3. Lấy thông tin biến thể (variants) và áp dụng SALE PRICE
     $sqlVariants = "
         SELECT v.variantID, v.productID, v.sku, v.price, v.stock, v.reservedStock, 
                GROUP_CONCAT(pav.valueName SEPARATOR ', ') AS attributes
         FROM product_variants v
-        /* ⭐ SỬA: Loại bỏ JOIN p ON p.productID = v.productID nếu không cần, hoặc đảm bảo v.productID được dùng */
         LEFT JOIN variant_attribute_values vv ON v.variantID = vv.variantID
         LEFT JOIN product_attribute_values pav ON vv.valueID = pav.valueID
         WHERE v.productID = ?
@@ -106,7 +118,7 @@ try {
 
 
     // 4. Gói dữ liệu
-    $product['images'] = $imgs;
+    $product['images'] = $imgs; // Đã bao gồm URL đầy đủ
     $product['variants'] = $variants;
 
     // 5. Trả về phản hồi THÀNH CÔNG (cấu trúc ProductDetailResponse)

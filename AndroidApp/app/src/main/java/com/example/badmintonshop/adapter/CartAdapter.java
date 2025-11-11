@@ -31,7 +31,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private List<CartItem> cartItems;
     private final Context context;
     private final CartAdapterListener listener;
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
+
+
 
     public CartAdapter(Context context, List<CartItem> cartItems, CartAdapterListener listener) {
         this.context = context;
@@ -68,7 +69,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         holder.checkbox.setChecked(item.isSelected());
 
         // Tải ảnh
-        String imageUrl = BASE_IMAGE_URL + item.getImageUrl();
+        String imageUrl =   item.getImageUrl();
         Glide.with(context)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_badminton_logo)

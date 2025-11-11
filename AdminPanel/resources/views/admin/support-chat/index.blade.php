@@ -190,22 +190,78 @@
         margin-top: 4px;
     }
     
-    .message-wrapper { margin-bottom: 15px; }
-    .message-bubble {
+    /* ✅ THU NGẮN CHAT CŨ */
+#messages-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #f8f9fa;
+    scroll-behavior: smooth; /* ✅ Smooth scroll */
+}
+    
+    /* ✅ GIỚI HẠN CHIỀU CAO MESSAGE CŨ */
+.message-wrapper {
+    margin-bottom: 8px; /* ✅ Giảm margin */
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ✅ THU NHỎ TIN NHẮN CŨ HƠN 10 PHÚT */
+.message-wrapper.old-message .message-bubble {
+    font-size: 12px; /* ✅ Chữ nhỏ hơn */
+    padding: 6px 10px; /* ✅ Padding nhỏ hơn */
+    opacity: 0.8;
+}
+.message-wrapper.old-message .message-meta {
+    font-size: 10px;
+}
+    
+    /* ✅ CUSTOMER MESSAGES - LEFT ALIGNED */
+    .message-wrapper.customer {
+        align-items: flex-start;
+    }
+    
+    .message-wrapper.customer .message-bubble {
+        background-color: #e3f2fd !important;
+        color: #212529;
         max-width: 70%;
         word-wrap: break-word;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        border-bottom-left-radius: 4px;
     }
-    .message-bubble.customer {
-        background-color: #e3f2fd !important;
-        color: #212529;
+    
+    /* ✅ EMPLOYEE MESSAGES - RIGHT ALIGNED */
+    .message-wrapper.employee {
+        align-items: flex-end;
     }
-    .message-bubble.employee {
+    
+    .message-wrapper.employee .message-bubble {
         background-color: #007bff !important;
         color: white;
+        max-width: 70%;
+        word-wrap: break-word;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        border-bottom-right-radius: 4px;
     }
-    .message-text { font-size: 14px; line-height: 1.5; }
-    .message-meta { font-size: 11px; margin-top: 4px; }
+    
+    .message-text { 
+        font-size: 14px; 
+        line-height: 1.5;
+        padding: 8px 12px;
+    }
+    
+    .message-meta { 
+        font-size: 11px; 
+        margin-top: 4px;
+        padding: 0 4px;
+    }
+    
     .message-attachment {
         display: inline-block;
         padding: 8px 12px;
@@ -222,19 +278,11 @@
     .status-open { background: #4caf50; color: white; }
     .status-pending { background: #ff9800; color: white; }
     .status-closed { background: #9e9e9e; color: white; }
-    #messages-container {
-    display: flex;
-    flex-direction: column;  /* Tin nhắn từ trên xuống */
-    overflow-y: auto;
-}
-
-
 </style>
 @stop
 
 @section('js')
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.3/dist/echo.iife.js"></script>
 
 <script>
 const CSRF_TOKEN = '{{ csrf_token() }}';
@@ -245,45 +293,110 @@ let currentFilter = 'all';
 let conversations = [];
 let messageHistory = [];
 let selectedFile = null;
+let pusherInstance = null;
+let adminChannel = null;
 
 // ============================================================================
-// INIT ECHO
+// ✅ PUSHER INITIALIZATION (THAY THẾ ECHO)
 // ============================================================================
-window.Pusher = Pusher;
-
-console.log('🚀 Initializing Echo with config:', {
-    key: '{{ env('PUSHER_APP_KEY') }}',
-    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-    wsHost: '127.0.0.1',
-    wsPort: 6001
-});
-
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: '{{ env('PUSHER_APP_KEY') }}',
-    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-    wsHost: '127.0.0.1',
-    wsPort: 6001,
-    wssPort: 6001,
-    forceTLS: false,
-    enabledTransports: ['ws', 'wss'],
-    disableStats: true,
-    authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: { 'X-CSRF-TOKEN': CSRF_TOKEN }
-    }
-});
-
-console.log('✅ Echo initialized:', window.Echo);
+function initializePusher() {
+    console.log('🔌 [ADMIN] Initializing Pusher...');
+    
+    const pusherKey = '{{ env('PUSHER_APP_KEY') }}';
+    const pusherCluster = '{{ env('PUSHER_APP_CLUSTER') }}';
+    
+    console.log('⚙️ [ADMIN] Pusher Config:', {
+        key: pusherKey,
+        cluster: pusherCluster
+    });
+    
+    // Initialize Pusher
+    pusherInstance = new Pusher(pusherKey, {
+        cluster: pusherCluster,
+        encrypted: true,
+        forceTLS: true
+    });
+    
+    console.log('✅ [ADMIN] Pusher instance created');
+    
+    // ✅ SUBSCRIBE TO PUBLIC ADMIN CHANNEL
+    console.log('📡 [ADMIN] Subscribing to admin.support.notifications...');
+    
+    adminChannel = pusherInstance.subscribe('admin.support.notifications');
+    
+    adminChannel.bind('pusher:subscription_succeeded', () => {
+        console.log('✅ ✅ ✅ [ADMIN] Successfully subscribed to admin channel! ✅ ✅ ✅');
+    });
+    
+    adminChannel.bind('pusher:subscription_error', (error) => {
+        console.error('❌ [ADMIN] Subscription error:', error);
+    });
+    
+    // ✅ LISTEN FOR NEW MESSAGES
+    adminChannel.bind('support.message.sent', (data) => {
+        try {
+            console.log('📩 [ADMIN] === NEW MESSAGE RECEIVED ===');
+            console.log('📩 [ADMIN] Data:', data);
+            
+            if (!data || !data.message) {
+                console.error('❌ [ADMIN] Invalid event structure:', data);
+                return;
+            }
+            
+            const message = data.message;
+            
+            console.log('📩 [ADMIN] Message ID:', message.id);
+            console.log('📩 [ADMIN] Conversation ID:', message.conversation_id);
+            console.log('📩 [ADMIN] Sender Type:', message.sender_type);
+            console.log('📩 [ADMIN] Message:', message.message);
+            console.log('📩 [ADMIN] Current Conv:', selectedConversationId);
+            
+            // ✅ ALWAYS reload conversations và stats
+            loadConversations();
+            loadStats();
+            
+            // ✅ Check if message is for current conversation
+            if (message.conversation_id === selectedConversationId) {
+                if (message.sender_type === 'customer') {
+                    console.log('✅ [ADMIN] Customer message for current conversation - APPENDING!');
+                    appendMessage(message, true);
+                    messageHistory.push(message);
+                    markAsRead(selectedConversationId);
+                    playNotificationSound();
+                } else {
+                    console.log('ℹ️ [ADMIN] Employee message (already displayed)');
+                }
+            } else {
+                console.log('💬 [ADMIN] Message for different conversation');
+                
+                const senderName = message.sender?.fullName || 'Khách hàng';
+                toastr.info(`Tin nhắn mới từ ${senderName}`);
+                
+                $(`.conversation-item[data-id="${message.conversation_id}"]`)
+                    .addClass('unread');
+            }
+            
+        } catch (err) {
+            console.error('❌ [ADMIN] Error handling message:', err);
+            console.error('❌ [ADMIN] Stack:', err.stack);
+        }
+    });
+    
+    console.log('✅ [ADMIN] Pusher setup complete!');
+}
 
 // ============================================================================
 // DOM READY
 // ============================================================================
 $(document).ready(function() {
+    console.log('🚀 [ADMIN] Support Chat Initialized');
+    
+    // ✅ INITIALIZE PUSHER FIRST
+    initializePusher();
+    
     loadConversations();
     loadStats();
     setupEventListeners();
-    connectWebSocket();
     
     // Auto refresh stats mỗi 30s
     setInterval(loadStats, 30000);
@@ -329,7 +442,7 @@ function setupEventListeners() {
 // ============================================================================
 function loadConversations() {
     $.ajax({
-        url: '/admin/support-chat/conversations',
+        url: '{{ route("admin.support-chat.conversations") }}',
         method: 'GET',
         data: { filter: currentFilter },
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
@@ -390,6 +503,7 @@ function renderConversations() {
 // SELECT CONVERSATION
 // ============================================================================
 function selectConversation(conversationId) {
+    console.log('📌 [ADMIN] Selecting conversation:', conversationId);
     selectedConversationId = conversationId;
     
     $('.conversation-item').removeClass('active');
@@ -418,10 +532,11 @@ function selectConversation(conversationId) {
 // ============================================================================
 function loadConversationHistory(conversationId) {
     $.ajax({
-        url: `/admin/support-chat/conversation/${conversationId}/history`,
+        url: '{{ route("admin.support-chat.conversation.history", ["conversationId" => ":id"]) }}'.replace(':id', conversationId),
         method: 'GET',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         success: function(data) {
+            console.log('✅ [ADMIN] Loaded', data.messages.length, 'messages');
             messageHistory = data.messages;
             renderMessages();
             markAsRead(conversationId);
@@ -444,17 +559,22 @@ function renderMessages() {
     messageHistory.forEach(msg => appendMessage(msg, false));
     scrollToBottom();
 }
+
 function appendMessage(msg, shouldScroll = true) {
     const $container = $('#messages-container');
     $container.find('.text-center').remove();
     
     const isEmployee = msg.sender_type === 'employee';
-    
-    // ✅ FIX: Thêm class wrapper
     const wrapperClass = isEmployee ? 'employee' : 'customer';
     
+    // ✅ CHECK NẾU LÀ TIN NHẮN CŨ (> 10 phút)
+    const messageTime = new Date(msg.created_at).getTime();
+    const now = new Date().getTime();
+    const isOld = (now - messageTime) > 600000; // 10 minutes
+    const oldClass = isOld ? 'old-message' : '';
+    
     const html = `
-        <div class="message-wrapper ${wrapperClass}">
+        <div class="message-wrapper ${wrapperClass} ${oldClass}">
             <div class="message-bubble ${isEmployee ? 'employee' : 'customer'} p-2 rounded">
                 <div class="message-text">${escapeHtml(msg.message)}</div>
                 ${msg.attachment_path ? `
@@ -472,19 +592,44 @@ function appendMessage(msg, shouldScroll = true) {
         </div>
     `;
     
-    // ✅ APPEND ở cuối (tin mới nhất ở dưới cùng)
     $container.append(html);
     
-    if (shouldScroll) scrollToBottom();
+    if (shouldScroll) {
+        // ✅ AUTO SCROLL VỚI ANIMATION
+        scrollToBottom();
+    }
+}
+
+function scrollToBottom() {
+    const $container = $('#messages-container');
+    
+    // ✅ SMOOTH SCROLL
+    $container.animate({
+        scrollTop: $container[0].scrollHeight
+    }, 300);
+}
+function loadConversationHistory(conversationId) {
+    $.ajax({
+        url: '{{ route("admin.support-chat.conversation.history", ["conversationId" => ":id"]) }}'.replace(':id', conversationId),
+        method: 'GET',
+        headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
+        success: function(data) {
+            console.log('✅ [ADMIN] Loaded', data.messages.length, 'messages');
+            messageHistory = data.messages;
+            renderMessages();
+            markAsRead(conversationId);
+            
+            // ✅ AUTO SCROLL NGAY SAU KHI LOAD
+            setTimeout(scrollToBottom, 100);
+        }
+    });
 }
 
 function scrollToBottom() {
     const $container = $('#messages-container');
     $container.scrollTop($container[0].scrollHeight);
 }
-/**
- * Escape HTML để tránh XSS
- */
+
 function escapeHtml(text) {
     if (!text) return '';
     const div = document.createElement('div');
@@ -492,25 +637,19 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-/**
- * Format thời gian
- */
 function formatTime(datetime) {
     if (!datetime) return '';
     const date = new Date(datetime);
     const now = new Date();
     const diff = now - date;
     
-    // Vừa xong
     if (diff < 60000) return 'Vừa xong';
     
-    // X phút trước
     if (diff < 3600000) {
         const minutes = Math.floor(diff / 60000);
         return `${minutes} phút trước`;
     }
     
-    // Hôm nay
     if (date.toDateString() === now.toDateString()) {
         return date.toLocaleTimeString('vi-VN', { 
             hour: '2-digit', 
@@ -518,7 +657,6 @@ function formatTime(datetime) {
         });
     }
     
-    // Hôm qua hoặc cũ hơn
     return date.toLocaleDateString('vi-VN', {
         day: '2-digit',
         month: '2-digit',
@@ -536,6 +674,8 @@ function sendMessage() {
     if (!message && !selectedFile) return;
     if (!selectedConversationId) return;
     
+    console.log('📤 [ADMIN] Sending message...');
+    
     const $input = $('#message-input');
     const $button = $('#btn-send-message');
     
@@ -551,7 +691,7 @@ function sendMessage() {
     }
     
     $.ajax({
-        url: '/admin/support-chat/send',
+        url: '{{ route("admin.support-chat.send") }}',
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         data: formData,
@@ -559,6 +699,7 @@ function sendMessage() {
         contentType: false,
         success: function(response) {
             if (response.success) {
+                console.log('✅ [ADMIN] Message sent successfully');
                 appendMessage(response.message, true);
                 messageHistory.push(response.message);
                 
@@ -585,7 +726,7 @@ function assignToMe() {
     if (!selectedConversationId) return;
     
     $.ajax({
-        url: `/admin/support-chat/conversation/${selectedConversationId}/assign`,
+       url: '{{ route("admin.support-chat.conversation.assign", ["conversationId" => ":id"]) }}'.replace(':id', selectedConversationId),
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         data: { employee_id: currentEmployeeId },
@@ -603,7 +744,7 @@ function closeConversation() {
     if (!confirm('Đóng cuộc hội thoại này?')) return;
     
     $.ajax({
-        url: `/admin/support-chat/conversation/${selectedConversationId}/close`,
+        url: '{{ route("admin.support-chat.conversation.close", ["conversationId" => ":id"]) }}'.replace(':id', selectedConversationId),
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         success: function() {
@@ -625,7 +766,7 @@ function closeConversation() {
 
 function markAsRead(conversationId) {
     $.ajax({
-        url: `/admin/support-chat/conversation/${conversationId}/mark-read`,
+        url: '{{ route("admin.support-chat.conversation.markRead", ["conversationId" => ":id"]) }}'.replace(':id', conversationId),
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN }
     });
@@ -636,71 +777,45 @@ function markAsRead(conversationId) {
 // ============================================================================
 function loadStats() {
     $.ajax({
-        url: '/admin/support-chat/stats',
+        url: '{{ route("admin.support-chat.stats") }}',
         method: 'GET',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         success: function(stats) {
             $('#stat-unassigned').text(stats.unassigned);
             $('#stat-assigned').text(stats.assigned_to_me);
             $('#stat-unread').text(stats.total_unread);
+        },
+        error: function(xhr) {
+             console.error('Lỗi khi tải Stats (đã bỏ qua lỗi 404):', xhr.status);
         }
     });
 }
 
 // ============================================================================
-// WEBSOCKET
+// UTILITY
 // ============================================================================
-function connectWebSocket() {
-    console.log('🔌 Connecting to WebSocket...');
-    
-    // ✅ THÊM: Check Echo exists
-    if (!window.Echo) {
-        console.error('❌ Echo not initialized!');
-        return;
+function playNotificationSound() {
+    try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBBl+y+/EcDMEDFOk5fCmZhUJPo3U7s+BPAgWX7rl7ahYGAhBkti7rGIZCUaN0vLFczQHG3C/7+qeVRILTKLi7rRmGQhCj9T');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('🔇 Cannot play sound:', e));
+    } catch (e) {
+        console.log('🔇 Sound not available');
+    }
+}
+
+// Cleanup
+window.addEventListener('beforeunload', () => {
+    if (adminChannel) {
+        console.log('🔌 [ADMIN] Unsubscribing from channel...');
+        adminChannel.unbind_all();
+        adminChannel.unsubscribe();
     }
     
-    console.log('📡 Echo object:', window.Echo);
-    
-    const channel = window.Echo.private('admin.support.notifications');
-    
-    console.log('📡 Channel:', channel);
-    
-    // ✅ THÊM: Listen for subscription success
-    channel.subscribed(() => {
-        console.log('✅ Successfully subscribed to admin.support.notifications');
-    });
-    
-    // ✅ THÊM: Listen for subscription error
-    channel.error((error) => {
-        console.error('❌ Channel subscription error:', error);
-    });
-    
-    // ✅ Listen for messages
-    channel.listen('.support.message.sent', function(event) {
-        console.log('📩 NEW MESSAGE RECEIVED!', event);
-        console.log('Message:', event.message);
-        console.log('Conversation ID:', event.message.conversation_id);
-        console.log('Current Conversation ID:', selectedConversationId);
-        
-        // Reload conversations
-        loadConversations();
-        loadStats();
-        
-        // If current conversation, append message
-        if (event.message.conversation_id === selectedConversationId) {
-            if (event.message.sender_type === 'customer') {
-                console.log('✅ Appending customer message to current conversation');
-                appendMessage(event.message, true);
-                messageHistory.push(event.message);
-                markAsRead(selectedConversationId);
-            } else {
-                console.log('ℹ️ Skipping employee message (already displayed)');
-            }
-        } else {
-            console.log('💬 Message for different conversation');
-            toastr.info(`Tin nhắn mới từ ${event.message.sender.fullName}`);
-        }
-    });
-}
+    if (pusherInstance) {
+        console.log('🔌 [ADMIN] Disconnecting Pusher...');
+        pusherInstance.disconnect();
+    }
+});
 </script>
 @stop

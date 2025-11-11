@@ -24,7 +24,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private final boolean isThumbnailMode; // ✅ chế độ hiển thị
     private int selectedPosition = 0;
 
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
+//    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // -------------------- INTERFACE --------------------
     public interface OnImageClickListener {
@@ -55,7 +55,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             return raw.replace("/api/BadmintonShop/uploads/", "/api/BadmintonShop/images/");
         }
         raw = raw.replaceFirst("^/?(images/)?uploads/", "");
-        return BASE_IMAGE_URL + raw;
+        return   raw;
     }
 
     // -------------------- VIEW HOLDER --------------------

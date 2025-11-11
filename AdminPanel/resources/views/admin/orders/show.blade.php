@@ -35,9 +35,133 @@
         </div>
     @endif
 
+    {{-- ⭐ REFUND REQUEST ALERT - Hiển thị nổi bật khi có yêu cầu hoàn tiền --}}
+    @if($order->status === 'Refund Requested')
+        <div class="alert alert-warning alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <h5><i class="fas fa-exclamation-triangle"></i> Yêu cầu hoàn tiền đang chờ xử lý!</h5>
+            <p class="mb-0">Khách hàng đã gửi yêu cầu hoàn tiền. Vui lòng kiểm tra thông tin bên dưới và xử lý.</p>
+        </div>
+    @endif
+
     <div class="row">
         {{-- Cột 1: Thông tin Khách hàng & Sản phẩm --}}
         <div class="col-lg-8">
+            {{-- ⭐ REFUND REQUEST DETAIL CARD - Chỉ hiển thị khi status = Refund Requested --}}
+            @php
+                $refundRequest = \App\Models\RefundRequest::where('orderID', $order->orderID)
+                                                          ->where('status', 'Pending')
+                                                          ->with(['items.orderDetail.variant.product', 'media'])
+                                                          ->first();
+            @endphp
+            
+            @if($order->status === 'Refund Requested' && $refundRequest)
+                <div class="card card-danger card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-undo-alt"></i> Chi tiết Yêu cầu Hoàn tiền
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5><i class="fas fa-info-circle"></i> Thông tin yêu cầu</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-3">Ngày gửi yêu cầu:</dt>
+                                    <dd class="col-sm-9">
+                                        {{ \Carbon\Carbon::parse($refundRequest->requestDate)->format('d/m/Y H:i') }}
+                                    </dd>
+                                    
+                                    <dt class="col-sm-3">Lý do chung:</dt>
+                                    <dd class="col-sm-9">
+                                        <div class="alert alert-light mb-0">
+                                            {{ $refundRequest->reason ?? 'Không có lý do cụ thể' }}
+                                        </div>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        {{-- Danh sách sản phẩm yêu cầu hoàn --}}
+                        @if($refundRequest->items && $refundRequest->items->count() > 0)
+                            <hr>
+                            <h5><i class="fas fa-box-open"></i> Sản phẩm yêu cầu hoàn trả</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Sản phẩm</th>
+                                            <th class="text-center">Số lượng hoàn</th>
+                                            <th>Lý do riêng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($refundRequest->items as $item)
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ $item->orderDetail->variant->product->productName ?? 'N/A' }}</strong>
+                                                </td>
+                                                <td class="text-center">
+                                                    <span class="badge badge-warning">{{ $item->quantity }}</span>
+                                                </td>
+                                                <td>
+                                                    <small>{{ $item->reason ?? '-' }}</small>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+
+                        {{-- Hình ảnh/Video chứng minh --}}
+                        @if($refundRequest->media && $refundRequest->media->count() > 0)
+                            <hr>
+                            <h5><i class="fas fa-camera"></i> Hình ảnh/Video chứng minh</h5>
+                            
+                            <div class="row">
+                                @foreach($refundRequest->media as $media)
+                                    @if($media->mediaType === 'photo')
+                                        <div class="col-md-3 mb-3">
+                                            <a href="{{ asset('storage/' . $media->mediaUrl) }}" data-toggle="lightbox" data-gallery="refund-gallery">
+                                                <img src="{{ asset('storage/' . $media->mediaUrl) }}" 
+                                                     class="img-fluid img-thumbnail" 
+                                                     alt="Ảnh chứng minh"
+                                                     style="height: 150px; width: 100%; object-fit: cover;">
+                                            </a>
+                                        </div>
+                                    @elseif($media->mediaType === 'video')
+                                        <div class="col-md-6 mb-3">
+                                            <video controls class="img-fluid img-thumbnail" style="width: 100%; max-height: 300px;">
+                                                <source src="{{ asset('storage/' . $media->mediaUrl) }}" type="video/mp4">
+                                                Trình duyệt không hỗ trợ video.
+                                            </video>
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
+
+                        {{-- Nút Chấp nhận / Từ chối --}}
+                        @if(Gate::allows('admin') || Gate::allows('staff'))
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-success btn-block btn-lg" id="btn-approve-refund">
+                                        <i class="fas fa-check-circle"></i> Chấp nhận Hoàn tiền
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-danger btn-block btn-lg" id="btn-reject-refund">
+                                        <i class="fas fa-times-circle"></i> Từ chối Hoàn tiền
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             {{-- Card: Customer Info --}}
             <div class="card card-primary card-outline">
                 <div class="card-header">
@@ -229,7 +353,8 @@
                                     'Shipped' => 'primary',
                                     'Delivered' => 'success',
                                     'Cancelled' => 'danger',
-                                    'Refunded' => 'secondary'
+                                    'Refunded' => 'secondary',
+                                    'Refund Requested' => 'danger'
                                 ];
                                 $color = $statusColors[$order->status] ?? 'secondary';
                             @endphp
@@ -248,8 +373,8 @@
                 </div>
             </div>
 
-            {{-- Card: Update Status --}}
-            @if(Gate::allows('admin') || Gate::allows('staff'))
+            {{-- Card: Update Status - Ẩn khi đang Refund Requested --}}
+            @if($order->status !== 'Refund Requested' && (Gate::allows('admin') || Gate::allows('staff')))
             <div class="card card-warning card-outline">
                 <div class="card-header">
                     <h3 class="card-title">
@@ -340,13 +465,13 @@
                     </form>
                 </div>
             </div>
-            @else
+            @elseif($order->status === 'Refund Requested')
             <div class="card card-secondary">
                 <div class="card-body">
-                    <div class="alert alert-info mb-0">
-                        <i class="fas fa-lock"></i>
-                        <strong>Giới hạn quyền</strong><br>
-                        Bạn chỉ có quyền xem, không thể cập nhật trạng thái đơn hàng.
+                    <div class="alert alert-warning mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Đơn hàng đang chờ xử lý hoàn tiền</strong><br>
+                        Vui lòng chấp nhận hoặc từ chối yêu cầu hoàn tiền ở phía trên trước khi cập nhật trạng thái.
                     </div>
                 </div>
             </div>
@@ -381,6 +506,22 @@
                             </div>
                         </div>
                         
+                        @if($order->status === 'Refund Requested' && $order->refundRequest)
+                        <div>
+                            <i class="fas fa-undo-alt bg-warning"></i>
+                            <div class="timeline-item">
+                                <span class="time">
+                                    <i class="far fa-clock"></i> 
+                                    {{ \Carbon\Carbon::parse($order->refundRequest->requestedDate)->format('d/m/Y H:i') }}
+                                </span>
+                                <h3 class="timeline-header">Yêu cầu hoàn tiền</h3>
+                                <div class="timeline-body">
+                                    {{ $order->refundRequest->reason }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                        
                         @if($order->status != 'Pending')
                         <div>
                             <i class="fas fa-check bg-success"></i>
@@ -398,9 +539,23 @@
             </div>
         </div>
     </div>
+
+    {{-- Hidden Forms for Approve/Reject Refund --}}
+    <form id="form-approve-refund" action="{{ route('admin.orders.refund.approve', $order) }}" method="POST" style="display:none;">
+        @csrf
+        @method('PUT')
+    </form>
+
+    <form id="form-reject-refund" action="{{ route('admin.orders.refund.reject', $order) }}" method="POST" style="display:none;">
+        @csrf
+        @method('PUT')
+    </form>
 @stop
 
 @section('css')
+{{-- Ekko Lightbox CSS --}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css">
+
 <style>
     .card-outline {
         border-top: 3px solid;
@@ -430,10 +585,78 @@
 @section('js')
 {{-- SweetAlert2 --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- Ekko Lightbox JS --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
 
 <script>
 $(document).ready(function() {
     console.log('✅ Order show page loaded');
+    
+    // Lightbox for images
+    $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+        event.preventDefault();
+        $(this).ekkoLightbox({
+            alwaysShowClose: true
+        });
+    });
+    
+    // Approve Refund
+    $('#btn-approve-refund').on('click', function() {
+        Swal.fire({
+            title: 'Chấp nhận hoàn tiền?',
+            html: `Bạn đang chấp nhận yêu cầu hoàn tiền cho đơn hàng <strong>#{{ $order->orderID }}</strong>.<br>
+                   Hệ thống sẽ:<br>
+                   <ul class="text-left">
+                       <li>Chuyển trạng thái đơn hàng sang <strong>Refunded</strong></li>
+                       <li>Cập nhật trạng thái thanh toán sang <strong>Refunded</strong></li>
+                       <li>Hoàn lại tồn kho sản phẩm</li>
+                       <li>Gửi email thông báo cho khách hàng</li>
+                   </ul>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-check"></i> Chấp nhận',
+            cancelButtonText: '<i class="fas fa-times"></i> Hủy',
+            customClass: {
+                confirmButton: 'btn btn-success mr-2',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#form-approve-refund').submit();
+            }
+        });
+    });
+    
+    // Reject Refund
+    $('#btn-reject-refund').on('click', function() {
+        Swal.fire({
+            title: 'Từ chối hoàn tiền?',
+            html: `Bạn đang từ chối yêu cầu hoàn tiền cho đơn hàng <strong>#{{ $order->orderID }}</strong>.<br>
+                   Hệ thống sẽ:<br>
+                   <ul class="text-left">
+                       <li>Giữ nguyên trạng thái đơn hàng hiện tại</li>
+                       <li>Gửi email thông báo từ chối cho khách hàng</li>
+                   </ul>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: '<i class="fas fa-times"></i> Từ chối',
+            cancelButtonText: '<i class="fas fa-ban"></i> Hủy bỏ',
+            customClass: {
+                confirmButton: 'btn btn-danger mr-2',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $('#form-reject-refund').submit();
+            }
+        });
+    });
     
     // Form confirmation
     $('#updateOrderForm').on('submit', function(e) {

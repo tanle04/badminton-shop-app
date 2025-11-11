@@ -1,6 +1,9 @@
 package com.example.badmintonshop.adapter;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +31,7 @@ public class SupportChatAdapter extends RecyclerView.Adapter<SupportChatAdapter.
     private Context context;
     private List<SupportMessage> messagesList;
     private int currentCustomerId;
-
+    private static final String TAG = "SupportChatAdapter"; // ✅ THÊM DÒNG NÀY
     public SupportChatAdapter(Context context, List<SupportMessage> messagesList, int currentCustomerId) {
         this.context = context;
         this.messagesList = messagesList;
@@ -92,18 +95,45 @@ public class SupportChatAdapter extends RecyclerView.Adapter<SupportChatAdapter.
     /**
      * Format timestamp
      */
+    /**
+     * Format timestamp - ✅ FIX: Handle multiple datetime formats
+     */
     private String formatTime(String isoTime) {
+        if (isoTime == null || isoTime.isEmpty()) {
+            return "";
+        }
+
         try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            // ✅ Try format 1: "yyyy-MM-dd HH:mm:ss" (MySQL default)
+            SimpleDateFormat inputFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             SimpleDateFormat outputFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-            Date date = inputFormat.parse(isoTime);
-            if (date != null) {
-                return outputFormat.format(date);
+            try {
+                Date date = inputFormat1.parse(isoTime);
+                if (date != null) {
+                    return outputFormat.format(date);
+                }
+            } catch (ParseException e1) {
+                // Try format 2: ISO with T
+                SimpleDateFormat inputFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+                try {
+                    Date date = inputFormat2.parse(isoTime);
+                    if (date != null) {
+                        return outputFormat.format(date);
+                    }
+                } catch (ParseException e2) {
+                    // Try format 3: ISO with timezone
+                    SimpleDateFormat inputFormat3 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+                    Date date = inputFormat3.parse(isoTime);
+                    if (date != null) {
+                        return outputFormat.format(date);
+                    }
+                }
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Parse time error for: " + isoTime, e);
         }
+
         return "";
     }
 

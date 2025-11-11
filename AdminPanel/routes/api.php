@@ -25,4 +25,7 @@ Route::prefix('bridge/support')->middleware(['api.key'])->group(function () {
     Route::get('/messages', [SupportBridgeController::class, 'getMessages']);
     Route::get('/unread-count', [SupportBridgeController::class, 'getUnreadCount']);
     Route::get('/health', [SupportBridgeController::class, 'healthCheck']);
+    
+    // ✅ THÊM DÒNG NÀY
+    Route::post('/trigger-broadcast', [SupportBridgeController::class, 'triggerBroadcast']);
 });

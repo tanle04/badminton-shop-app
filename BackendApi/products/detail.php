@@ -54,15 +54,28 @@ try {
     $product['totalReviews'] = (int)$product['totalReviews'];
 
 
-    // 2. Lấy Ảnh sản phẩm (Giữ nguyên)
-    $sqlImg = "SELECT imageUrl FROM productimages WHERE productID = ? ORDER BY imageID ASC";
+    // ✅ BƯỚC SỬA LỖI: Lấy Ảnh sản phẩm và sửa URL
+    $sqlImg = "SELECT imageUrl, imageType FROM productimages WHERE productID = ? ORDER BY (imageType = 'main') DESC, imageID ASC";
     $stmtImg = $mysqli->prepare($sqlImg);
     $stmtImg->bind_param("i", $productID);
     $stmtImg->execute();
     $resImg = $stmtImg->get_result();
-    $images = $resImg->fetch_all(MYSQLI_ASSOC);
+    
+    $images = [];
+    $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+    
+    while ($img = $resImg->fetch_assoc()) {
+        if (!empty($img['imageUrl'])) {
+            // $img['imageUrl'] từ DB là "products/ten_file.jpg"
+            $img['imageUrl'] = $base_url . $img['imageUrl'];
+        }
+        $images[] = $img;
+    }
+    
     $product['images'] = $images;
     $stmtImg->close();
+    // ✅ KẾT THÚC SỬA LỖI
+
 
     // 3. Lấy danh sách biến thể (size, giá, tồn kho)
     $sqlVariants = "

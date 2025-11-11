@@ -4,360 +4,325 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Order; 
+use App\Models\Order;
 use App\Models\ProductVariant;
-use App\Models\Shipping; 
+use App\Models\Shipping;
+use App\Models\RefundRequest; 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+// use Illuminate\Support\Facades\Mail; // <- KHÔNG CẦN NỮA, VÌ HELPER ĐÃ XỬ LÝ
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
     /**
-     * Display a listing of orders with advanced filters
+     * Display a listing of the resource.
      */
     public function index(Request $request)
     {
-        // Get filter parameters
-        $statusFilter = $request->get('status', 'all');
-        $paymentFilter = $request->get('payment', 'all');
-        $search = $request->get('search', '');
-        $dateFrom = $request->get('date_from');
-        $dateTo = $request->get('date_to');
-        
-        // Start query with relationships
-        $query = Order::with(['customer', 'address']);
-        
-        // Apply status filter
-        if ($statusFilter && $statusFilter !== 'all') {
-            $query->where('status', $statusFilter);
+        $query = Order::with('customer')->orderBy('orderDate', 'desc');
+
+        if ($request->has('status') && $request->status != 'all') {
+            $query->where('status', $request->status);
         }
-        
-        // Apply payment status filter
-        if ($paymentFilter && $paymentFilter !== 'all') {
-            $query->where('paymentStatus', $paymentFilter);
-        }
-        
-        // Apply search
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('orderID', 'like', "%{$search}%")
-                  ->orWhereHas('customer', function($subQ) use ($search) {
-                      $subQ->where('fullName', 'like', "%{$search}%")
-                           ->orWhere('email', 'like', "%{$search}%");
-                  });
-            });
-        }
-        
-        // Apply date range filter
-        if ($dateFrom) {
-            $query->whereDate('orderDate', '>=', $dateFrom);
-        }
-        if ($dateTo) {
-            $query->whereDate('orderDate', '<=', $dateTo);
-        }
-        
-        // Order by latest
-        $query->orderBy('orderDate', 'desc');
-        
-        // Paginate
+
         $orders = $query->paginate(15);
-        
-        // Calculate statistics
-        $stats = $this->calculateStats();
-        
-        return view('admin.orders.index', compact('orders', 'stats'));
-    }
-    
-    /**
-     * Calculate order statistics for all statuses
-     */
-    private function calculateStats()
-    {
-        return [
-            'total' => Order::count(),
-            'pending' => Order::where('status', 'Pending')->count(),
-            'processing' => Order::where('status', 'Processing')->count(),
-            'shipped' => Order::where('status', 'Shipped')->count(),
-            'delivered' => Order::where('status', 'Delivered')->count(),
-            'cancelled' => Order::where('status', 'Cancelled')->count(),
-            'refunded' => Order::where('status', 'Refunded')->count(),
-            
-            // Payment statistics
-            'paid' => Order::where('paymentStatus', 'Paid')->count(),
-            'unpaid' => Order::where('paymentStatus', 'Unpaid')->count(),
-            
-            // Revenue
-            'total_revenue' => Order::where('paymentStatus', 'Paid')->sum('total'),
-        ];
+        return view('admin.orders.index', compact('orders'));
     }
 
     /**
-     * Display order details
+     * Display the specified resource.
+     */
+    public function create()
+    {
+        return redirect()->route('admin.orders.index')->with('error', 'Chức năng này không được hỗ trợ.');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        return redirect()->route('admin.orders.index')->with('error', 'Chức năng này không được hỗ trợ.');
+    }
+
+    /**
+     * Display the specified resource.
      */
     public function show(Order $order)
     {
-        $order->load([
+        $order->load(
             'customer', 
             'address', 
-            'orderDetails.variant.product.images',
-            'orderDetails.variant.attributeValues', 
-            'voucher',
-            'shipping'
-        ]);
+            'shipping', 
+            'voucher', 
+            'orderDetails.variant.product.images', 
+            'orderDetails.variant.attributeValues'
+        );
 
-        return view('admin.orders.show', compact('order'));
+        $refundRequest = null;
+        if ($order->status === 'Refund Requested') {
+            $refundRequest = RefundRequest::where('orderID', $order->orderID)
+                                          ->where('status', 'Pending')
+                                          ->with(['items.orderDetail.variant.product', 'media'])
+                                          ->first();
+        }
+
+        return view('admin.orders.show', compact('order', 'refundRequest'));
     }
-    
+
     /**
-     * Update order status with business logic validation
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Order $order)
+    {
+        return redirect()->route('admin.orders.show', $order);
+    }
+
+    /**
+     * Update the specified resource in storage.
      */
     public function update(Request $request, Order $order)
     {
-        // 1. CHECK PERMISSIONS
         if (!Gate::allows('admin') && !Gate::allows('staff')) {
-            return redirect()->route('admin.orders.show', $order)
-                             ->with('error', 'Bạn không có quyền cập nhật trạng thái đơn hàng.');
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Bạn không có quyền cập nhật đơn hàng.');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'status' => ['required', Rule::in(['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Refunded'])],
             'paymentStatus' => ['required', Rule::in(['Unpaid', 'Paid', 'Refunded'])],
-            'trackingCode' => 'nullable|string|max:255'
+            'trackingCode' => 'nullable|string|max:255',
         ]);
-        
-        $oldStatus = $order->status;
-        $newStatus = $request->status;
-        $newPaymentStatus = $request->paymentStatus;
-        
-        // --- BUSINESS LOGIC: LINEAR WORKFLOW & VALIDATION ---
-        
-        $finalStates = ['Delivered', 'Cancelled', 'Refunded'];
-        $transitionMap = [
-            'Pending'    => ['Processing', 'Cancelled'],
-            'Processing' => ['Shipped', 'Cancelled'],
-            'Shipped'    => ['Delivered', 'Cancelled'],
-            'Delivered'  => ['Refunded'],
-            'Cancelled'  => ['Refunded'],
-            'Refunded'   => ['Cancelled'],
-        ];
 
-        // Validate state transitions (except when status stays the same)
-        if ($newStatus !== $oldStatus) {
-            
-            $isFinalStateChange = in_array($oldStatus, $finalStates);
-            $allowedTransitions = $transitionMap[$oldStatus] ?? [];
-            
-            // If not in final state, validate allowed transitions
-            if (!$isFinalStateChange) {
-                if (!in_array($newStatus, $allowedTransitions)) {
-                    return redirect()->back()->with('error', 
-                        "Lỗi nghiệp vụ: Không thể chuyển từ '$oldStatus' sang '$newStatus'. Luồng hợp lệ: " . implode(', ', $allowedTransitions)
-                    );
-                }
-            } else {
-                // ALREADY IN FINAL STATE
-                $isAllowedFinalTransition = 
-                    ($oldStatus === 'Delivered' && $newStatus === 'Refunded') || 
-                    ($oldStatus === 'Cancelled' && $newStatus === 'Refunded') || 
-                    ($oldStatus === 'Refunded' && $newStatus === 'Cancelled');
-                
-                if (!$isAllowedFinalTransition) {
-                    return redirect()->back()->with('error', 
-                        "Lỗi nghiệp vụ: Đơn hàng đã ở trạng thái kết thúc ($oldStatus). Chuyển đổi sang $newStatus không hợp lệ."
-                    );
-                }
-            }
-        }
-        // --- END BUSINESS LOGIC ---
-        
-        // Track products that need stock update
-        $productsToUpdate = [];
-        
         try {
             DB::beginTransaction();
 
-            // 1. STOCK RESTORATION LOGIC (Cancel or Refund)
-            if (($newStatus === 'Cancelled' || $newStatus === 'Refunded') && 
-                $oldStatus !== 'Cancelled' && $oldStatus !== 'Refunded') {
-                
-                foreach ($order->orderDetails as $item) {
-                    $variant = ProductVariant::find($item->variantID);
-                    if ($variant) {
-                        $variant->reservedStock -= $item->quantity;
-                        $variant->stock += $item->quantity;
-                        if ($variant->reservedStock < 0) $variant->reservedStock = 0; 
-                        $variant->save();
-                        
-                        $productsToUpdate[$variant->productID] = true;
-                    }
-                }
-            }
+            $oldStatus = $order->status;
+            $newStatus = $validated['status'];
 
-            // 2. RESERVED STOCK REDUCTION LOGIC (Delivered)
-            if ($newStatus === 'Delivered' && $oldStatus !== 'Delivered') {
-                foreach ($order->orderDetails as $item) {
-                    $variant = ProductVariant::find($item->variantID);
-                    if ($variant) {
-                        $variant->reservedStock -= $item->quantity;
-                        if ($variant->reservedStock < 0) $variant->reservedStock = 0; 
-                        $variant->save();
+            $order->status = $newStatus;
+            $order->paymentStatus = $validated['paymentStatus'];
+            $order->save();
 
-                        $productsToUpdate[$variant->productID] = true;
-                    }
-                }
+            if ($request->filled('trackingCode')) {
+                $shipping = $order->shipping ?? new Shipping();
+                $shipping->orderID = $order->orderID;
+                $shipping->trackingCode = $validated['trackingCode'];
                 
-                // Auto-set Paid for COD when Delivered
-                if ($order->paymentMethod === 'COD' && $request->paymentStatus === 'Unpaid') {
-                    $newPaymentStatus = 'Paid';
-                    session()->flash('info', 'Đơn hàng COD đã giao thành công. Trạng thái thanh toán tự động chuyển sang "Paid".');
+                if (!$shipping->exists) {
+                     $shipping->shippingMethod = $order->shipping->shippingMethod ?? 'N/A'; // Lấy từ đơn hàng nếu có
+                     $shipping->shippingFee = $order->shipping->shippingFee ?? 0;
                 }
+               
+                if ($newStatus == 'Shipped' && $oldStatus != 'Shipped') {
+                    $shipping->shippedDate = now();
+                }
+                $shipping->save();
             }
             
-            // 3. UPDATE TOTAL STOCK FOR AFFECTED PRODUCTS
+            // 3. Xử lý hoàn kho VÀ GỬI EMAIL
+            if ($newStatus == 'Cancelled' && $oldStatus != 'Cancelled') {
+                 $productsToUpdate = [];
+                 foreach ($order->orderDetails as $item) {
+                     $variant = ProductVariant::find($item->variantID);
+                     if ($variant) {
+                         $variant->reservedStock -= $item->quantity;
+                         $variant->stock += $item->quantity;
+                         if ($variant->reservedStock < 0) $variant->reservedStock = 0;
+                         $variant->save();
+                         $productsToUpdate[$variant->productID] = true;
+                     }
+                 }
+                 
+                 if (!empty($productsToUpdate)) {
+                     $productIDs = array_keys($productsToUpdate);
+                     $products = \App\Models\Product::whereIn('productID', $productIDs)->get();
+                     foreach ($products as $product) {
+                         $product->updateStockAndPriceFromVariants();
+                     }
+                 }
+                 
+                 // ⭐ GỌI EMAIL HỦY ĐƠN (TỪ HELPER)
+                 if ($order->customer->email) {
+                     sendCancellationEmail(
+                         $order->customer->email, 
+                         $order->customer->fullName, 
+                         $order->orderID
+                     );
+                 }
+            }
+
+            // 4. ⭐ GỬI EMAIL GIAO HÀNG THÀNH CÔNG (TỪ HELPER)
+            if ($newStatus == 'Delivered' && $oldStatus != 'Delivered') {
+                if ($order->customer->email) {
+                    sendDeliveryConfirmationEmail(
+                        $order->customer->email,
+                        $order->customer->fullName,
+                        $order->orderID
+                    );
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('admin.orders.show', $order)->with('success', 'Cập nhật đơn hàng thành công!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Order Update Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Lỗi khi cập nhật đơn hàng: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Order $order)
+    {
+        if (!Gate::allows('admin')) {
+             return redirect()->route('admin.orders.index')->with('error', 'Chỉ Admin mới có quyền xóa đơn hàng.');
+        }
+        
+        try {
+            $order->delete();
+            return redirect()->route('admin.orders.index')->with('success', 'Đã xóa đơn hàng (thao tác này không được khuyến khích).');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Không thể xóa đơn hàng. Lỗi: ' . $e->getMessage());
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CÁC HÀM XỬ LÝ REFUND
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * ⭐ APPROVE REFUND REQUEST
+     */
+    public function approveRefund(Order $order)
+    {
+        if (!Gate::allows('admin') && !Gate::allows('staff')) {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Bạn không có quyền xử lý yêu cầu hoàn tiền.');
+        }
+        if ($order->status !== 'Refund Requested') {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Đơn hàng này không có yêu cầu hoàn tiền.');
+        }
+        $refundRequest = RefundRequest::where('orderID', $order->orderID)->where('status', 'Pending')->first();
+        if (!$refundRequest) {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Không tìm thấy yêu cầu hoàn tiền hợp lệ.');
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // 1. RESTORE STOCK
+            $productsToUpdate = [];
+            foreach ($refundRequest->items as $refundItem) {
+                $orderDetail = $refundItem->orderDetail;
+                $variant = ProductVariant::find($orderDetail->variantID);
+                if ($variant) {
+                    $quantityToRestore = $refundItem->quantity;
+                    $variant->reservedStock -= $quantityToRestore;
+                    $variant->stock += $quantityToRestore;
+                    if ($variant->reservedStock < 0) $variant->reservedStock = 0;
+                    $variant->save();
+                    $productsToUpdate[$variant->productID] = true;
+                }
+            }
+
             if (!empty($productsToUpdate)) {
                 $productIDs = array_keys($productsToUpdate);
-                $products = \App\Models\Product::whereIn('productID', $productIDs)->get(); 
-                
+                $products = \App\Models\Product::whereIn('productID', $productIDs)->get();
                 foreach ($products as $product) {
                     $product->updateStockAndPriceFromVariants();
                 }
             }
 
-            // 4. SAVE TRACKING CODE
-            if ($request->has('trackingCode') || optional($order->shipping)->exists) {
-                $trackingCode = trim($request->trackingCode);
-                
-                $shipping = $order->shipping ?? new Shipping(['orderID' => $order->orderID]);
-                $shipping->shippingMethod = $shipping->shippingMethod ?? 'Standard'; 
-                $shipping->shippingFee = $shipping->shippingFee ?? 0.00; 
-                $shipping->trackingCode = $trackingCode;
-                
-                if ($newStatus === 'Shipped' && !$shipping->shippedDate) {
-                    $shipping->shippedDate = now();
-                }
-                
-                $shipping->save();
-            }
-            
-            // 5. UPDATE ORDER STATUS
-            $order->status = $newStatus;
-            $order->paymentStatus = $newPaymentStatus;
+            // 2. UPDATE ORDER STATUS
+            $order->status = 'Refunded';
+            $order->paymentStatus = 'Refunded';
             $order->save();
 
-            // 6. SEND EMAIL NOTIFICATIONS (if functions exist)
-            $recipientEmail = $order->customer->email ?? null; 
-            $recipientName = $order->customer->fullName ?? 'Quý khách';
-            $orderID = $order->orderID;
+            // 3. UPDATE REFUND REQUEST STATUS
+            $refundRequest->status = 'Approved';
+            $refundRequest->adminNotes = 'Đã chấp nhận hoàn tiền bởi ' . auth('admin')->user()->fullName;
+            $refundRequest->save();
 
-            if ($recipientEmail && $newStatus !== $oldStatus) {
-                if ($newStatus === 'Delivered' && function_exists('sendDeliveryConfirmationEmail')) {
-                    \sendDeliveryConfirmationEmail($recipientEmail, $recipientName, $orderID);
-                    session()->flash('email_info', 'Email xác nhận giao hàng đã được gửi.');
-                } else if (($newStatus === 'Cancelled' || $newStatus === 'Refunded') && function_exists('sendCancellationEmail')) {
-                    \sendCancellationEmail($recipientEmail, $recipientName, $orderID);
-                    session()->flash('email_info', 'Email thông báo hủy/hoàn tiền đã được gửi.');
-                }
-            }
-            
             DB::commit();
+
+            // 4. ⭐ GỌI EMAIL CHẤP NHẬN REFUND (TỪ HELPER)
+            if ($order->customer->email) {
+                sendRefundApprovedEmail(
+                    $order->customer->email,
+                    $order->customer->fullName,
+                    $order->orderID,
+                    $refundRequest->reason ?? 'Không có lý do cụ thể',
+                    $order->paymentMethod
+                );
+            }
 
             return redirect()->route('admin.orders.show', $order)
-                             ->with('success', 'Đã cập nhật trạng thái đơn hàng thành ' . $newStatus . '.');
-
+                ->with('success', 'Đã chấp nhận yêu cầu hoàn tiền. Đơn hàng chuyển sang trạng thái Refunded và email đã được gửi cho khách hàng.');
+        
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Lỗi xử lý nghiệp vụ: ' . $e->getMessage());
+            Log::error('Approve Refund Error: '." ". $e->getMessage());
+            return redirect()->back()->with('error', 'Lỗi xử lý: ' . $e->getMessage());
         }
     }
-    
+
     /**
-     * Export orders to Excel (future feature)
+     * ⭐ REJECT REFUND REQUEST
      */
-    public function export(Request $request)
+    public function rejectRefund(Request $request, Order $order)
     {
-        return redirect()->back()->with('info', 'Chức năng xuất Excel đang được phát triển');
-    }
-    
-    /**
-     * Bulk update orders (future feature)
-     */
-    public function bulkUpdate(Request $request)
-    {
-        $request->validate([
-            'order_ids' => 'required|array',
-            'order_ids.*' => 'exists:orders,orderID',
-            'action' => 'required|in:mark_paid,mark_shipped,mark_delivered,cancel'
-        ]);
-        
-        $orderIds = $request->order_ids;
-        $action = $request->action;
-        
-        $updated = 0;
-        
-        DB::beginTransaction();
+        if (!Gate::allows('admin') && !Gate::allows('staff')) {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Bạn không có quyền xử lý yêu cầu hoàn tiền.');
+        }
+        if ($order->status !== 'Refund Requested') {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Đơn hàng này không có yêu cầu hoàn tiền.');
+        }
+        $refundRequest = RefundRequest::where('orderID', $order->orderID)->where('status', 'Pending')->first();
+        if (!$refundRequest) {
+            return redirect()->route('admin.orders.show', $order)->with('error', 'Không tìm thấy yêu cầu hoàn tiền hợp lệ.');
+        }
+
         try {
-            foreach ($orderIds as $orderId) {
-                $order = Order::find($orderId);
-                if (!$order) continue;
-                
-                switch ($action) {
-                    case 'mark_paid':
-                        $order->paymentStatus = 'Paid';
-                        $order->save();
-                        $updated++;
-                        break;
-                        
-                    case 'mark_shipped':
-                        if ($order->status === 'Processing') {
-                            $order->status = 'Shipped';
-                            $order->save();
-                            $updated++;
-                        }
-                        break;
-                        
-                    case 'mark_delivered':
-                        if ($order->status === 'Shipped') {
-                            $order->status = 'Delivered';
-                            $order->save();
-                            $updated++;
-                        }
-                        break;
-                        
-                    case 'cancel':
-                        if (!in_array($order->status, ['Delivered', 'Cancelled', 'Refunded'])) {
-                            // Restore stock
-                            foreach ($order->orderDetails as $item) {
-                                $variant = ProductVariant::find($item->variantID);
-                                if ($variant) {
-                                    $variant->reservedStock -= $item->quantity;
-                                    $variant->stock += $item->quantity;
-                                    if ($variant->reservedStock < 0) $variant->reservedStock = 0;
-                                    $variant->save();
-                                }
-                            }
-                            
-                            $order->status = 'Cancelled';
-                            $order->save();
-                            $updated++;
-                        }
-                        break;
-                }
+            DB::beginTransaction();
+
+            // 1. UPDATE ORDER STATUS
+            $order->status = 'Delivered';
+            $order->save();
+
+            // 2. UPDATE REFUND REQUEST STATUS
+            $refundRequest->status = 'Rejected';
+            $rejectReason = $request->input('reject_reason', 'Không đáp ứng điều kiện hoàn trả');
+            $refundRequest->adminNotes = $rejectReason . ' - Từ chối bởi ' . auth('admin')->user()->fullName;
+            $refundRequest->save();
+
+            DB::commit();
+
+            // 3. ⭐ GỌI EMAIL TỪ CHỐI REFUND (TỪ HELPER)
+            if ($order->customer->email) {
+                sendRefundRejectedEmail(
+                    $order->customer->email,
+                    $order->customer->fullName,
+                    $order->orderID,
+                    $refundRequest->reason ?? 'Không có lý do cụ thể',
+                    $refundRequest->adminNotes // Lý do từ chối
+                );
             }
             
-            DB::commit();
-            return redirect()->back()->with('success', "Đã cập nhật $updated đơn hàng thành công!");
-            
+            return redirect()->route('admin.orders.show', $order)
+                ->with('success', 'Đã từ chối yêu cầu hoàn tiền. Đơn hàng quay lại trạng thái Delivered và email đã được gửi cho khách hàng.');
+        
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Lỗi: ' . $e->getMessage());
+            Log::error('Reject Refund Error: '." ". $e->getMessage());
+            return redirect()->back()->with('error', 'Lỗi xử lý: ' . $e->getMessage());
         }
     }
-    
-    // Resource methods
-    public function create() { abort(404); }
-    public function store(Request $request) { abort(404); }
-    public function edit(Order $order) { return $this->show($order); } 
-    public function destroy(Order $order) { abort(404); }
 }

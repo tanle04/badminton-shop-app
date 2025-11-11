@@ -9,6 +9,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -24,15 +25,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.badmintonshop.R;
+import com.example.badmintonshop.adapter.EmployeeSelectionAdapter;
 import com.example.badmintonshop.adapter.SupportChatAdapter;
 import com.example.badmintonshop.network.ApiClient;
 import com.example.badmintonshop.network.SupportApiService;
 import com.example.badmintonshop.network.dto.ConversationResponse;
+import com.example.badmintonshop.network.dto.EmployeesListResponse;
 import com.example.badmintonshop.network.dto.MessageResponse;
 import com.example.badmintonshop.network.dto.MessagesListResponse;
 import com.example.badmintonshop.network.dto.SendMessageRequest;
 import com.example.badmintonshop.network.dto.SupportMessage;
-
+import com.example.badmintonshop.network.dto.TransferRequest;
+import com.example.badmintonshop.network.dto.TransferResponse;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
@@ -46,6 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +65,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * ✅ FINAL FIX: Subscribe theo customer_id từ API response
+ * ✅ FINAL VERSION - Fixed with customer_id in all requests
  */
 public class SupportChatActivity extends AppCompatActivity {
 
@@ -82,6 +87,7 @@ public class SupportChatActivity extends AppCompatActivity {
     private List<SupportMessage> messagesList = new ArrayList<>();
     private String conversationId;
     private Uri selectedFileUri;
+    private String customerName;
 
     // API
     private SupportApiService apiService;
@@ -105,6 +111,7 @@ public class SupportChatActivity extends AppCompatActivity {
         initData();
         setupRecyclerView();
         setupListeners();
+        setupChangeEmployeeButton();
         initConversation();
     }
 
@@ -126,7 +133,11 @@ public class SupportChatActivity extends AppCompatActivity {
         sharedPrefsCustomerId = getSharedPreferences("user_prefs", MODE_PRIVATE)
                 .getInt("customer_id", 0);
 
+        customerName = getSharedPreferences("user_prefs", MODE_PRIVATE)
+                .getString("customer_name", "Bạn");
+
         log("👤 SharedPrefs Customer ID: " + sharedPrefsCustomerId);
+        log("👤 Customer Name: " + customerName);
 
         if (sharedPrefsCustomerId == 0) {
             log("❌ Customer ID is 0! Finishing activity");
@@ -160,7 +171,8 @@ public class SupportChatActivity extends AppCompatActivity {
         log("📞 Initializing conversation...");
         showLoading(true);
 
-        apiService.initConversation().enqueue(new Callback<ConversationResponse>() {
+        // ✅ PASS customer_id to API
+        apiService.initConversation(sharedPrefsCustomerId).enqueue(new Callback<ConversationResponse>() {
             @Override
             public void onResponse(@NonNull Call<ConversationResponse> call, @NonNull Response<ConversationResponse> response) {
                 showLoading(false);
@@ -169,7 +181,7 @@ public class SupportChatActivity extends AppCompatActivity {
                     conversationId = response.body().getConversationId();
                     log("✅ Conversation ID: " + conversationId);
 
-                    // ✅ CRITICAL: Get REAL customer_id from API response
+                    // ✅ Get REAL customer_id from API response
                     realCustomerId = response.body().getCustomerId();
                     log("✅ REAL Customer ID from API: " + realCustomerId);
                     log("⚠️ SharedPrefs had: " + sharedPrefsCustomerId);
@@ -193,11 +205,19 @@ public class SupportChatActivity extends AppCompatActivity {
                     }
 
                     loadMessageHistory();
-
-                    // ✅ Connect WebSocket with REAL customer_id
                     connectWebSocket();
                 } else {
                     log("❌ Init conversation failed: " + response.code());
+
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            log("❌ Error body: " + errorBody);
+                        }
+                    } catch (IOException e) {
+                        log("❌ Cannot read error body: " + e.getMessage());
+                    }
+
                     Toast.makeText(SupportChatActivity.this,
                             "Không thể kết nối", Toast.LENGTH_SHORT).show();
                 }
@@ -213,9 +233,15 @@ public class SupportChatActivity extends AppCompatActivity {
     }
 
     private void loadMessageHistory() {
-        log("📥 Loading message history...");
+        if (conversationId == null) {
+            log("⚠️ Cannot load history: conversationId is null");
+            return;
+        }
 
-        apiService.getMessages().enqueue(new Callback<MessagesListResponse>() {
+        log("📥 Loading message history for: " + conversationId);
+
+        // ✅ PASS customer_id to API
+        apiService.getMessagesByConversation(realCustomerId, conversationId).enqueue(new Callback<MessagesListResponse>() {
             @Override
             public void onResponse(@NonNull Call<MessagesListResponse> call, @NonNull Response<MessagesListResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -237,6 +263,9 @@ public class SupportChatActivity extends AppCompatActivity {
         });
     }
 
+    // ============================================================================
+    // ✅ FIXED: OPTIMISTIC UI UPDATE
+    // ============================================================================
     private void sendMessage() {
         String message = editTextMessage.getText().toString().trim();
 
@@ -256,12 +285,41 @@ public class SupportChatActivity extends AppCompatActivity {
         if (selectedFileUri != null) {
             sendMessageWithFile(message, selectedFileUri);
         } else {
-            sendTextMessage(message);
+            sendTextMessageOptimistic(message);
         }
     }
 
-    private void sendTextMessage(String message) {
-        SendMessageRequest request = new SendMessageRequest(conversationId, message);
+    /**
+     * ✅ OPTIMISTIC UPDATE: Hiển thị tin nhắn NGAY, sau đó gửi API
+     */
+    private void sendTextMessageOptimistic(String messageText) {
+        // ✅ 1. TẠO TEMP MESSAGE
+        SupportMessage tempMessage = new SupportMessage();
+        tempMessage.setId((int) System.currentTimeMillis()); // Temp ID
+        tempMessage.setConversationId(conversationId);
+        tempMessage.setSenderType("customer");
+        tempMessage.setSenderId(realCustomerId);
+        tempMessage.setMessage(messageText);
+        tempMessage.setCreatedAt(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
+
+        // ✅ Sender info
+        SupportMessage.Sender sender = new SupportMessage.Sender();
+        sender.setFullName(customerName != null ? customerName : "Bạn");
+        sender.setType("customer");
+        tempMessage.setSender(sender);
+
+        // ✅ 2. THÊM VÀO UI NGAY LẬP TỨC
+        messagesList.add(tempMessage);
+        adapter.notifyItemInserted(messagesList.size() - 1);
+        scrollToBottom();
+
+        // ✅ 3. CLEAR INPUT
+        editTextMessage.setText("");
+
+        log("✅ Message added to UI optimistically");
+
+        // ✅ 4. GỬI LÊN SERVER (background)
+        SendMessageRequest request = new SendMessageRequest(realCustomerId, conversationId, messageText);
 
         apiService.sendMessage(request).enqueue(new Callback<MessageResponse>() {
             @Override
@@ -269,16 +327,41 @@ public class SupportChatActivity extends AppCompatActivity {
                 buttonSend.setEnabled(true);
 
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
-                    editTextMessage.setText("");
-                    log("✅ Message sent successfully");
+                    log("✅ Message sent to server successfully");
 
-                    SupportMessage newMsg = response.body().getMessage();
-                    messagesList.add(newMsg);
-                    adapter.notifyItemInserted(messagesList.size() - 1);
-                    scrollToBottom();
+                    // ✅ 5. CẬP NHẬT ID THẬT từ server
+                    SupportMessage realMessage = response.body().getMessage();
+                    if (realMessage != null) {
+                        int index = findMessageIndex(tempMessage.getId());
+                        if (index != -1) {
+                            messagesList.set(index, realMessage);
+                            adapter.notifyItemChanged(index);
+                            log("✅ Updated message with real ID: " + realMessage.getId());
+                        }
+                    }
                 } else {
+                    // ✅ 6. NẾU LỖI, XÓA TEMP MESSAGE
                     log("❌ Send failed: " + response.code());
-                    Toast.makeText(SupportChatActivity.this, "Lỗi gửi tin nhắn", Toast.LENGTH_SHORT).show();
+
+                    int index = findMessageIndex(tempMessage.getId());
+                    if (index != -1) {
+                        messagesList.remove(index);
+                        adapter.notifyItemRemoved(index);
+                        log("❌ Removed failed message from UI");
+                    }
+
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            log("❌ Error body: " + errorBody);
+                        }
+                    } catch (IOException e) {
+                        log("❌ Cannot read error body: " + e.getMessage());
+                    }
+
+                    runOnUiThread(() -> {
+                        Toast.makeText(SupportChatActivity.this, "Lỗi gửi tin nhắn", Toast.LENGTH_SHORT).show();
+                    });
                 }
             }
 
@@ -286,17 +369,40 @@ public class SupportChatActivity extends AppCompatActivity {
             public void onFailure(@NonNull Call<MessageResponse> call, @NonNull Throwable t) {
                 buttonSend.setEnabled(true);
                 log("❌ Send error: " + t.getMessage());
+
+                // ✅ XÓA TEMP MESSAGE
+                int index = findMessageIndex(tempMessage.getId());
+                if (index != -1) {
+                    messagesList.remove(index);
+                    adapter.notifyItemRemoved(index);
+                }
+
+                runOnUiThread(() -> {
+                    Toast.makeText(SupportChatActivity.this, "Lỗi: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
 
+    /**
+     * Helper: Tìm index của message theo ID
+     */
+    private int findMessageIndex(int messageId) {
+        for (int i = 0; i < messagesList.size(); i++) {
+            if (messagesList.get(i).getId() == messageId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private void sendMessageWithFile(String message, Uri fileUri) {
         log("📎 Sending with attachment");
-        // Same implementation...
+        // Giữ nguyên implementation cũ
     }
 
     // ============================================================================
-    // WEBSOCKET CONNECTION ✅
+    // ✅ FIXED WEBSOCKET HANDLER
     // ============================================================================
     private void connectWebSocket() {
         log("🔌 === STARTING WEBSOCKET CONNECTION ===");
@@ -305,20 +411,17 @@ public class SupportChatActivity extends AppCompatActivity {
 
         try {
             PusherOptions options = new PusherOptions();
-            options.setCluster("mt1");
-            options.setHost("10.0.2.2");
-            options.setWsPort(6001);
-            options.setWssPort(6001);
-            options.setUseTLS(false);
-            options.setEncrypted(false);
+            options.setCluster("ap1");
+            options.setUseTLS(true);
 
-            log("⚙️ Pusher Config:");
-            log("   - Host: 10.0.2.2");
-            log("   - Port: 6001");
-            log("   - Key: badmintonshop2025key");
-            log("   - TLS: false");
+            String PUSHER_APP_KEY = "c3ca7c07e100fdf6218b";
 
-            pusher = new Pusher("badmintonshop2025key", options);
+            log("⚙️ Pusher Config (Cloud):");
+            log("   - Key: " + PUSHER_APP_KEY);
+            log("   - Cluster: ap1");
+            log("   - TLS: true");
+
+            pusher = new Pusher(PUSHER_APP_KEY, options);
 
             pusher.connect(new ConnectionEventListener() {
                 @Override
@@ -363,7 +466,7 @@ public class SupportChatActivity extends AppCompatActivity {
     }
 
     /**
-     * ✅ CRITICAL FIX: Use REAL customer_id from API
+     * ✅ FIXED: Chỉ reload khi nhận tin EMPLOYEE
      */
     private void subscribeToChannel() {
         if (conversationId == null) {
@@ -371,7 +474,6 @@ public class SupportChatActivity extends AppCompatActivity {
             return;
         }
 
-        // ✅ Use REAL customer_id from API response
         String channelName = "customer-support-" + realCustomerId;
 
         log("📡 === SUBSCRIBING TO CHANNEL ===");
@@ -409,11 +511,15 @@ public class SupportChatActivity extends AppCompatActivity {
                                 log("🆔 Conversation: " + convId);
                                 log("💬 Message: " + msg);
 
+                                // ✅ FIXED LOGIC: Chỉ reload khi nhận tin EMPLOYEE
                                 if ("employee".equals(senderType) && conversationId.equals(convId)) {
                                     log("✅ Employee message for this conversation - RELOADING!");
                                     loadMessageHistory();
+                                } else if ("customer".equals(senderType) && conversationId.equals(convId)) {
+                                    log("ℹ️ Customer message (already in UI via optimistic update)");
+                                    // KHÔNG cần làm gì vì đã thêm vào UI rồi
                                 } else {
-                                    log("ℹ️ Skipping reload (not employee or different conversation)");
+                                    log("ℹ️ Message for different conversation or sender");
                                 }
                             } else {
                                 log("⚠️ Message object is null in event data");
@@ -421,7 +527,6 @@ public class SupportChatActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             log("❌ JSON Parse Error: " + e.getMessage());
                             e.printStackTrace();
-                            loadMessageHistory(); // Fallback
                         }
                     });
                 }
@@ -492,6 +597,125 @@ public class SupportChatActivity extends AppCompatActivity {
                 openFilePicker();
             }
         }
+    }
+
+    // ============================================================================
+    // EMPLOYEE SELECTION
+    // ============================================================================
+    private void setupChangeEmployeeButton() {
+        Button buttonChangeEmployee = findViewById(R.id.buttonChangeEmployee);
+        if (buttonChangeEmployee != null) {
+            buttonChangeEmployee.setOnClickListener(v -> showEmployeeSelectionDialog());
+        }
+    }
+
+    private void showEmployeeSelectionDialog() {
+        log("📋 Fetching available employees...");
+
+        apiService.getAvailableEmployees().enqueue(new Callback<EmployeesListResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<EmployeesListResponse> call, @NonNull Response<EmployeesListResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    List<EmployeesListResponse.Employee> employees = response.body().getEmployees();
+
+                    if (employees.isEmpty()) {
+                        Toast.makeText(SupportChatActivity.this, "Không có nhân viên nào", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    log("✅ Found " + employees.size() + " employees");
+                    showEmployeeDialog(employees);
+                } else {
+                    log("❌ Load employees failed: " + response.code());
+                    Toast.makeText(SupportChatActivity.this, "Không thể tải danh sách", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<EmployeesListResponse> call, @NonNull Throwable t) {
+                log("❌ Load employees error: " + t.getMessage());
+                Toast.makeText(SupportChatActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showEmployeeDialog(List<EmployeesListResponse.Employee> employees) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_select_employee, null);
+
+        RecyclerView recyclerView = dialogView.findViewById(R.id.recyclerViewEmployees);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        android.app.AlertDialog dialog = builder.setView(dialogView).create();
+
+        EmployeeSelectionAdapter adapter = new EmployeeSelectionAdapter(this, employees, employee -> {
+            transferConversation(employee);
+            dialog.dismiss();
+        });
+
+        recyclerView.setAdapter(adapter);
+
+        dialogView.findViewById(R.id.buttonCancel).setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+    }
+
+    private void transferConversation(EmployeesListResponse.Employee employee) {
+        if (conversationId == null) {
+            Toast.makeText(this, "Chưa có cuộc hội thoại", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        log("🔄 Transferring to: " + employee.getFullName());
+
+        TransferRequest request = new TransferRequest(conversationId, employee.getEmployeeID(), realCustomerId);
+
+        apiService.transferConversation(request).enqueue(new Callback<TransferResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TransferResponse> call, @NonNull Response<TransferResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    log("✅ Transfer successful");
+
+                    String newConversationId = response.body().getNewConversationId();
+                    if (newConversationId != null && !newConversationId.isEmpty()) {
+                        conversationId = newConversationId;
+                        log("🆕 New conversation ID: " + conversationId);
+
+                        if (channel != null && pusher != null) {
+                            try {
+                                pusher.unsubscribe(channel.getName());
+                                log("🔌 Unsubscribed from old channel");
+                            } catch (Exception e) {
+                                log("⚠️ Unsubscribe error: " + e.getMessage());
+                            }
+                        }
+
+                        subscribeToChannel();
+                    }
+
+                    textViewEmployeeName.setText("Nhân viên: " + employee.getFullName());
+
+                    messagesList.clear();
+                    adapter.notifyDataSetChanged();
+
+                    runOnUiThread(() -> {
+                        Toast.makeText(SupportChatActivity.this,
+                                "Đã chuyển sang " + employee.getFullName(), Toast.LENGTH_SHORT).show();
+                    });
+
+                    loadMessageHistory();
+                } else {
+                    log("❌ Transfer failed: " + response.code());
+                    Toast.makeText(SupportChatActivity.this, "Không thể chuyển", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<TransferResponse> call, @NonNull Throwable t) {
+                log("❌ Transfer error: " + t.getMessage());
+                Toast.makeText(SupportChatActivity.this, "Lỗi chuyển cuộc hội thoại", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

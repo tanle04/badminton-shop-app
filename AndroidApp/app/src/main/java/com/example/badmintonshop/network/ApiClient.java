@@ -8,9 +8,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    // 1. Định nghĩa BASE_URL cố định ở đây
-    private static final String BASE_URL = "http://10.0.2.2/api/BadmintonShop/";
-
+    // ✅ URL này đã đúng
+    private static final String BASE_URL = "https://tanbadminton.id.vn/api/";
+    public static final String BASE_STORAGE_URL = "https://tanbadminton.id.vn/admin/public/storage/";
     private static Retrofit retrofit;
     private static ApiService apiService;
 
@@ -18,25 +18,24 @@ public class ApiClient {
     public static Retrofit getRetrofitInstance(){
         if (retrofit == null) {
 
-            // TẠO GSON CÓ CẤU HÌNH LENIENT (KHẮC PHỤC LỖI PHP/BOM)
+            // TẠO GSON CÓ CẤU HÌNH LENIENT
             Gson gson = new GsonBuilder()
-                    .setLenient() // KÍCH HOẠT CHẾ ĐỘ LENIENT
+                    .setLenient()
                     .create();
 
             // Cấu hình HttpLoggingInterceptor
             HttpLoggingInterceptor log = new HttpLoggingInterceptor();
             log.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-            // Tạo OkHttpClient và thêm Interceptor
+            // ✅ QUAY LẠI PHIÊN BẢN GỐC (AN TOÀN)
             OkHttpClient client = new OkHttpClient.Builder()
                     .addInterceptor(log)
-                    .build();
+                    .build(); // Xóa .Builder() không an toàn đi
 
             // Tạo Retrofit instance
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
-                    .client(client)
-                    // SỬ DỤNG GSON CÓ CẤU HÌNH LENIENT ĐÃ ĐƯỢC TẠO
+                    .client(client) // Dùng client an toàn
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
@@ -50,4 +49,6 @@ public class ApiClient {
         }
         return apiService;
     }
+
+    // ✅ XÓA BỎ HOÀN TOÀN HÀM 'getUnsafeOkHttpClientBuilder()'
 }

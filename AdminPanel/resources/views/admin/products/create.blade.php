@@ -378,14 +378,9 @@
 
 @section('js')
 <script>
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-const ROUTES = {
-    getAttributes: '/admin/products/category/:id/attributes'
-};
 
-console.log('🎯 Routes configured:', ROUTES);
+
+// console.log('🎯 Routes configured:', ROUTES);
 
 // ============================================================================
 // KHỞI TẠO
@@ -473,7 +468,7 @@ function loadAttributesForCategory(categoryID) {
     $('#attributes-container').hide();
     
     $.ajax({
-        url: ROUTES.getAttributes.replace(':id', categoryID),
+        url: '{{ route("admin.products.category.attributes", ["categoryID" => ":id"]) }}'.replace(':id', categoryID),
         method: 'GET',
         success: function(attributes) {
             console.log('✅ Attributes loaded:', attributes);

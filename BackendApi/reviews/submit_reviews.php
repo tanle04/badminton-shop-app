@@ -31,16 +31,24 @@ try {
         respond(['isSuccess' => false, 'message' => 'Dữ liệu đánh giá không hợp lệ.'], 400);
     }
 
-    $upload_dir = __DIR__ . '/../../uploads/reviews/'; // Đường dẫn vật lý đến /uploads/reviews/
-    $db_prefix = 'reviews/'; // Tiền tố tương đối mong muốn trong DB
+    // ✅ SỬA LỖI 1: Thay đổi đường dẫn vật lý để trỏ vào storage của AdminPanel
+    // __DIR__ là /public_html/api/reviews/
+    // Chúng ta cần đi lùi 3 cấp để đến /public_html/ rồi vào /admin/storage/app/public/reviews/media/
+    $upload_dir = __DIR__ . '/../../admin/storage/app/public/reviews/';
+    
+    // ✅ SỬA LỖI 2: Thay đổi tiền tố DB để khớp với AdminPanel
+    $db_prefix = 'reviews/'; // Thêm 'media/'
     
     if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
+        // Tạo thư mục nếu nó không tồn tại
+        if (!mkdir($upload_dir, 0777, true) && !is_dir($upload_dir)) {
+             throw new Exception("Không thể tạo thư mục upload: " . $upload_dir);
+        }
     }
     
     $media_urls = []; // Mảng lưu trữ URL/Type của các tệp đã tải lên
 
-    // ⭐ BẮT ĐẦU: XỬ LÝ UPLOAD TỆP (Sửa để ghi chuẩn vào DB)
+    // ⭐ BẮT ĐẦU: XỬ LÝ UPLOAD TỆP
     
     // Xử lý Ảnh (photos[])
     if (isset($_FILES['photos'])) {
@@ -53,7 +61,7 @@ try {
                 $file_path = $upload_dir . $file_name;
 
                 if (move_uploaded_file($tmp_name, $file_path)) {
-                    // ⭐ SỬA: Ghi đường dẫn tương đối chuẩn vào DB (reviews/filename.jpg)
+                    // Ghi đường dẫn tương đối (đã sửa) vào DB (ví dụ: reviews/media/filename.jpg)
                     $media_urls[] = ['url' => $db_prefix . $file_name, 'type' => 'photo']; 
                     $uploaded_file_paths[] = $file_path;
                 }
@@ -72,7 +80,7 @@ try {
                 $file_path = $upload_dir . $file_name;
                 
                 if (move_uploaded_file($tmp_name, $file_path)) {
-                    // ⭐ SỬA: Ghi đường dẫn tương đối chuẩn vào DB (reviews/filename.mp4)
+                    // Ghi đường dẫn tương đối (đã sửa) vào DB (ví dụ: reviews/media/filename.mp4)
                     $media_urls[] = ['url' => $db_prefix . $file_name, 'type' => 'video']; 
                     $uploaded_file_paths[] = $file_path;
                 }

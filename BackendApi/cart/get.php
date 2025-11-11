@@ -31,7 +31,7 @@ try {
             pv.variantID,
             pv.price AS priceBase, /* ⭐ LẤY GIÁ GỐC BIẾN THỂ */
             pv.stock,
-            (SELECT pi.imageUrl FROM productimages pi WHERE pi.productID = p.productID ORDER BY pi.imageID ASC LIMIT 1) AS imageUrl,
+            (SELECT pi.imageUrl FROM productimages pi WHERE pi.productID = p.productID ORDER BY (pi.imageType = 'main') DESC, pi.imageID ASC LIMIT 1) AS imageUrl,
             GROUP_CONCAT(CONCAT(pa.attributeName, ': ', pav.valueName) SEPARATOR ', ') AS variantDetails
         FROM shopping_cart sc
         JOIN product_variants pv ON sc.variantID = pv.variantID
@@ -78,12 +78,14 @@ try {
         $row['variantPrice'] = (float) $row['variantPrice'];
         $row['stock'] = (int) $row['stock']; 
         
-        $img = $row['imageUrl'] ?? "";
-        if ($img && preg_match('/^http/', $img)) {
-            // Giả định bạn chỉ muốn lấy tên file, tùy chỉnh nếu cần
-            $img = basename($img); 
+        // ✅ SỬA LỖI URL ẢNH: Tạo URL ảnh đầy đủ
+        if (!empty($row['imageUrl'])) {
+            // Dùng https và trỏ đến thư mục storage public của AdminPanel
+            $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+            
+            // $row['imageUrl'] từ DB đã có dạng: "products/ten_file.jpg"
+            $row['imageUrl'] = $base_url . $row['imageUrl'];
         }
-        $row['imageUrl'] = $img ?: "no_image.png";
         
         $row['isSelected'] = true; 
         

@@ -76,6 +76,12 @@ public class SupportMessage {
         return "employee".equals(sender_type);
     }
 
+    public void setConversationId(String conversationId) {
+    }
+
+    public void setSenderId(int realCustomerId) {
+    }
+
     /**
      * Sender info (nested class)
      */

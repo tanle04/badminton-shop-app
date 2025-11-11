@@ -6,14 +6,18 @@ import com.example.badmintonshop.network.dto.ApiResponse;
 import com.example.badmintonshop.network.dto.AuthLoginBody;
 import com.example.badmintonshop.network.dto.AuthRegisterBody;
 import com.example.badmintonshop.network.dto.AuthResponse;
+import com.example.badmintonshop.network.dto.BrandListResponse;
 import com.example.badmintonshop.network.dto.CartResponse;
 import com.example.badmintonshop.network.dto.CategoryListResponse;
 // ⭐ SỬA: Import OrderDto
 import com.example.badmintonshop.network.dto.OrderDto;
 import com.example.badmintonshop.network.dto.OrderDetailsListResponse;
 import com.example.badmintonshop.network.dto.OrderListResponse;
+import com.example.badmintonshop.network.dto.OrderTrackResponse;
 import com.example.badmintonshop.network.dto.ProductDetailResponse;
 import com.example.badmintonshop.network.dto.ProductListResponse;
+import com.example.badmintonshop.network.dto.RefundRequestBody;
+import com.example.badmintonshop.network.dto.ReviewDetailsResponse;
 import com.example.badmintonshop.network.dto.ReviewListResponse;
 import com.example.badmintonshop.network.dto.ReviewSubmitRequest;
 import com.example.badmintonshop.network.dto.ShippingRatesResponse;
@@ -25,6 +29,7 @@ import com.example.badmintonshop.network.dto.WishlistDeleteRequest;
 import com.example.badmintonshop.network.dto.WishlistGetResponse;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -69,6 +74,8 @@ public interface ApiService {
 
     @GET("categories/list.php")
     Call<CategoryListResponse> getCategories();
+    @GET("brands/list.php")
+    Call<BrandListResponse> getBrands();
 
 
     // --- WISHLIST API ---
@@ -244,7 +251,33 @@ public interface ApiService {
             @Query("orderID") int orderId,
             @Query("customerID") int customerId
     );
+    @GET("orders/get_details.php")
+    Call<ReviewDetailsResponse> getOrderDetailsReview(
+            @Query("orderID") int orderId,
+            @Query("customerID") int customerId
+    );
+    @GET("orders/get_details.php")
+    Call<OrderDetailsListResponse> getOrderDetailsForReview(
+            @Query("orderID") int orderId,
+            @Query("customerID") int customerId
+    );
+    // (Thêm vào bên trong interface ApiService)
 
+    @GET("orders/track.php")
+    Call<OrderTrackResponse> trackOrder(
+            @Query("orderID") int orderID,
+            @Query("customerID") int customerID
+    );
+
+    /* * ⭐ MỚI: API để gửi yêu cầu trả hàng
+     */
+    @Multipart
+    @POST("refunds/request_refund.php")
+    Call<ApiResponse> submitRefundRequestMultipart(
+            @Part("refund_data") RequestBody refundDataJson, // Dữ liệu JSON (text)
+            @Part List<MultipartBody.Part> photos,           // Danh sách file ảnh
+            @Part List<MultipartBody.Part> videos            // Danh sách file video
+    );
     // Phương thức HỦY đơn hàng
     @FormUrlEncoded
     @POST("orders/cancel.php")
@@ -269,4 +302,16 @@ public interface ApiService {
             @Query("productID") int productID,
             @Query("rating") int ratingFilter // ratingFilter = 0 cho tất cả
     );
+
+    /**
+     * GĐ 1: Yêu cầu gửi mã OTP đến email
+     */
+    @POST("auth/password-request-otp.php")
+    Call<ApiResponse> requestPasswordOtp(@Body Map<String, String> body);
+
+    /**
+     * GĐ 2: Đặt lại mật khẩu bằng OTP
+     */
+    @POST("auth/password-reset.php")
+    Call<ApiResponse> resetPassword(@Body Map<String, String> body);
 }

@@ -1,3 +1,6 @@
+// File: app/src/main/java/com/example/badmintonshop/ui/OrderFragment.java
+// KHÔNG CẦN SỬA FILE NÀY
+
 package com.example.badmintonshop.ui;
 
 import android.content.Context;

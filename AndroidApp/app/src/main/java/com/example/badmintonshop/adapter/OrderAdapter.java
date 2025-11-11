@@ -1,8 +1,11 @@
+// File: app/src/main/java/com/example/badmintonshop/adapter/OrderAdapter.java
+// NỘI DUNG ĐÃ SỬA
+
 package com.example.badmintonshop.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log; // ⭐ Import Log for debugging image URLs if needed
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,23 +28,20 @@ import java.util.Locale;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
-    // 1. INTERFACE LISTENER (includes onListRepayClicked)
+    // 1. INTERFACE LISTENER (Đã có onTrackClicked)
     public interface OrderAdapterListener {
         void onReviewClicked(int orderId);
         void onRefundClicked(int orderId);
         void onTrackClicked(int orderId);
         void onBuyAgainClicked(int orderId);
         void onOrderClicked(OrderDto order);
-        void onListRepayClicked(int orderId); // Listener for the repay button in the list
+        void onListRepayClicked(int orderId);
     }
 
     private final Context context;
     private List<OrderDto> orderList;
     private final OrderAdapterListener listener;
-    // ⭐ Double-check this URL. Use your PC's internal IP if testing on a real device.
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
-    // Constructor (Correct)
     public OrderAdapter(Context context, List<OrderDto> orderList, OrderAdapterListener listener) {
         this.context = context;
         this.orderList = orderList;
@@ -60,15 +60,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         OrderDto order = orderList.get(position);
         List<OrderDetailDto> items = order.getItems();
 
-        // 1. Update order header info (Correct)
+        // 1. Thông tin header
         holder.tvOrderId.setText(String.format("Order #%d", order.getOrderID()));
-        // Use the improved status display name
         holder.tvStatus.setText(getStatusDisplayName(order.getStatus(), order.getPaymentMethod(), order.getPaymentStatus()));
-        holder.tvStatus.setTextColor(getStatusColor(order.getStatus())); // Color might need adjustment based on payment status too
+        holder.tvStatus.setTextColor(getStatusColor(order.getStatus()));
         holder.tvDate.setText(formatDate(order.getOrderDate()));
         holder.tvTotal.setText(String.format(Locale.GERMAN, "%,.0f đ", order.getTotal()));
 
-        // Calculate total quantity (Correct)
+        // 2. Đếm số lượng
         int totalQuantity = 0;
         if (items != null) {
             for (OrderDetailDto item : items) {
@@ -77,13 +76,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
         holder.tvItemCount.setText(String.format(Locale.getDefault(), " (%d items)", totalQuantity));
 
-        // 2. Display product images (Correct logic, check URL/Glide issues for missing images)
+        // 3. Hiển thị ảnh
         displayOrderItems(holder.llItemPreviews, items);
 
-        // 3. Setup action buttons (Includes repay button logic)
+        // 4. Cài đặt các nút action
         setupActionButtons(holder, order);
 
-        // 4. Handle click on the entire order item (Correct)
+        // 5. Click vào cả item (Mở OrderDetailActivity)
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onOrderClicked(order);
@@ -91,82 +90,69 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         });
     }
 
-    // (getItemCount, updateData - Correct)
     @Override
     public int getItemCount() { return orderList != null ? orderList.size() : 0; }
     public void updateData(List<OrderDto> newOrders) { this.orderList = newOrders; notifyDataSetChanged(); }
 
-    // --- PRIVATE HELPER METHODS ---
+    // --- CÁC HÀM HỖ TRỢ ---
 
-    // Check if all items in the order have been reviewed
     private boolean isOrderFullyReviewed(List<OrderDetailDto> items) {
-        if (items == null || items.isEmpty()) {
-            // Consider if an empty order should be "reviewed" - probably not relevant for buttons
-            return false;
-        }
+        if (items == null || items.isEmpty()) return false;
         for (OrderDetailDto item : items) {
-            // Assuming isReviewed() correctly reflects the review status from your DTO
             if (!item.isReviewed()) {
-                return false; // Found one item not reviewed
+                return false;
             }
         }
-        return true; // All items are reviewed
+        return true;
     }
 
-    // Display item preview images
     private void displayOrderItems(LinearLayout container, List<OrderDetailDto> items) {
-        container.removeAllViews(); // Clear previous images
-        int maxDisplay = 4; // Show up to 4 images
+        container.removeAllViews();
+        int maxDisplay = 4;
 
-        if (items == null || context == null) return; // Need context for LayoutInflater and Glide
+        if (items == null || context == null) return;
 
         for (int i = 0; i < items.size() && i < maxDisplay; i++) {
             OrderDetailDto item = items.get(i);
-            // Inflate the layout which is likely just an ImageView
             View previewView = LayoutInflater.from(context).inflate(R.layout.include_order_item_preview, container, false);
-            ImageView imageView; // Declare the ImageView variable
 
-            // ⭐ FIX: Check if the inflated view itself IS an ImageView
-            if (previewView instanceof ImageView) {
-                imageView = (ImageView) previewView; // Cast the inflated view directly
-            } else {
-                // ⭐ Fallback: If the layout is complex, try finding by ID (Ensure ID exists in XML)
-                // imageView = previewView.findViewById(R.id.your_image_view_id_in_include_layout); // Replace with actual ID if needed
-                // if (imageView == null) {
-                Log.e("OrderAdapter", "ImageView not found in include_order_item_preview layout. Ensure the layout root is an ImageView or it contains an ImageView with a correct ID.");
-                continue; // Skip if ImageView is missing
-                // }
+            // Tìm ImageView bằng ID bên trong previewView
+            ImageView imageView = previewView.findViewById(R.id.iv_order_item_preview);
+
+            if (imageView == null) {
+                Log.e("OrderAdapter", "LỖI: Không tìm thấy R.id.iv_order_item_preview trong layout include_order_item_preview.xml");
+                continue;
             }
 
-            String imageUrl = BASE_IMAGE_URL + item.getImageUrl();
-            Log.d("IMAGE_DEBUG", "Loading image in adapter: " + imageUrl); // Debug URL
-
+            String imageUrl = item.getImageUrl();
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_badminton_logo) // Placeholder while loading
-                    .error(R.drawable.ic_badminton_logo)      // Image shown on error
-                    .into(imageView); // Load image into the found/casted ImageView
+                    .placeholder(R.drawable.ic_badminton_logo)
+                    .error(R.drawable.ic_badminton_logo)
+                    .into(imageView);
 
-            container.addView(previewView); // Add the inflated view (which contains the ImageView)
+            container.addView(previewView);
         }
     }
 
-    // Setup visibility and actions for buttons based on order status (Correct Logic)
+    /**
+     * ⭐ HÀM ĐÃ SỬA LOGIC HIỂN THỊ NÚT "TRACK" ⭐
+     */
     private void setupActionButtons(OrderViewHolder holder, OrderDto order) {
         String paymentMethod = order.getPaymentMethod();
         String status = order.getStatus();
         String paymentStatus = order.getPaymentStatus();
         List<OrderDetailDto> items = order.getItems();
 
-        // Hide all buttons initially
+        // Ẩn tất cả các nút
         holder.btnListRepay.setVisibility(View.GONE);
         holder.btnTrack.setVisibility(View.GONE);
         holder.btnReview.setVisibility(View.GONE);
         holder.btnReturnRefund.setVisibility(View.GONE);
 
-        // --- Logic to show buttons based on status ---
+        // --- Logic mới ---
 
-        // 1. Priority: Repay? (Only VNPay Pending and not Paid)
+        // 1. Ưu tiên: Chờ thanh toán?
         boolean canRepay = "VNPay".equals(paymentMethod) && "Pending".equals(status) &&
                 (paymentStatus == null || "".equals(paymentStatus) || "Pending".equals(paymentStatus) || "Unpaid".equals(paymentStatus) || "Failed".equals(paymentStatus));
 
@@ -175,23 +161,23 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             holder.btnListRepay.setOnClickListener(v -> {
                 if (listener != null) listener.onListRepayClicked(order.getOrderID());
             });
-            // Don't show other buttons when awaiting payment
-            return; // Stop here
+            return; // Chỉ hiển thị nút "Thanh toán lại", không hiển thị các nút khác
         }
 
-        // 2. Track? (Processing or Shipped)
-        if ("Processing".equals(status) || "Shipped".equals(status)) {
-            holder.btnTrack.setVisibility(View.VISIBLE);
-            holder.btnTrack.setOnClickListener(v -> {
-                if (listener != null) listener.onTrackClicked(order.getOrderID());
-            });
-            // Decide if you want "Buy Again" here too. If not, return.
-            // return;
-        }
+        // 2. Hiển thị nút "Theo dõi" cho TẤT CẢ các trạng thái khác
+        // (Processing, Shipped, Delivered, Cancelled, Refunded, v.v.)
+        holder.btnTrack.setVisibility(View.VISIBLE);
+        holder.btnTrack.setOnClickListener(v -> {
+            if (listener != null) {
+                // Gọi đúng listener onTrackClicked
+                listener.onTrackClicked(order.getOrderID());
+            }
+        });
 
-        // 3. Delivered?
+        // 3. Hiển thị các nút BỔ SUNG tùy theo trạng thái
+
         if ("Delivered".equals(status)) {
-            // Show Return/Refund unconditionally for delivered orders? Adjust as needed.
+            // Đã giao: Hiển thị "Trả hàng"
             holder.btnReturnRefund.setVisibility(View.VISIBLE);
             holder.btnReturnRefund.setOnClickListener(v -> {
                 if (listener != null) listener.onRefundClicked(order.getOrderID());
@@ -199,63 +185,58 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
             boolean fullyReviewed = isOrderFullyReviewed(items);
             if (fullyReviewed) {
-                // All items reviewed -> Show "Buy Again"
+                // Đã review hết: Hiển thị "Mua lại"
                 holder.btnReview.setVisibility(View.VISIBLE);
                 holder.btnReview.setText("Mua lại");
-                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800)); // Or your desired color
+                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800)); // Cần định nghĩa
                 holder.btnReview.setOnClickListener(v -> {
                     if (listener != null) listener.onBuyAgainClicked(order.getOrderID());
                 });
             } else {
-                // Not all items reviewed -> Show "Leave a review"
+                // Chưa review: Hiển thị "Đánh giá"
                 holder.btnReview.setVisibility(View.VISIBLE);
                 holder.btnReview.setText("Leave a review");
-                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.red_700)); // Or your desired color
+                holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.red_700)); // Cần định nghĩa
                 holder.btnReview.setOnClickListener(v -> {
                     if (listener != null) listener.onReviewClicked(order.getOrderID());
                 });
             }
-            return; // Stop here for Delivered status
         }
-
-        // 4. Cancelled / Refunded?
-        if ("Cancelled".equals(status) || "Refunded".equals(status)) {
-            // Only show "Buy Again"
-            holder.btnReview.setVisibility(View.VISIBLE); // Re-using the review button slot
+        else if ("Cancelled".equals(status) || "Refunded".equals(status) || "Refund Requested".equals(status)) {
+            // Đã hủy/Hoàn tiền: Chỉ hiển thị "Mua lại" (dùng chung slot với nút review)
+            holder.btnReview.setVisibility(View.VISIBLE);
             holder.btnReview.setText("Mua lại");
-            holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800)); // Or your desired color
+            holder.btnReview.setTextColor(ContextCompat.getColor(context, R.color.orange_800)); // Cần định nghĩa
             holder.btnReview.setOnClickListener(v -> {
                 if (listener != null) listener.onBuyAgainClicked(order.getOrderID());
             });
-            // No other buttons needed
-            return; // Stop here
         }
-
-        // Other statuses (like initial Pending for COD) might not show any buttons based on this logic.
+        // Các trạng thái "Processing" và "Shipped" sẽ chỉ hiển thị nút "Track" (đã xử lý ở bước 2).
     }
 
-    // Get status color (Correct)
+
     private int getStatusColor(String status) {
         if (status == null) return Color.GRAY;
         switch (status) {
-            case "Delivered": return ContextCompat.getColor(context, R.color.green_700);
+            case "Delivered": return ContextCompat.getColor(context, R.color.success_color);
             case "Processing":
-            case "Shipped": return ContextCompat.getColor(context, R.color.orange_800);
+            case "Shipped": return ContextCompat.getColor(context, R.color.pending_color);
             case "Cancelled":
-            case "Refunded": return ContextCompat.getColor(context, R.color.red_700);
-            case "Pending": // Pending might need differentiation (COD vs VNPay unpaid)
-            default: return Color.GRAY; // Default for Pending or unknown
+            case "Refunded":
+            case "Refund Requested": // Thêm trạng thái này
+                return ContextCompat.getColor(context, R.color.error_color);
+            case "Pending":
+            default: return Color.GRAY;
         }
     }
 
-    // Get display name for status (Improved)
     private String getStatusDisplayName(String status, String paymentMethod, String paymentStatus) {
         if (status == null) return "Unknown";
-        // Specific case for unpaid VNPay
+
         if ("Pending".equals(status) && "VNPay".equals(paymentMethod) && !"Paid".equals(paymentStatus)) {
             return "Chờ thanh toán";
         }
-        // General cases
+
         switch (status) {
             case "Pending": return "Chờ xác nhận";
             case "Processing": return "Đang xử lý";
@@ -263,22 +244,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             case "Delivered": return "Đã giao hàng";
             case "Cancelled": return "Đã hủy";
             case "Refunded": return "Đã hoàn tiền";
-            default: return status; // Return the raw status if unknown
+            case "Refund Requested": return "Yêu cầu hoàn tiền";
+            default: return status;
         }
     }
 
-    // Format date string (Correct)
     private String formatDate(String isoDate) {
         if (isoDate == null || isoDate.length() < 10) return "N/A";
-        // Takes yyyy-MM-dd part
         return isoDate.substring(0, 10).replace('-', '/');
     }
 
-    // --- VIEWHOLDER CLASS (Correct - includes btnListRepay) ---
+    // --- VIEWHOLDER CLASS ---
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
         TextView tvOrderId, tvStatus, tvDate, tvTotal, tvItemCount;
         LinearLayout llItemPreviews;
-        // Buttons for actions
         Button btnListRepay, btnReview, btnReturnRefund, btnTrack;
 
         public OrderViewHolder(@NonNull View itemView) {
@@ -290,7 +269,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             llItemPreviews = itemView.findViewById(R.id.ll_item_previews);
             tvItemCount = itemView.findViewById(R.id.tv_item_count);
 
-            // Find all buttons by their IDs from item_order_summary.xml
             btnListRepay = itemView.findViewById(R.id.btn_list_repay);
             btnReview = itemView.findViewById(R.id.btn_review);
             btnReturnRefund = itemView.findViewById(R.id.btn_return_refund);

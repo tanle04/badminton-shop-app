@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Events\NewSupportMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; 
 
 class SupportChatController extends Controller
 {
@@ -19,91 +20,109 @@ class SupportChatController extends Controller
     }
 
     public function getConversations(Request $request)
-    {
-        try {
-            $employeeId = Auth::guard('admin')->id();
-            $filter = $request->get('filter', 'all');
-
-            $query = DB::table('support_conversations as sc')
-                ->leftJoin('customers as c', 'sc.customer_id', '=', 'c.customerID')
-                ->leftJoin('employees as e', 'sc.assigned_employee_id', '=', 'e.employeeID')
-                ->select(
-                    'sc.*',
-                    'c.customerID',
-                    'c.fullName as customer_name',
-                    'c.email as customer_email',
-                    'c.phone as customer_phone',
-                    'e.employeeID as emp_id',
-                    'e.fullName as emp_name',
-                    'e.img_url as emp_img'
-                )
-                ->orderBy('sc.last_message_at', 'desc');
-
-            switch ($filter) {
-                case 'assigned':
-                    $query->where('sc.assigned_employee_id', $employeeId);
-                    break;
-                case 'unassigned':
-                    $query->whereNull('sc.assigned_employee_id');
-                    break;
-                case 'open':
-                    $query->where('sc.status', 'open');
-                    break;
-                case 'closed':
-                    $query->where('sc.status', 'closed');
-                    break;
-            }
-
-            $conversations = $query->get();
-
-            $result = $conversations->map(function ($conv) {
-                $latestMessage = DB::table('support_messages')
-                    ->where('conversation_id', $conv->conversation_id)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-
-                $unreadCount = DB::table('support_messages')
-                    ->where('conversation_id', $conv->conversation_id)
-                    ->where('sender_type', 'customer')
-                    ->where('is_read', false)
-                    ->count();
-
-                return [
-                    'conversation_id' => $conv->conversation_id,
-                    'customer' => [
-                        'customerID' => $conv->customerID,
-                        'fullName' => $conv->customer_name,
-                        'email' => $conv->customer_email,
-                        'phone' => $conv->customer_phone ?? 'N/A',
-                    ],
-                    'assigned_employee' => $conv->emp_id ? [
-                        'employeeID' => $conv->emp_id,
-                        'fullName' => $conv->emp_name,
-                        'img_url' => $conv->emp_img,
-                    ] : null,
-                    'status' => $conv->status,
-                    'priority' => $conv->priority,
-                    'subject' => $conv->subject,
-                    'last_message_at' => $conv->last_message_at,
-                    'unread_count' => $unreadCount,
-                    'latest_message' => $latestMessage ? [
-                        'message' => $latestMessage->message,
-                        'sender_type' => $latestMessage->sender_type,
-                        'created_at' => $latestMessage->created_at,
-                    ] : null,
-                ];
+{
+    $filter = $request->input('filter', 'all');
+    $currentEmployeeId = Auth::guard('admin')->id();
+    
+    Log::info('📋 [SUPPORT] Get conversations', [
+        'employee_id' => $currentEmployeeId,
+        'filter' => $filter
+    ]);
+    
+    $query = DB::table('support_conversations as sc')
+        ->leftJoin('customers as c', 'sc.customer_id', '=', 'c.customerID')
+        ->leftJoin('employees as e', 'sc.assigned_employee_id', '=', 'e.employeeID')
+        ->leftJoin(DB::raw('(
+            SELECT conversation_id, MAX(created_at) as latest_at
+            FROM support_messages
+            GROUP BY conversation_id
+        ) as lm'), 'sc.conversation_id', '=', 'lm.conversation_id')
+        ->leftJoin('support_messages as latest_msg', function($join) {
+            $join->on('sc.conversation_id', '=', 'latest_msg.conversation_id')
+                 ->on('lm.latest_at', '=', 'latest_msg.created_at');
+        })
+        ->select(
+            'sc.conversation_id',
+            'sc.customer_id',
+            'sc.status',
+            'sc.assigned_employee_id',
+            'sc.last_message_at',
+            'c.fullName as customer_name',
+            'c.email as customer_email',
+            'c.phone as customer_phone',
+            'e.fullName as employee_name',
+            'latest_msg.message as last_message',
+            'latest_msg.sender_type as last_sender_type',
+            'latest_msg.created_at as last_message_time',
+            DB::raw('(SELECT COUNT(*) FROM support_messages sm 
+                     WHERE sm.conversation_id = sc.conversation_id 
+                     AND sm.sender_type = "customer" 
+                     AND sm.is_read = 0) as unread_count')
+        );
+    
+    // ✅ CRITICAL: CHỈ LẤY CONVERSATION CỦA NHÂN VIÊN HIỆN TẠI
+    switch ($filter) {
+        case 'assigned':
+            // Chỉ conversation được assign cho mình
+            $query->where('sc.assigned_employee_id', $currentEmployeeId)
+                  ->where('sc.status', 'open');
+            break;
+            
+        case 'unassigned':
+            // Conversation chưa assign (tất cả nhân viên đều thấy)
+            $query->whereNull('sc.assigned_employee_id')
+                  ->where('sc.status', 'open');
+            break;
+            
+        case 'open':
+            // Conversation open của mình HOẶC chưa assign
+            $query->where('sc.status', 'open')
+                  ->where(function($q) use ($currentEmployeeId) {
+                      $q->where('sc.assigned_employee_id', $currentEmployeeId)
+                        ->orWhereNull('sc.assigned_employee_id');
+                  });
+            break;
+            
+        default: // 'all'
+            // ✅ CHỈ LẤY CONVERSATION CỦA MÌNH + CHƯA ASSIGN
+            $query->where(function($q) use ($currentEmployeeId) {
+                $q->where('sc.assigned_employee_id', $currentEmployeeId)
+                  ->orWhereNull('sc.assigned_employee_id');
             });
-
-            return response()->json($result);
-
-        } catch (\Exception $e) {
-            \Log::error('❌ Get conversations error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage()
-            ], 500);
-        }
+            break;
     }
+    
+    $conversations = $query->orderBy('sc.last_message_at', 'desc')
+                           ->get();
+    
+    $result = $conversations->map(function($conv) {
+        return [
+            'conversation_id' => $conv->conversation_id,
+            'status' => $conv->status,
+            'customer' => [
+                'customerID' => $conv->customer_id,
+                'fullName' => $conv->customer_name,
+                'email' => $conv->customer_email,
+                'phone' => $conv->customer_phone,
+            ],
+            'assigned_employee' => $conv->assigned_employee_id ? [
+                'employeeID' => $conv->assigned_employee_id,
+                'fullName' => $conv->employee_name,
+            ] : null,
+            'latest_message' => $conv->last_message ? [
+                'message' => $conv->last_message,
+                'sender_type' => $conv->last_sender_type,
+                'created_at' => $conv->last_message_time,
+            ] : null,
+            'unread_count' => (int)$conv->unread_count,
+            'last_message_at' => $conv->last_message_at,
+        ];
+    });
+    
+    Log::info('✅ [SUPPORT] Returning ' . $result->count() . ' conversations');
+    
+    return response()->json($result);
+}
 
     public function getConversationHistory($conversationId)
     {

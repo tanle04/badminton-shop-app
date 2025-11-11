@@ -23,7 +23,7 @@ public class DisplayReviewMediaAdapter extends RecyclerView.Adapter<DisplayRevie
     private final List<String> mediaUrls; // Sử dụng String (URL)
     private final ReviewMediaClickListener listener;
     // ⭐ BASE_IMAGE_URL cần phải trỏ đến thư mục 'uploads' của API gốc (đã sửa trong các bước trước)
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/uploads/";
+//    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/uploads/";
 
     // Constructor nhận 3 tham số: Context, List<String> URL, Listener
     public DisplayReviewMediaAdapter(Context context, List<String> mediaUrls, ReviewMediaClickListener listener) {
@@ -44,7 +44,7 @@ public class DisplayReviewMediaAdapter extends RecyclerView.Adapter<DisplayRevie
     public void onBindViewHolder(@NonNull MediaViewHolder holder, int position) {
         String url = mediaUrls.get(position);
 
-        String fullUrl = BASE_IMAGE_URL + url;
+        String fullUrl =   url;
 
         // 1. Tải ảnh/thumbnail (Glide không thể tạo thumbnail video từ URL, nên chỉ tải ảnh)
         Glide.with(context)

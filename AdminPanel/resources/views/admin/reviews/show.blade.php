@@ -71,57 +71,56 @@
 
             {{-- Card: Content & Media --}}
             <div class="card card-info card-outline">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <i class="fas fa-comment"></i> Nội dung & Media
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <h5>Nội dung:</h5>
-                    <p>{{ $review->reviewContent ?? '(Không có nội dung chi tiết)' }}</p>
-                    <hr>
-                    
-                    <h5>Media (Ảnh/Video):</h5>
-                    <div class="row">
-                        @forelse ($review->media as $media)
-                        @php
-                            $path = $media->mediaUrl;
-                            if (\Str::startsWith($path, '/api/uploads/')) {
-                                $path_relative = \Str::after($path, '/api/uploads/');
-                            } else {
-                                $path_relative = $path;
-                            }
-                            $base_url_correct = 'http://127.0.0.1/api/uploads/'; // Cần cấu hình URL này
-                            $full_url = $base_url_correct . $path_relative;
-                            
-                            $path_lower = strtolower($path_relative);
-                            $isImage = \Str::endsWith($path_lower, ['.jpg', '.jpeg', '.png', '.gif']);
-                            $isVideo = \Str::endsWith($path_lower, ['.mp4', '.mov', '.webm', '.avi']); 
-                            $col_class = $isVideo ? 'col-md-6' : 'col-md-3';
-                        @endphp
-                        
-                        <div class="{{ $col_class }} mb-3">
-                            @if ($isImage)
-                                <img src="{{ $full_url }}" alt="Review Media" style="width: 100%; max-height: 200px; object-fit: contain; border: 1px solid #ccc;">
-                            @elseif ($isVideo)
-                                <video controls style="width: 100%; max-height: 250px; border: 1px solid #ccc;">
-                                    <source src="{{ $full_url }}" type="video/mp4">
-                                    Trình duyệt của bạn không hỗ trợ video.
-                                </video>
-                            @else
-                                <div style="width: 100%; height: 100px; background-color: #eee; text-align: center; padding-top: 30px;">
-                                    <i class="fas fa-file fa-2x text-secondary"></i>
-                                </div>
-                            @endif
-                            <p class="text-xs text-center mt-1">{{ $media->mediaType }}</p>
-                        </div>
-                        @empty
-                        <div class="col-12"><p>Không có tệp media nào đính kèm.</p></div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+        <div class="card-header">
+          <h3 class="card-title">
+            <i class="fas fa-comment"></i> Nội dung & Media
+          </h3>
         </div>
+        <div class="card-body">
+          <h5>Nội dung:</h5>
+          <p>{{ $review->reviewContent ?? '(Không có nội dung chi tiết)' }}</p>
+          <hr>
+          
+          <h5>Media (Ảnh/Video):</h5>
+          
+                    {{-- ⭐ BẮT ĐẦU SỬA LỖI SYNTAX --}}
+                    {{-- Xóa tất cả code thừa và chỉ giữ lại 1 vòng lặp này --}}
+          <div class="row">
+            @forelse ($review->media as $media)
+              @php
+                // $media->mediaUrl từ DB sẽ có dạng: "reviews/filename.jpg" (sau khi bạn sửa PHP)
+                                // Hàm asset() sẽ tạo URL: "http://your-domain.com/storage/reviews/filename.jpg"
+                $full_url = asset('storage/' . $media->mediaUrl);
+                
+                $path_lower = strtolower($media->mediaUrl); 
+                $isImage = \Str::endsWith($path_lower, ['.jpg', '.jpeg', '.png', '.gif']);
+                $isVideo = \Str::endsWith($path_lower, ['.mp4', '.mov', '.webm', '.avi']); 
+                $col_class = $isVideo ? 'col-md-6' : 'col-md-3';
+              @endphp
+              
+              <div class="{{ $col_class }} mb-3">
+                @if ($isImage)
+                  <img src="{{ $full_url }}" alt="Review Media" style="width: 100%; max-height: 200px; object-fit: contain; border: 1px solid #ccc;">
+                @elseif ($isVideo)
+                  <video controls style="width: 100%; max-height: 250px; border: 1px solid #ccc;">
+                    <source src="{{ $full_url }}" type="video/mp4">
+                    Trình duyệt của bạn không hỗ trợ video.
+                  </video>
+                @else
+                  <div style="width: 100%; height: 100px; background-color: #eee; text-align: center; padding-top: 30px;">
+                    <i class="fas fa-file fa-2x text-secondary"></i>
+                  </div>
+                @endif
+                <p class="text-xs text-center mt-1">{{ $media->mediaType }}</p>
+              </div>
+            @empty
+              <div class="col-12"><p>Không có tệp media nào đính kèm.</p></div>
+            @endforelse
+          </div>
+                    {{-- ⭐ KẾT THÚC SỬA LỖI SYNTAX --}}
+        </div>
+      </div>
+    </div>
 
         {{-- Cột 2: Trạng thái & Xử lý --}}
         <div class="col-lg-4">

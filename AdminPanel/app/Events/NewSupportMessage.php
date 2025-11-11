@@ -34,41 +34,38 @@ class NewSupportMessage implements ShouldBroadcast
      * ✅ CRITICAL: Broadcast to BOTH admin AND customer channels
      */
     public function broadcastOn()
-    {
-        $channels = [];
+{
+    $channels = [];
+    
+    // 1. Admin channel (Private)
+    $adminChannel = new PrivateChannel('admin.support.notifications');
+    $channels[] = $adminChannel;
+    Log::info('📡 Broadcasting to ADMIN channel: admin.support.notifications');
+    
+    // 2. Customer channel (Public) - CRITICAL FIX
+    try {
+        $conversation = DB::table('support_conversations')
+            ->where('conversation_id', $this->message->conversation_id)
+            ->first();
         
-        // 1. Admin channel (Private)
-        $adminChannel = new PrivateChannel('admin.support.notifications');
-        $channels[] = $adminChannel;
-        Log::info('📡 Broadcasting to ADMIN channel: admin.support.notifications');
-        
-        // 2. Customer channel (Public) - CRITICAL FIX
-        try {
-            $conversation = DB::table('support_conversations')
-                ->where('conversation_id', $this->message->conversation_id)
-                ->first();
+        if ($conversation && $conversation->customer_id) {
+            $customerChannel = 'customer-support-' . $conversation->customer_id;
             
-            if ($conversation && $conversation->customer_id) {
-                $customerChannel = 'customer-support-' . $conversation->customer_id;
-                
-                // ✅ IMPORTANT: Must be PUBLIC channel
-                $channels[] = new Channel($customerChannel);
-                
-                Log::info('📡 Broadcasting to CUSTOMER channel: ' . $customerChannel, [
-                    'customer_id' => $conversation->customer_id,
-                    'conversation_id' => $this->message->conversation_id
-                ]);
-            } else {
-                Log::warning('⚠️ No customer found for conversation: ' . $this->message->conversation_id);
-            }
-        } catch (\Exception $e) {
-            Log::error('❌ Error broadcasting to customer: ' . $e->getMessage());
+            // ✅ Dùng PUBLIC Channel
+            $channels[] = new Channel($customerChannel);
+            
+            Log::info('📡 Broadcasting to CUSTOMER channel: ' . $customerChannel, [
+                'customer_id' => $conversation->customer_id,
+                'conversation_id' => $this->message->conversation_id,
+                'sender_type' => $this->message->sender_type // ✅ THÊM ĐỂ DEBUG
+            ]);
         }
-        
-        Log::info('📤 Total channels: ' . count($channels));
-        
-        return $channels;
+    } catch (\Exception $e) {
+        Log::error('❌ Error broadcasting to customer: ' . $e->getMessage());
     }
+    
+    return $channels;
+}
 
     public function broadcastAs()
     {

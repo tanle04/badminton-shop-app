@@ -27,7 +27,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>Badminton</b>Shop',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image opacity-8',
     'logo_img_xl' => null,
@@ -41,10 +41,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
-    'usermenu_desc' => false,
+    'usermenu_desc' => true, // Hiển thị role
     'usermenu_profile_url' => false,
 
     /*
@@ -66,16 +66,18 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'login_url' => 'admin/login',
-    'logout_url' => 'admin/logout', // ĐÚNG: AdminLTE sẽ dùng URL này để tạo POST request
-    'register_url' => 'register',
-    'password_reset_url' => 'password/reset',
-    'password_email_url' => 'password/email',
+    'use_route_url' => true,
+    'dashboard_url' => 'admin.dashboard',
+    'logout_url' => 'admin.logout',
+    'login_url' => 'admin.login',
+    'register_url' => false,
+    'password_reset_url' => false,
+    'password_email_url' => false,
     'profile_url' => false,
 
     /*
     |--------------------------------------------------------------------------
-    | Laravel Mix (Vô hiệu hóa vì bạn đang dùng Vite)
+    | Laravel Mix
     |--------------------------------------------------------------------------
     */
 
@@ -85,145 +87,175 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Menu Items
+    | Menu Items - Phân quyền theo Role
     |--------------------------------------------------------------------------
     */
 
     'menu' => [
-        // Menu quan trọng: Dashboard (Tất cả nhân viên đã đăng nhập)
+        
+        // =====================================================================
+        // COMMON - TẤT CẢ ROLES
+        // =====================================================================
+        
         [
             'text' => 'Dashboard',
-            'url'  => 'admin/dashboard',
+            'route'  => 'admin.dashboard',
             'icon' => 'fas fa-fw fa-home',
             'active' => ['admin/dashboard'],
         ],
 
-        // =========================================================================
-        // THÊM MỤC CHAT VÀO MENU
-        // =========================================================================
         [
             'text' => 'Chat Nội Bộ',
-            'url'  => 'admin/chat',
+            'route'  => 'admin.chat.index',
             'icon' => 'fas fa-fw fa-comments',
             'active' => ['admin/chat'],
         ],
+
         [
             'text' => 'Hỗ trợ Khách hàng',
-            'url'  => 'admin/support-chat',
+            'route'  => 'admin.support-chat.index',
             'icon' => 'fas fa-fw fa-headset',
             'active' => ['admin/support-chat'],
         ],
-        // =========================================================================
 
-        ['header' => 'QUẢN LÝ NGHIỆP VỤ', 'can' => 'auth:admin'], // Tất cả đều thấy header này
+        // =====================================================================
+        // QUẢN LÝ NGHIỆP VỤ
+        // =====================================================================
+        
+        ['header' => 'QUẢN LÝ NGHIỆP VỤ'],
 
-        // ĐƠN HÀNG (Tất cả nhân viên xem)
+        // Khách hàng - TẤT CẢ ROLES (View)
+        [
+            'text' => 'Khách hàng',
+            'route'  => 'admin.customers.index',
+            'icon' => 'fas fa-fw fa-users',
+            'active' => ['admin/customers*'],
+        ],
+
+        // Đơn hàng - TẤT CẢ ROLES
         [
             'text' => 'Đơn hàng',
-            'url'  => 'admin/orders',
+            'route'  => 'admin.orders.index',
             'icon' => 'fas fa-fw fa-shopping-cart',
-            // KHÔNG CẦN 'can' vì tất cả nhân viên đều xem được index
+            'active' => ['admin/orders*'],
         ],
 
-        // KHO HÀNG & ĐÁNH GIÁ (Admin & Staff)
+        // =====================================================================
+        // KHO HÀNG - ADMIN & STAFF
+        // =====================================================================
+        
+        ['header' => 'KHO HÀNG', 'can' => 'staff'],
+
         [
             'text' => 'Sản phẩm & Tồn kho',
-            'url'  => 'admin/products',
+            'route'  => 'admin.products.index',
             'icon' => 'fas fa-fw fa-box',
-            'can'  => 'staff', // Staff và Admin (vì Admin có TOÀN QUYỀN)
+            'can'  => 'staff',
+            'active' => ['admin/products*'],
         ],
+
         [
             'text' => 'Quản lý Đánh giá',
-            'url'  => 'admin/reviews',
+            'route'  => 'admin.reviews.index',
             'icon' => 'fas fa-fw fa-star-half-alt',
-            'can'  => 'staff', // Staff và Admin
+            'can'  => 'staff',
+            'active' => ['admin/reviews*'],
         ],
 
-        // MARKETING (Admin & Marketing)
-        // Bắt đầu khối Marketing
+        [
+            'text' => 'Thuộc tính Sản phẩm',
+            'route'  => 'admin.attributes.index',
+            'icon' => 'fas fa-fw fa-list-ul',
+            'can'  => 'staff',
+            'active' => ['admin/attributes*'],
+        ],
+
+        // =====================================================================
+        // MARKETING - ADMIN & MARKETER
+        // =====================================================================
+        
+        ['header' => 'MARKETING', 'can' => 'marketing'],
+
         [
             'text' => 'Mã giảm giá (Voucher)',
-            'url'  => 'admin/vouchers',
+            'route'  => 'admin.vouchers.index',
             'icon' => 'fas fa-fw fa-gift',
-            'can'  => 'marketing', // Marketing và Admin
+            'can'  => 'marketing',
+            'active' => ['admin/vouchers*'],
         ],
 
-        // MỤC MỚI: CHƯƠNG TRÌNH GIẢM GIÁ SẢN PHẨM
         [
-            'text' => 'Chương trình Giảm giá SP',
-            'url'  => 'admin/product-discounts',
+            'text' => 'Chương trình Giảm giá',
+            'route'  => 'admin.product-discounts.index',
             'icon' => 'fas fa-fw fa-percent',
-            'can'  => 'marketing', // Marketing và Admin
+            'can'  => 'marketing',
+            'active' => ['admin/product-discounts*'],
         ],
 
         [
-            'text' => 'Slider/Banner', // Đã thêm module Slider
-            'url'  => 'admin/sliders',
+            'text' => 'Slider/Banner',
+            'route'  => 'admin.sliders.index',
             'icon' => 'fas fa-fw fa-images',
-            'can'  => 'marketing', // Marketing và Admin
+            'can'  => 'marketing',
+            'active' => ['admin/sliders*'],
         ],
-        // Kết thúc khối Marketing
 
-        // =========================================================================
-        ['header' => 'CẤU HÌNH HỆ THỐNG', 'can' => 'admin'], // Chỉ Admin thấy header này
+        // =====================================================================
+        // CẤU HÌNH HỆ THỐNG - CHỈ ADMIN
+        // =====================================================================
+        
+        ['header' => 'CẤU HÌNH HỆ THỐNG', 'can' => 'admin'],
 
-        // TÀI KHOẢN (Chỉ Admin)
         [
             'text' => 'Tài khoản nhân viên',
-            'url'  => 'admin/employees',
+            'route'  => 'admin.employees.index',
             'icon' => 'fas fa-fw fa-users-cog',
-            'can'  => 'admin', // Chỉ Admin
+            'can'  => 'admin',
+            'active' => ['admin/employees*'],
         ],
 
-        // CẤU HÌNH CHUNG (Chỉ Admin)
         [
-            'text'      => 'Cấu hình chung',
-            'icon'      => 'fas fa-fw fa-cogs',
-            'can'       => 'admin', // Chỉ Admin
+            'text'    => 'Danh mục & Thương hiệu',
+            'icon'    => 'fas fa-fw fa-tags',
+            'can'     => 'admin',
             'submenu' => [
                 [
                     'text' => 'Thương hiệu',
-                    'url'  => 'admin/brands',
+                    'route'  => 'admin.brands.index',
                     'icon' => 'far fa-fw fa-copyright',
+                    'active' => ['admin/brands*'],
                 ],
                 [
                     'text' => 'Danh mục sản phẩm',
-                    'url'  => 'admin/categories',
+                    'route'  => 'admin.categories.index',
                     'icon' => 'fas fa-fw fa-layer-group',
+                    'active' => ['admin/categories*'],
                 ],
-                // ⭐ MỤC THUỘC TÍNH SẢN PHẨM MỚI ⭐
-                [
-                    'text' => 'Thuộc tính Sản phẩm',
-                    'url'  => 'admin/attributes', // Dùng route admin/attributes đã định nghĩa
-                    'icon' => 'fas fa-fw fa-list-ul', // Icon gợi ý: list-ul hoặc tag
-                    'active' => ['admin/attributes*'],
-                ],
-                // ⭐ HẾT MỤC THUỘC TÍNH SẢN PHẨM MỚI ⭐
+            ],
+        ],
 
-                // QUẢN LÝ CẤU HÌNH VẬN CHUYỂN 
+        [
+            'text' => 'Cấu hình Vận chuyển',
+            'icon' => 'fas fa-fw fa-truck',
+            'can'  => 'admin',
+            'submenu' => [
                 [
-                    'text' => 'Cấu hình Vận chuyển',
-                    'icon' => 'fas fa-fw fa-sliders-h',
-                    'submenu' => [
-                        [
-                            'text' => 'Đơn vị Vận chuyển',
-                            'url'  => 'admin/carriers',
-                            'icon' => 'fas fa-fw fa-truck',
-                            'active' => ['admin/carriers*'],
-                        ],
-                        [
-                            'text' => 'Mức phí Dịch vụ',
-                            'url'  => 'admin/rates',
-                            'icon' => 'fas fa-fw fa-list-alt',
-                            'active' => ['admin/rates*'],
-                        ],
-                        // Trang cấu hình để thay đổi ngưỡng Free Ship
-                        [
-                            'text' => 'Ngưỡng Free Ship',
-                            'url'  => 'admin/shipping/config', // Cần tạo route và controller cho mục này
-                            'icon' => 'fas fa-fw fa-hand-holding-usd',
-                        ],
-                    ],
+                    'text' => 'Đơn vị Vận chuyển',
+                    'route'  => 'admin.carriers.index',
+                    'icon' => 'fas fa-fw fa-shipping-fast',
+                    'active' => ['admin/carriers*'],
+                ],
+                [
+                    'text' => 'Mức phí Dịch vụ',
+                    'route'  => 'admin.rates.index',
+                    'icon' => 'fas fa-fw fa-dollar-sign',
+                    'active' => ['admin/rates*'],
+                ],
+                [
+                    'text' => 'Ngưỡng Free Ship',
+                    'route'  => 'admin.shipping.config.edit',
+                    'icon' => 'fas fa-fw fa-gift',
+                    'active' => ['admin/shipping/config*'],
                 ],
             ],
         ],
@@ -247,40 +279,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Plugins Initialization
+    | Plugins
     |--------------------------------------------------------------------------
     */
 
     'plugins' => [
-        // ⭐ ĐÃ CHUYỂN VỀ DATATABLES CHUẨN ⭐
         'Datatables' => [
-            'active' => true,  // <-- ĐỔI THÀNH TRUE
+            'active' => true,
             'files' => [
-                [
-                    'type' => 'js',
-                    'asset' => true, // Đảm bảo asset là true để nó tự động copy
-                    'location' => 'vendor/datatables-bs4/js/dataTables.bootstrap4.min.js',
-                ],
-                [
-                    'type' => 'js',
-                    'asset' => true,
-                    'location' => 'vendor/datatables/js/dataTables.bootstrap4.min.js',
-                ],
                 [
                     'type' => 'css',
                     'asset' => true,
-                    'location' => 'vendor/datatables/css/dataTables.bootstrap4.min.css',
+                    'location' => 'vendor/datatables-bs4/css/dataTables.bootstrap4.min.css',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/datatables/js/jquery.dataTables.min.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'vendor/datatables-bs4/js/dataTables.bootstrap4.min.js',
                 ],
             ],
         ],
 
-        // BỔ SUNG TOASTR CHO THÔNG BÁO AJAX
         'Toastr' => [
-            'active' => true,  // <-- ĐỔI THÀNH TRUE
+            'active' => true,
             'files' => [
                 [
                     'type' => 'css',
-                    'asset' => true, // Đảm bảo asset là true
+                    'asset' => true,
                     'location' => 'vendor/toastr/toastr.min.css',
                 ],
                 [
@@ -290,7 +320,6 @@ return [
                 ],
             ],
         ],
-        // Cấu hình plugin nếu cần
     ],
 
     /*

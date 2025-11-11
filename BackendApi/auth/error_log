@@ -1,0 +1,119 @@
+[06-Nov-2025 00:27:22 Asia/Ho_Chi_Minh] password-reset.php ERROR: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:27:27 Asia/Ho_Chi_Minh] password-reset.php ERROR: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:31:45 Asia/Ho_Chi_Minh] password-reset.php ERROR: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:35:01 Asia/Ho_Chi_Minh] password-reset.php ERROR: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Bắt đầu xử lý.
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã nhận dữ liệu - Email: tanle07112004@gmail.com, OTP: 999813
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đang tìm OTP cho tanle07112004@gmail.com VÀ kiểm tra (created_at > NOW())...
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã tìm thấy mã. Đang xác thực (password_verify)...
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: OTP chính xác. Đang hash mật khẩu mới...
+[06-Nov-2025 00:40:46 Asia/Ho_Chi_Minh] [FATAL ERROR] password-reset.php: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Bắt đầu xử lý.
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã nhận dữ liệu - Email: tanle07112004@gmail.com, OTP: 416260
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đang tìm OTP cho tanle07112004@gmail.com VÀ kiểm tra (created_at > NOW())...
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã tìm thấy mã. Đang xác thực (password_verify)...
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: OTP chính xác. Đang hash mật khẩu mới...
+[06-Nov-2025 00:41:24 Asia/Ho_Chi_Minh] [FATAL ERROR] password-reset.php: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Bắt đầu xử lý.
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã nhận email: tanle07112004@gmail.com
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã tạo OTP: 250685 cho email: tanle07112004@gmail.com.
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang xóa OTP cũ cho tanle07112004@gmail.com...
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã xóa OTP cũ.
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang lưu OTP mới (đã hash) vào CSDL...
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã lưu OTP mới.
+[06-Nov-2025 00:45:55 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang chuẩn bị gửi email OTP đến tanle07112004@gmail.com...
+[06-Nov-2025 00:45:58 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã gửi email thành công.
+[06-Nov-2025 00:45:58 Asia/Ho_Chi_Minh] [SUCCESS] password-request-otp.php: Hoàn tất. Đã gửi mã và lưu CSDL cho tanle07112004@gmail.com.
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Bắt đầu xử lý.
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã nhận dữ liệu - Email: tanle07112004@gmail.com, OTP: 250685
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đang tìm OTP cho tanle07112004@gmail.com VÀ kiểm tra (created_at > NOW() - INTERVAL 10 MINUTE)...
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã tìm thấy mã. Đang xác thực (password_verify)...
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: OTP chính xác. Đang hash mật khẩu mới...
+[06-Nov-2025 00:46:54 Asia/Ho_Chi_Minh] [FATAL ERROR] password-reset.php: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Bắt đầu xử lý.
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã nhận email: tanle07112004@gmail.com
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã tạo OTP: 812106 cho email: tanle07112004@gmail.com.
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang xóa OTP cũ cho tanle07112004@gmail.com...
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã xóa OTP cũ.
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang lưu OTP mới (đã hash) vào CSDL...
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã lưu OTP mới.
+[06-Nov-2025 00:51:56 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang chuẩn bị gửi email OTP đến tanle07112004@gmail.com...
+[06-Nov-2025 00:52:00 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã gửi email thành công.
+[06-Nov-2025 00:52:00 Asia/Ho_Chi_Minh] [SUCCESS] password-request-otp.php: Hoàn tất. Đã gửi mã và lưu CSDL cho tanle07112004@gmail.com.
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Bắt đầu xử lý.
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã nhận dữ liệu - Email: tanle07112004@gmail.com, OTP: 812106
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đang tìm OTP cho tanle07112004@gmail.com VÀ kiểm tra (created_at > NOW() - INTERVAL 10 MINUTE)...
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã tìm thấy mã. Đang xác thực (password_verify)...
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: OTP chính xác. Đang hash mật khẩu mới...
+[06-Nov-2025 00:52:19 Asia/Ho_Chi_Minh] [FATAL ERROR] password-reset.php: Unknown column 'password' in 'field list'
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Bắt đầu xử lý.
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã nhận email: tanle07112004@gmail.com
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã tạo OTP: 335017 cho email: tanle07112004@gmail.com.
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang xóa OTP cũ cho tanle07112004@gmail.com...
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã xóa OTP cũ.
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang lưu OTP mới (đã hash) vào CSDL...
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã lưu OTP mới.
+[06-Nov-2025 00:55:46 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang chuẩn bị gửi email OTP đến tanle07112004@gmail.com...
+[06-Nov-2025 00:55:49 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã gửi email thành công.
+[06-Nov-2025 00:55:49 Asia/Ho_Chi_Minh] [SUCCESS] password-request-otp.php: Hoàn tất. Đã gửi mã và lưu CSDL cho tanle07112004@gmail.com.
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Bắt đầu xử lý.
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã nhận email: tanle07112004@gmail.com
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã tạo OTP: 586758 cho email: tanle07112004@gmail.com.
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang xóa OTP cũ cho tanle07112004@gmail.com...
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã xóa OTP cũ.
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang lưu OTP mới (đã hash) vào CSDL...
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã lưu OTP mới.
+[06-Nov-2025 00:59:16 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đang chuẩn bị gửi email OTP đến tanle07112004@gmail.com...
+[06-Nov-2025 00:59:19 Asia/Ho_Chi_Minh] [DEBUG] password-request-otp.php: Đã gửi email thành công.
+[06-Nov-2025 00:59:19 Asia/Ho_Chi_Minh] [SUCCESS] password-request-otp.php: Hoàn tất. Đã gửi mã và lưu CSDL cho tanle07112004@gmail.com.
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Bắt đầu xử lý.
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đã nhận dữ liệu - Email: tanle07112004@gmail.com, OTP: 586758
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Đang tìm OTP cho tanle07112004@gmail.com...
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: TimeCheck - Created: 2025-11-06 00:59:16 | Expiry_TS: 1762366156 | Current_TS: 1762365571
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: Mã còn hạn. Đang xác thực (password_verify)...
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [DEBUG] password-reset.php: OTP chính xác. Đang hash mật khẩu mới...
+[06-Nov-2025 00:59:31 Asia/Ho_Chi_Minh] [FATAL ERROR] password-reset.php: Code: 500 - Unknown column 'password' in 'field list'
+[07-Nov-2025 15:21:27 Asia/Ho_Chi_Minh] Email sending system exception: Call to undefined function sendVerificationEmail()
+[07-Nov-2025 15:24:26 Asia/Ho_Chi_Minh] Email sending system exception: Call to undefined function sendVerificationEmail()
+[07-Nov-2025 16:04:23 Asia/Ho_Chi_Minh] Verification Success: Customer ID 15 verified successfully.
+[07-Nov-2025 16:16:26 Asia/Ho_Chi_Minh] Verification Success: Customer ID 16 verified successfully.
+[08-Nov-2025 23:39:53 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[08-Nov-2025 23:39:53 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: tanhtht18123@gmai.com
+[08-Nov-2025 23:39:53 Asia/Ho_Chi_Minh] [REQUEST-OTP] Email 'tanhtht18123@gmai.com' không tồn tại. Ném lỗi 404.
+[08-Nov-2025 23:39:53 Asia/Ho_Chi_Minh] [FATAL ERROR] [REQUEST-OTP]: Code: 404 - Email không tồn tại trong hệ thống.
+[08-Nov-2025 23:40:06 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[08-Nov-2025 23:40:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: tanle07112004@gmail.com
+[08-Nov-2025 23:40:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã tạo OTP: 146004 cho email: tanle07112004@gmail.com.
+[08-Nov-2025 23:40:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang lưu OTP mới vào CSDL với thời gian: 2025-11-08 23:40:06
+[08-Nov-2025 23:40:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang gửi email OTP...
+[08-Nov-2025 23:40:10 Asia/Ho_Chi_Minh] [SUCCESS] [REQUEST-OTP] Hoàn tất cho tanle07112004@gmail.com.
+[08-Nov-2025 23:42:16 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[08-Nov-2025 23:42:16 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: tanle07112004@gmail.com
+[08-Nov-2025 23:42:17 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã tạo OTP: 966070 cho email: tanle07112004@gmail.com.
+[08-Nov-2025 23:42:17 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang lưu OTP mới vào CSDL với thời gian: 2025-11-08 23:42:17
+[08-Nov-2025 23:42:17 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang gửi email OTP...
+[08-Nov-2025 23:42:20 Asia/Ho_Chi_Minh] [SUCCESS] [REQUEST-OTP] Hoàn tất cho tanle07112004@gmail.com.
+[09-Nov-2025 03:12:01 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:12:01 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:12:01 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 04:10:06 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[09-Nov-2025 04:10:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: hjakjhajksd@gmajk.com
+[09-Nov-2025 04:10:06 Asia/Ho_Chi_Minh] [REQUEST-OTP] Email 'hjakjhajksd@gmajk.com' không tồn tại. Ném lỗi 404.
+[09-Nov-2025 04:10:06 Asia/Ho_Chi_Minh] [FATAL ERROR] [REQUEST-OTP]: Code: 404 - Email không tồn tại trong hệ thống.
+[10-Nov-2025 16:44:20 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[10-Nov-2025 16:44:20 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: hdhdjdjfk@gmail.com
+[10-Nov-2025 16:44:20 Asia/Ho_Chi_Minh] [REQUEST-OTP] Email 'hdhdjdjfk@gmail.com' không tồn tại. Ném lỗi 404.
+[10-Nov-2025 16:44:20 Asia/Ho_Chi_Minh] [FATAL ERROR] [REQUEST-OTP]: Code: 404 - Email không tồn tại trong hệ thống.
+[11-Nov-2025 02:51:42 Asia/Ho_Chi_Minh] Email sending system exception: Call to undefined function sendVerificationEmail()
+[11-Nov-2025 03:04:13 Asia/Ho_Chi_Minh] Verification Success: Customer ID 14 verified successfully.
+[11-Nov-2025 03:19:05 Asia/Ho_Chi_Minh] Verification Success: Customer ID 15 verified successfully.
+[11-Nov-2025 03:24:57 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[11-Nov-2025 03:24:57 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: tanlthe182131@fpt.edu.vn1
+[11-Nov-2025 03:24:57 Asia/Ho_Chi_Minh] [REQUEST-OTP] Email 'tanlthe182131@fpt.edu.vn1' không tồn tại. Ném lỗi 404.
+[11-Nov-2025 03:24:57 Asia/Ho_Chi_Minh] [FATAL ERROR] [REQUEST-OTP]: Code: 404 - Email không tồn tại trong hệ thống.
+[11-Nov-2025 03:25:02 Asia/Ho_Chi_Minh] ====== [REQUEST-OTP] Bắt đầu ======
+[11-Nov-2025 03:25:02 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã nhận email: tanlthe182131@fpt.edu.vn
+[11-Nov-2025 03:25:02 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đã tạo OTP: 654562 cho email: tanlthe182131@fpt.edu.vn.
+[11-Nov-2025 03:25:02 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang lưu OTP mới vào CSDL với thời gian: 2025-11-11 03:25:02
+[11-Nov-2025 03:25:02 Asia/Ho_Chi_Minh] [REQUEST-OTP] Đang gửi email OTP...
+[11-Nov-2025 03:25:06 Asia/Ho_Chi_Minh] [SUCCESS] [REQUEST-OTP] Hoàn tất cho tanlthe182131@fpt.edu.vn.

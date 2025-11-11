@@ -19,6 +19,9 @@
 @stop
 
 @section('content')
+    {{-- CSRF Token cho AJAX --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    
     {{-- Alert Messages --}}
     @if(session('success'))
         <div class="alert alert-success alert-dismissible fade show">
@@ -416,21 +419,56 @@ const CURRENT_VARIANTS = {!! json_encode($product->variants->mapWithKeys(functio
 })) !!};
 
 // Category attributes mapping từ server
-const CATEGORY_ATTRIBUTES_MAP = @json($categoryAttributes);
+// ✅ MỚI - In ra để debug
+const PRELOADED_ATTRIBUTES = {!! json_encode($currentCategoryAttributes, JSON_UNESCAPED_UNICODE) !!};
+console.log('🔍 [INIT] PRELOADED_ATTRIBUTES type:', typeof PRELOADED_ATTRIBUTES);
+console.log('🔍 [INIT] PRELOADED_ATTRIBUTES value:', PRELOADED_ATTRIBUTES);
 
 console.log('🎯 Product ID:', PRODUCT_ID);
 console.log('📦 Current Variants (đã có is_active):', CURRENT_VARIANTS);
-console.log('🗂️ Category Mapping:', CATEGORY_ATTRIBUTES_MAP);
+console.log('🗂️ Category Mapping:', PRELOADED_ATTRIBUTES);
 
 // ============================================================================
 // KHỞI TẠO KHI DOM READY
 // ============================================================================
 $(document).ready(function() {
-    console.log('✅ Document ready!');
+ // ✅ MỚI - Kiểm tra cấu trúc dữ liệu
+console.log('✅ Document ready!');
+console.log('📦 PRELOADED_ATTRIBUTES:', PRELOADED_ATTRIBUTES);
+
+// Kiểm tra cấu trúc dữ liệu từ Controller
+let attributesData = PRELOADED_ATTRIBUTES;
+
+// Nếu có thuộc tính 'original', lấy từ đó
+if (PRELOADED_ATTRIBUTES && PRELOADED_ATTRIBUTES.original) {
+    attributesData = PRELOADED_ATTRIBUTES.original;
+}
+
+console.log('🎯 Attributes data to render:', attributesData);
+
+if (attributesData && Array.isArray(attributesData) && attributesData.length > 0) {
+    // ✅ ẨN loading spinner
+    $('#attributes-loading').hide();
+    $('#variant-matrix-loading').hide();
     
-    // Load thuộc tính của category hiện tại
-    loadAttributesForCategory(CURRENT_CATEGORY_ID);
+    // ✅ HIỆN container
+    $('#attributes-container').show();
+    $('#variant-matrix-area').show();
     
+    // Render attributes
+    renderAttributes(attributesData);
+    
+    // Chờ một chút để DOM update
+    setTimeout(function() {
+        generateVariants();
+    }, 100);
+} else {
+    console.error('❌ Invalid attributes data:', attributesData);
+    $('#attributes-loading').hide();
+    $('#attributes-container').html(
+        '<div class="alert alert-danger">Lỗi: Không thể tải thuộc tính</div>'
+    ).show();
+} 
     // Lắng nghe thay đổi category
     $('#categoryID').on('change', function() {
         const categoryID = $(this).val();
@@ -469,7 +507,7 @@ $(document).ready(function() {
 // ============================================================================
 // HÀM LOAD THUỘC TÍNH THEO CATEGORY
 // ============================================================================
-function loadAttributesForCategory(categoryID) {
+function loadAttributesForCategory(categoryID) {  // ← Tham số đúng là categoryID
     console.log('🔄 Loading attributes for category:', categoryID);
     
     $('#attributes-loading').show();
@@ -478,7 +516,9 @@ function loadAttributesForCategory(categoryID) {
     $('#variant-matrix-area').hide();
     
     $.ajax({
-        url: `/admin/products/category/${categoryID}/attributes`,
+        url: '{{ route("admin.products.category.attributes", ["categoryID" => ":id"]) }}'.replace(':id', categoryID),
+        //                                                                                                  ^^^^^^^^
+        //                                                                                                  ĐÃ SỬA: categoryID
         method: 'GET',
         success: function(attributes) {
             console.log('✅ Attributes loaded:', attributes);
@@ -502,23 +542,29 @@ function loadAttributesForCategory(categoryID) {
 // HÀM RENDER THUỘC TÍNH
 // ============================================================================
 function renderAttributes(attributes) {
+    console.log('🎨 [renderAttributes] Starting...', attributes);
+    
     const $container = $('#attributes-container');
     $container.empty();
     
-    if (attributes.length === 0) {
+    // Kiểm tra dữ liệu đầu vào
+    if (!attributes || attributes.length === 0) {
+        console.warn('⚠️ No attributes to render');
         $container.html('<div class="alert alert-info"><i class="fas fa-info-circle"></i> Danh mục này chưa có thuộc tính nào được gán</div>');
         return;
     }
     
     // *** UPDATED: Chỉ lấy valueIDs từ các variants đang ACTIVE ***
-    // Lấy tất cả valueIDs đang được dùng trong variants hiện tại VÀ ĐANG ACTIVE
     const currentValueIDs = Object.values(CURRENT_VARIANTS)
-        .filter(v => v.is_active == 1) // <-- CHỈ LỌC CÁC VARIANT ACTIVE
-        .flatMap(v => v.attribute_values);
+        .filter(v => v.is_active == 1)
+        .flatMap(v => v.attribute_values || []);
     
-    console.log('📋 Current ACTIVE value IDs (để check):', currentValueIDs);
+    console.log('📋 Current ACTIVE value IDs:', currentValueIDs);
     
-    attributes.forEach(attr => {
+    // Render từng attribute
+    attributes.forEach((attr, attrIndex) => {
+        console.log(`  └─ Rendering attribute [${attrIndex}]:`, attr.attributeName);
+        
         let html = `
             <div class="attribute-group" data-attribute-id="${attr.attributeID}">
                 <strong>
@@ -527,30 +573,34 @@ function renderAttributes(attributes) {
                 <div class="row">
         `;
         
-        attr.values.forEach(value => {
-            // Check box sẽ chỉ được check nếu nó thuộc về một variant đang active
-            const isChecked = currentValueIDs.includes(value.valueID) ? 'checked' : '';
-            
-            html += `
-                <div class="col-md-4 col-sm-6">
-                    <div class="form-check">
-                        <input class="form-check-input attribute-checkbox" 
-                               type="checkbox" 
-                               name="attribute_values_temp[]"
-                               data-attribute-id="${attr.attributeID}"
-                               data-attribute-name="${attr.attributeName}"
-                               data-value-id="${value.valueID}"
-                               data-value-name="${value.valueName}"
-                               value="${value.valueID}"
-                               ${isChecked}
-                               onchange="generateVariants()">
-                        <label class="form-check-label">
-                            ${value.valueName}
-                        </label>
+        // Render từng value
+        if (attr.values && Array.isArray(attr.values)) {
+            attr.values.forEach((value, valIndex) => {
+                const isChecked = currentValueIDs.includes(parseInt(value.valueID)) ? 'checked' : '';
+                
+                html += `
+                    <div class="col-md-4 col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input attribute-checkbox" 
+                                   type="checkbox" 
+                                   name="attribute_values_temp[]"
+                                   data-attribute-id="${attr.attributeID}"
+                                   data-attribute-name="${attr.attributeName}"
+                                   data-value-id="${value.valueID}"
+                                   data-value-name="${value.valueName}"
+                                   value="${value.valueID}"
+                                   ${isChecked}
+                                   onchange="generateVariants()">
+                            <label class="form-check-label">
+                                ${value.valueName}
+                            </label>
+                        </div>
                     </div>
-                </div>
-            `;
-        });
+                `;
+            });
+        } else {
+            console.warn(`⚠️ Attribute "${attr.attributeName}" has no values`);
+        }
         
         html += `
                 </div>
@@ -560,7 +610,7 @@ function renderAttributes(attributes) {
         $container.append(html);
     });
     
-    console.log('✅ Attributes rendered (chỉ check các variant active)');
+    console.log('✅ Attributes rendered successfully!');
 }
 
 // ============================================================================
@@ -741,6 +791,7 @@ function renderVariantMatrix(variants) {
     $('#variant-matrix-area').html(html);
 }
 
+
 // ============================================================================
 // HÀM XÓA ẢNH
 // ============================================================================
@@ -748,31 +799,55 @@ function deleteImage(imageId) {
     console.log('🗑️ Deleting image:', imageId);
     
     $.ajax({
-        url: `/admin/products/${PRODUCT_ID}/images/${imageId}`,
-        type: 'DELETE',
-        data: {
-            _token: '{{ csrf_token() }}',
+url: '{{ route("admin.products.delete.image", ["product" => $product->productID, "imageID" => ":id"]) }}'.replace(':id', imageId),        type: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
             console.log('✅ Image deleted:', response);
             if (response.success) {
+                // Fade out và xóa element
                 $(`.image-item-${imageId}`).fadeOut(300, function() {
                     $(this).remove();
+                    
+                    // Kiểm tra nếu không còn ảnh nào
+                    if ($('#current-images-row .col-6').length === 0) {
+                        $('#current-images-row').html(`
+                            <div class="col-12">
+                                <p class="text-muted text-center">Chưa có ảnh nào</p>
+                            </div>
+                        `);
+                    }
                 });
-                toastr.success(response.message || 'Ảnh đã được xóa');
+                
+                // Hiển thị thông báo (nếu có toastr)
+                if (typeof toastr !== 'undefined') {
+                    toastr.success(response.message || 'Ảnh đã được xóa');
+                } else {
+                    alert(response.message || 'Ảnh đã được xóa');
+                }
             } else {
-                toastr.error(response.message || 'Lỗi khi xóa ảnh');
+                if (typeof toastr !== 'undefined') {
+                    toastr.error(response.message || 'Lỗi khi xóa ảnh');
+                } else {
+                    alert(response.message || 'Lỗi khi xóa ảnh');
+                }
             }
         },
         error: function(xhr) {
             console.error('❌ Error deleting image:', xhr);
-            let response = {};
-            try {
-                response = JSON.parse(xhr.responseText);
-            } catch (e) {
-                response.message = 'Lỗi server không xác định';
+            
+            let errorMessage = 'Lỗi server khi xóa ảnh';
+            
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
             }
-            toastr.error(response.message || 'Lỗi server khi xóa ảnh');
+            
+            if (typeof toastr !== 'undefined') {
+                toastr.error(errorMessage);
+            } else {
+                alert(errorMessage);
+            }
         }
     });
 }

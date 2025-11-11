@@ -1,0 +1,6 @@
+<IfModule mod_security2.c>
+    # Tắt hoàn toàn bộ máy bảo mật cho file này
+    SecRuleEngine Off
+    # Tắt kiểm tra nội dung POST
+    SecRequestBodyAccess Off
+</IfModule>

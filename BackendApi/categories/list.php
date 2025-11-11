@@ -7,7 +7,7 @@ try {
         respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
     }
 
-    $sql = "SELECT categoryID, categoryName FROM categories ORDER BY categoryID ASC";
+    $sql = "SELECT categoryID, categoryName FROM categories WHERE is_actived = 1 ORDER BY categoryID ASC";
     $res = $mysqli->query($sql);
     
     if ($res === false) {

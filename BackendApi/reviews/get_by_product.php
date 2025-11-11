@@ -24,7 +24,6 @@ try {
                 SELECT GROUP_CONCAT(rm.mediaUrl SEPARATOR '||')
                 FROM review_media rm
                 WHERE rm.reviewID = r.reviewID 
-                /* ⭐ ĐÃ XÓA ĐIỀU KIỆN 'AND rm.mediaType = 'photo' ' ĐỂ LẤY CẢ ẢNH VÀ VIDEO */
             ) AS reviewPhotos
         FROM reviews r
         JOIN customers c ON r.customerID = c.customerID
@@ -62,9 +61,27 @@ try {
     $resDetails = $stmtDetails->get_result();
 
     $data = [];
+    
+    // ✅ SỬA LỖI: Định nghĩa base URL 1 lần bên ngoài vòng lặp
+    $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+            
     while ($row = $resDetails->fetch_assoc()) {
-        // Sau khi loại bỏ điều kiện trong SQL, hàm này sẽ explode cả ảnh và video URL
-        $row['reviewPhotos'] = $row['reviewPhotos'] ? explode('||', $row['reviewPhotos']) : [];
+        
+        // Lấy danh sách ảnh/video
+        $mediaUrls = $row['reviewPhotos'] ? explode('||', $row['reviewPhotos']) : [];
+        $processedMedia = [];
+
+        // ✅ SỬA LỖI: Lặp qua từng media URL và thêm base_url
+        if (!empty($mediaUrls)) {
+            foreach ($mediaUrls as $url) {
+                if (!empty($url)) {
+                    // $url từ DB là "reviews/media/image.jpg"
+                    $processedMedia[] = $base_url . $url;
+                }
+            }
+        }
+        
+        $row['reviewPhotos'] = $processedMedia; // Gán mảng đã xử lý
         $data[] = $row;
     }
     $stmtDetails->close();

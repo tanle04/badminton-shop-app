@@ -15,14 +15,11 @@ public class FullScreenImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Thiết lập FullScreen Activity (Ẩn Status Bar nếu cần)
-
         setContentView(R.layout.activity_full_screen_image);
 
         ImageView imgFullScreen = findViewById(R.id.imgFullScreen);
         ImageButton btnClose = findViewById(R.id.btnClose);
 
-        // Ẩn thanh Action Bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }

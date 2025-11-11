@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json; charset=UTF-8");
-require_once '../bootstrap.php'; // Giả định chứa hàm respond()
+require_once '../bootstrap.php';
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -14,7 +14,12 @@ try {
     $customerID = (int)$_GET['customerID'];
 
     // 2. Thực hiện truy vấn
-    $stmt = $mysqli->prepare("SELECT * FROM customer_addresses WHERE customerID = ? ORDER BY isDefault DESC, addressID DESC");
+    // ⭐ THÊM ĐIỀU KIỆN 'AND is_active = 1'
+    $stmt = $mysqli->prepare("
+        SELECT * FROM customer_addresses 
+        WHERE customerID = ? AND is_active = 1 
+        ORDER BY isDefault DESC, addressID DESC
+    ");
     
     if (!$stmt) {
         respond(['isSuccess' => false, 'message' => 'SQL Prepare failed: ' . $mysqli->error], 500);
@@ -26,24 +31,20 @@ try {
     
     $addresses = [];
 
-    // Chuyển đổi giá trị isDefault sang boolean
     while ($row = $result->fetch_assoc()) {
-        // ⭐ Ép kiểu (int) 1 hoặc 0 thành (bool) true hoặc false
         $row['isDefault'] = (bool)$row['isDefault']; 
         $addresses[] = $row;
     }
 
     $stmt->close();
-
-    // ⭐ PHẢN HỒI THÀNH CÔNG: Sử dụng respond() với cấu trúc DTO
+    
     respond([
         "isSuccess" => true,
         "message" => "Addresses loaded successfully.",
-        "addresses" => $addresses // Khớp với trường 'addresses' trong AddressListResponse
+        "addresses" => $addresses
     ]);
 
 } catch (Throwable $e) {
     error_log("Get Addresses API Error: " . $e->getMessage());
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

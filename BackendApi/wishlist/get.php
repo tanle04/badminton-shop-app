@@ -29,7 +29,7 @@ try {
             SELECT pi.imageUrl 
             FROM productimages pi 
             WHERE pi.productID = p.productID 
-            ORDER BY pi.imageID ASC 
+            ORDER BY (pi.imageType = 'main') DESC, pi.imageID ASC 
             LIMIT 1
         ) AS imageUrl
     FROM wishlists w
@@ -49,6 +49,10 @@ try {
     $res = $stmt->get_result();
 
     $wishlist = [];
+    
+    // ✅ SỬA LỖI: Định nghĩa base URL 1 lần bên ngoài vòng lặp
+    $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+            
     while ($row = $res->fetch_assoc()) {
         $productID = (int)$row['productID'];
         
@@ -62,12 +66,11 @@ try {
         $row['originalPriceMin'] = $price_details['originalPrice']; 
         $row['isDiscounted'] = $price_details['isDiscounted'];
         
-        // Xử lý tên file ảnh (giữ nguyên logic)
-        $img = $row['imageUrl'] ?? "";
-        if ($img && preg_match('/^http/', $img)) {
-            $img = basename($img);
+        // ✅ SỬA LỖI URL ẢNH: Tạo URL ảnh đầy đủ
+        if (!empty($row['imageUrl'])) {
+            // $row['imageUrl'] từ DB đã có dạng: "products/ten_file.jpg"
+            $row['imageUrl'] = $base_url . $row['imageUrl'];
         }
-        $row['imageUrl'] = $img ?: "no_image.png"; 
 
         // Loại bỏ cột tạm thời
         unset($row['basePrice']); 

@@ -21,7 +21,6 @@ try {
     $offset = ($page - 1) * $limit;
 
     // --- Bắt đầu xây dựng câu lệnh SQL ---
-    // ⭐ SỬA: Bỏ COALESCE(MIN(v.price), p.price) AS priceMin. Ta dùng p.price làm base
     $sql = "
         SELECT 
             p.productID, p.productName, p.description,
@@ -114,6 +113,15 @@ try {
         // Gán các cờ sale cần thiết cho ProductDto chính
         $row['originalPriceMin'] = $price_details['originalPrice']; 
         $row['isDiscounted'] = $price_details['isDiscounted'];
+
+        // ✅ SỬA LỖI URL ẢNH: Tạo URL ảnh đầy đủ
+        if (!empty($row['imageUrl'])) {
+            // Dùng https và trỏ đến thư mục storage public của AdminPanel
+            $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+            
+            // $row['imageUrl'] từ DB đã có dạng: "products/ten_file.jpg"
+            $row['imageUrl'] = $base_url . $row['imageUrl'];
+        }
         
         // Loại bỏ trường basePrice không cần thiết trên Android
         unset($row['basePrice']); 

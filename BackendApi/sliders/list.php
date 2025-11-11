@@ -27,19 +27,15 @@ try {
     }
     
     $data = [];
-    $base_url_path = '/api/BadmintonShop/images/'; // ⭐ Đảm bảo đường dẫn này đúng
+  $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
     
     while ($row = $res->fetch_assoc()) {
-        // ⭐ SỬA: Sử dụng BASE_URL cố định 10.0.2.2 cho emulator hoặc URL thực
-        // Tùy chọn 1: Dùng HTTP_HOST thực tế
-        $base_url = 'http://' . $_SERVER['HTTP_HOST']; 
         
-        // Tùy chọn 2: Dùng URL cố định của emulator (Tốt hơn cho phát triển)
-        // $base_url = 'http://10.0.2.2';
-        
-        $row['imageUrl'] = $base_url . $base_url_path . $row['imageUrl'];
-        $data[] = $row;
-    }
+        // ✅ SỬA LỖI 2: Dùng https:// để khớp với SSL của bạn
+
+$row['imageUrl'] = $base_url . $base_url_path . $row['imageUrl'];
+ $data[] = $row;
+ }
 
     $mysqli->close();
     

@@ -1,9 +1,80 @@
 let currentConversationId = null;
+let pusherInstance = null;
+let adminChannel = null;
+
+// =========================================================================
+// ✅ PUSHER INITIALIZATION - THÊM MỚI
+// =========================================================================
+function initializePusher() {
+    console.log('🔌 [ADMIN] Initializing Pusher...');
+    
+    // Get Pusher config from meta tags or window object
+    const pusherKey = document.querySelector('meta[name="pusher-key"]')?.content || 'c3ca7c07e100fdf6218b';
+    const pusherCluster = document.querySelector('meta[name="pusher-cluster"]')?.content || 'ap1';
+    
+    console.log('⚙️ [ADMIN] Pusher Config:', {
+        key: pusherKey,
+        cluster: pusherCluster
+    });
+    
+    // Initialize Pusher
+    pusherInstance = new Pusher(pusherKey, {
+        cluster: pusherCluster,
+        encrypted: true,
+        forceTLS: true
+    });
+    
+    console.log('✅ [ADMIN] Pusher instance created');
+    
+    // ✅ SUBSCRIBE TO ADMIN CHANNEL (PUBLIC CHANNEL)
+    console.log('📡 [ADMIN] Subscribing to admin.support.notifications...');
+    
+    adminChannel = pusherInstance.subscribe('admin.support.notifications');
+    
+    adminChannel.bind('pusher:subscription_succeeded', () => {
+        console.log('✅ ✅ ✅ [ADMIN] Successfully subscribed to admin channel! ✅ ✅ ✅');
+    });
+    
+    adminChannel.bind('pusher:subscription_error', (error) => {
+        console.error('❌ [ADMIN] Subscription error:', error);
+    });
+    
+    // ✅ LISTEN FOR NEW MESSAGES
+    adminChannel.bind('support.message.sent', (data) => {
+        console.log('📩 [ADMIN] === NEW MESSAGE RECEIVED ===');
+        console.log('📩 [ADMIN] Data:', data);
+        
+        if (data.message) {
+            console.log('📩 [ADMIN] Message ID:', data.message.id);
+            console.log('📩 [ADMIN] Conversation ID:', data.message.conversation_id);
+            console.log('📩 [ADMIN] Sender Type:', data.message.sender_type);
+            console.log('📩 [ADMIN] Message:', data.message.message);
+            
+            // Check if this is for the current conversation
+            if (currentConversationId && data.message.conversation_id === currentConversationId) {
+                console.log('✅ [ADMIN] Message for current conversation - RELOADING!');
+                loadMessages(currentConversationId);
+            } else {
+                console.log('ℹ️ [ADMIN] Message for different conversation');
+            }
+            
+            // Always reload conversations list to update unread count
+            console.log('🔄 [ADMIN] Reloading conversations list...');
+            loadConversations();
+        }
+    });
+    
+    console.log('✅ [ADMIN] Pusher setup complete!');
+}
+
+// =========================================================================
+// EXISTING FUNCTIONS (GIỮ NGUYÊN)
+// =========================================================================
 
 // Load conversations
 async function loadConversations(filter = 'all') {
     try {
-        const response = await fetch(`/api/support/conversations?filter=${filter}`);
+        const response = await fetch(`/admin/public/api/support/conversations?filter=${filter}`);
         const data = await response.json();
         
         if (data.success) {
@@ -43,6 +114,7 @@ function renderConversations(conversations) {
 
 // Select conversation
 async function selectConversation(conversationId) {
+    console.log('📌 [ADMIN] Selecting conversation:', conversationId);
     currentConversationId = conversationId;
     
     // Update UI
@@ -57,10 +129,13 @@ async function selectConversation(conversationId) {
 // Load messages
 async function loadMessages(conversationId) {
     try {
-        const response = await fetch(`/api/support/conversations/${conversationId}/messages`);
+        console.log('📥 [ADMIN] Loading messages for:', conversationId);
+        
+        const response = await fetch(`/admin/public/api/support/conversations/${conversationId}/messages`);
         const data = await response.json();
         
         if (data.success) {
+            console.log('✅ [ADMIN] Loaded', data.messages.length, 'messages');
             renderMessages(data.messages);
         }
     } catch (error) {
@@ -97,8 +172,10 @@ async function sendMessage() {
     
     if (!message || !currentConversationId) return;
     
+    console.log('📤 [ADMIN] Sending message...');
+    
     try {
-        const response = await fetch('/api/support/messages', {
+        const response = await fetch('/admin/public/api/support/messages', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,13 +184,14 @@ async function sendMessage() {
             body: JSON.stringify({
                 conversation_id: currentConversationId,
                 message: message,
-                employee_id: 1  // TODO: Get from session
+                employee_id: window.currentEmployeeId || 1  // Get from global var
             })
         });
         
         const data = await response.json();
         
         if (data.success) {
+            console.log('✅ [ADMIN] Message sent successfully');
             input.value = '';
             await loadMessages(currentConversationId);
         }
@@ -137,25 +215,61 @@ function escapeHtml(text) {
 
 function scrollToBottom() {
     const container = document.getElementById('messages-container');
-    container.scrollTop = container.scrollHeight;
+    if (container) {
+        container.scrollTop = container.scrollHeight;
+    }
 }
 
-// Init
+// =========================================================================
+// ✅ INITIALIZATION - CẬP NHẬT ĐỂ THÊM PUSHER
+// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 [ADMIN] Support Chat Initialized');
+    
+    // ✅ INITIALIZE PUSHER FIRST
+    if (typeof Pusher !== 'undefined') {
+        console.log('✅ [ADMIN] Pusher library found, initializing...');
+        initializePusher();
+    } else {
+        console.error('❌ [ADMIN] Pusher library not loaded!');
+        console.error('❌ [ADMIN] Add this to your HTML: <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>');
+    }
+    
+    // Load initial data
     loadConversations();
     
-    // Auto refresh
+    // Auto refresh (backup for when Pusher fails)
     setInterval(() => {
         if (currentConversationId) {
+            console.log('🔄 [ADMIN] Auto-refresh (polling backup)');
             loadMessages(currentConversationId);
         }
-    }, 5000);
+    }, 30000); // Every 30 seconds (reduced from 5 seconds since we have Pusher)
     
     // Send on enter
-    document.getElementById('message-input')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    });
+    const messageInput = document.getElementById('message-input');
+    if (messageInput) {
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+    
+    console.log('✅ [ADMIN] Setup complete!');
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (adminChannel) {
+        console.log('🔌 [ADMIN] Unsubscribing from channel...');
+        adminChannel.unbind_all();
+        adminChannel.unsubscribe();
+    }
+    
+    if (pusherInstance) {
+        console.log('🔌 [ADMIN] Disconnecting Pusher...');
+        pusherInstance.disconnect();
+    }
 });

@@ -1,0 +1,383 @@
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=11, paymentMethod=VNPay, clientTotal=160000, voucherID=-1, selectedRateID=2, shippingFeeClient=50000
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 26, quantity: 1
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 110000
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 50000
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 160000
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 108. Status: Pending, PaymentStatus: Pending
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_108_1762349748
+[05-Nov-2025 20:35:48 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 91, customerID: 12
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 91
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-05 21:39:24], New TxnRef: [ORDER_91_1762349964]
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=240000000&vnp_Command=pay&vnp_CreateDate=20251105203924&vnp_CurrCode=VND&vnp_IpAddr=58.187.178.74&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%2391+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_91_1762349964&vnp_Version=2.1.0&vnp_SecureHash=b5db29c747e2dd9907fdfd0b56fa889e7ac74f96f2c67633bd985989fce854b07397ae0a79b7f8a07843ddb731d7c58cc44d42e30376cfef9c74dbfcaef162ab
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[05-Nov-2025 20:39:24 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=11, paymentMethod=COD, clientTotal=560000, voucherID=-1, selectedRateID=4, shippingFeeClient=100000
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 6, quantity: 1
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 460000
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 100000
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 560000
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 109. Status: Processing, PaymentStatus: Unpaid
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: COD
+[06-Nov-2025 03:04:20 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. COD selected. Attempting to send email...
+[06-Nov-2025 03:04:23 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. Email send status: Success
+[06-Nov-2025 03:04:23 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. Transaction COMMITTED.
+[06-Nov-2025 13:52:20 Asia/Ho_Chi_Minh] Order Track API Error: Call to undefined function require_auth()
+[06-Nov-2025 13:52:31 Asia/Ho_Chi_Minh] Order Track API Error: Call to undefined function require_auth()
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=12, paymentMethod=VNPay, clientTotal=217000, voucherID=2, selectedRateID=3, shippingFeeClient=22000
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 26, quantity: 2
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 220000
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 22000
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 25000
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 217000
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 110. Status: Pending, PaymentStatus: Pending
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 2
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_110_1762427697
+[06-Nov-2025 18:14:57 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 110, customerID: 12
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 110
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-06 19:15:19], New TxnRef: [ORDER_110_1762427719]
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=21700000&vnp_Command=pay&vnp_CreateDate=20251106181519&vnp_CurrCode=VND&vnp_IpAddr=113.185.46.134&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23110+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_110_1762427719&vnp_Version=2.1.0&vnp_SecureHash=71a46dd9f944820665bf7eb520725406e328759ac3e1791ff09d1bb90946bd9f891faef6a509796112a4f7b965c5d36a62e5d6d1b21dd6af9c419fd5ff289e13
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[06-Nov-2025 18:15:19 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 110, customerID: 12
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 110
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-06 19:15:37], New TxnRef: [ORDER_110_1762427737]
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=21700000&vnp_Command=pay&vnp_CreateDate=20251106181537&vnp_CurrCode=VND&vnp_IpAddr=113.185.46.134&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23110+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_110_1762427737&vnp_Version=2.1.0&vnp_SecureHash=bc6be5a8891c704e84bd7386994ad6d4bf2b3e1ddd151da0d99caee7afc489bf872c11984b57844d1846b1dcec4bcc47c985a96f7897df507d8a3fd423094f5a
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[06-Nov-2025 18:15:37 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=12, paymentMethod=VNPay, clientTotal=10440000, voucherID=1, selectedRateID=4, shippingFeeClient=0
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 7, quantity: 1
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 1, quantity: 2
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 19, quantity: 1
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 10940000
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 500000
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 10440000
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 111. Status: Pending, PaymentStatus: Pending
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 1
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_111_1762503324
+[07-Nov-2025 15:15:24 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=11, paymentMethod=VNPay, clientTotal=890500, voucherID=1, selectedRateID=4, shippingFeeClient=100000
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 28, quantity: 5
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 23, quantity: 1
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 930000
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 100000
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 139500
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 890500
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 112. Status: Pending, PaymentStatus: Pending
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 1
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_112_1762504303
+[07-Nov-2025 15:31:43 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-07 16:31:48], New TxnRef: [ORDER_112_1762504308]
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=89050000&vnp_Command=pay&vnp_CreateDate=20251107153148&vnp_CurrCode=VND&vnp_IpAddr=58.186.240.14&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762504308&vnp_Version=2.1.0&vnp_SecureHash=e51b7975b57feee2627636f6b4552ed21633688688f267ac9330586df3488b268a0758e7a4f27511d495decb84a4bcd6ebfefda80c4b09aadf0f0e2c96f2a1f1
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[07-Nov-2025 15:31:48 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-07 16:31:57], New TxnRef: [ORDER_112_1762504317]
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=89050000&vnp_Command=pay&vnp_CreateDate=20251107153157&vnp_CurrCode=VND&vnp_IpAddr=58.186.240.14&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762504317&vnp_Version=2.1.0&vnp_SecureHash=86efc6fa36ee334973d8796f0446411c0a77ee5be3e2347be99909e96ef13fdb197304cbe7c8451ecc107770714a4303db137aa143ec1e216d6a229b4fc93f46
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[07-Nov-2025 15:31:57 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-07 16:32:00], New TxnRef: [ORDER_112_1762504320]
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=89050000&vnp_Command=pay&vnp_CreateDate=20251107153200&vnp_CurrCode=VND&vnp_IpAddr=58.186.240.14&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762504320&vnp_Version=2.1.0&vnp_SecureHash=89306a32c3ea9d6fdd945a51db6f9aeaed881909f22f77cda620683135b2b49a303901288a49461a2e6b96eb48fa4cb084113efc50bd3360bb85f8cdbb9a0ffc
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[07-Nov-2025 15:32:00 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-07 16:33:37], New TxnRef: [ORDER_112_1762504417]
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=89050000&vnp_Command=pay&vnp_CreateDate=20251107153337&vnp_CurrCode=VND&vnp_IpAddr=58.186.240.14&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762504417&vnp_Version=2.1.0&vnp_SecureHash=e217c2864f35f159f7c75119cd1c195a16f8d0f9e580749c93a79e389bce120fadcec0680e051dc3b68c2eaa1b1197901db6100da31f0a41821a9f0eebecbc43
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[07-Nov-2025 15:33:37 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 15:33:58 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-07 16:33:59], New TxnRef: [ORDER_112_1762504439]
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=89050000&vnp_Command=pay&vnp_CreateDate=20251107153359&vnp_CurrCode=VND&vnp_IpAddr=58.186.240.14&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762504439&vnp_Version=2.1.0&vnp_SecureHash=02d88829f5a6e0a6b916eccef1169b9ebbcc05b03e79296ed83928809f67cc966a4df80d0f2f95d52e3439f061ef2e05bf67f36c37b8fb2d657ac7b90acb846b
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[07-Nov-2025 15:33:59 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=16, addressID=13, paymentMethod=VNPay, clientTotal=3805000, voucherID=2, selectedRateID=4, shippingFeeClient=0
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 16
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: dinh48967@gmail.com
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 8, quantity: 1
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 26, quantity: 3
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 3830000
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 25000
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 3805000
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 113. Status: Pending, PaymentStatus: Pending
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 2
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_113_1762507134
+[07-Nov-2025 16:18:54 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 87, customerID: 12
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 87
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-10 17:42:53], New TxnRef: [ORDER_87_1762767773]
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=217500000&vnp_Command=pay&vnp_CreateDate=20251110164253&vnp_CurrCode=VND&vnp_IpAddr=27.67.27.199&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%2387+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_87_1762767773&vnp_Version=2.1.0&vnp_SecureHash=bc1940b8299f8599a12ab64abcc3ff1ecbb3e27c3b5f98669945075084c9684a4a961c5d2cc1f934023757c3be5a030c06a69d5a55c66c85d78ccf7c5e15bccf
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[10-Nov-2025 16:42:53 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=13, paymentMethod=COD, clientTotal=3020000, voucherID=12, selectedRateID=3, shippingFeeClient=0
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 24, quantity: 2
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 1, quantity: 1
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 3320000
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 600000
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 2720000
+[11-Nov-2025 03:37:26 Asia/Ho_Chi_Minh] [CREATE_ORDER] Transaction Rollback (409 - PriceMismatchException): Tổng tiền cuối cùng không khớp. Server: 2,720,000đ, Client: 3,020,000đ. Có thể giá đã thay đổi.
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=13, paymentMethod=COD, clientTotal=2720000, voucherID=12, selectedRateID=4, shippingFeeClient=0
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 24, quantity: 2
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 1, quantity: 1
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 3320000
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[11-Nov-2025 03:39:16 Asia/Ho_Chi_Minh] [CREATE_ORDER] Transaction Rollback (500 - Exception): Voucher không hợp lệ: Voucher chưa/đã hết hạn sử dụng.
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=13, paymentMethod=COD, clientTotal=2720000, voucherID=12, selectedRateID=4, shippingFeeClient=0
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 24, quantity: 2
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 1, quantity: 1
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 3320000
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 600000
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 2720000
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 111. Status: Processing, PaymentStatus: Unpaid
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7a. Updating status for PRIVATE voucherID: 12
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 12
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: COD
+[11-Nov-2025 03:40:01 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. COD selected. Attempting to send email...
+[11-Nov-2025 03:40:04 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. Email send status: Success
+[11-Nov-2025 03:40:04 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9b. Transaction COMMITTED.
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=13, paymentMethod=VNPay, clientTotal=2295000, voucherID=1, selectedRateID=4, shippingFeeClient=0
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 22, quantity: 1
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 2700000
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 0
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 405000
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 2295000
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 112. Status: Pending, PaymentStatus: Pending
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 1
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_112_1762807332
+[11-Nov-2025 03:42:12 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 112, customerID: 12
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 112
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-11 04:42:50], New TxnRef: [ORDER_112_1762807370]
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=229500000&vnp_Command=pay&vnp_CreateDate=20251111034250&vnp_CurrCode=VND&vnp_IpAddr=58.187.228.9&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23112+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_112_1762807370&vnp_Version=2.1.0&vnp_SecureHash=3211a136778cf777b6ef9d9841115fdafbf063c61c9c8962cfd85c7bd6ac5bec786517665ed552727aed42bb9d62d91c6bf57391490921906b8b72eb06278448
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[11-Nov-2025 03:42:50 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] --- Request received ---
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] Inputs: customerID=12, addressID=13, paymentMethod=VNPay, clientTotal=217000, voucherID=2, selectedRateID=3, shippingFeeClient=22000
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] Beginning transaction for customerID: 12
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Fetching customer info...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 1. Customer info found: tanle07112004@gmail.com
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2. Updating stock and calculating subtotal...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 28, quantity: 1
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2a. Updating stock for variantID: 27, quantity: 1
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 2b. Backend Subtotal calculated: 220000
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Verifying shipping fee...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3a. Shipping fee verified: 22000
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Calculating final total...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Voucher discount applied: 25000
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3b. Final total calculated (Server): 217000
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 3c. Client total vs Server total MATCHED.
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Inserting order...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 4. Order created with orderID: 113. Status: Pending, PaymentStatus: Pending
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 5. Inserting shipping details...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 6. Inserting order details...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7. Processing voucher usage...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 7b. Updating global usedCount for voucherID: 2
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 8. Deleting cart items...
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9. Finalizing payment method: VNPay
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. VNPay selected. Generating TxnRef: ORDER_113_1762807451
+[11-Nov-2025 03:44:11 Asia/Ho_Chi_Minh] [CREATE_ORDER] 9a. Transaction COMMITTED. Generating VNPay URL...
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 113, customerID: 12
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 113
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-11 04:44:30], New TxnRef: [ORDER_113_1762807470]
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=21700000&vnp_Command=pay&vnp_CreateDate=20251111034430&vnp_CurrCode=VND&vnp_IpAddr=58.187.228.9&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23113+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_113_1762807470&vnp_Version=2.1.0&vnp_SecureHash=7210260421bee588bd69c0ee3cccc6057a8e2c0170197ac953455f9a0cb67fdd7341e058ae69521c4939426374b9fcb81d7e0d1ad3526ad69d71ad4796ae980c
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[11-Nov-2025 03:44:30 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Request received.
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Input - orderID: 113, customerID: 12
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Transaction started for Order ID: 113
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Order found. Status: [Pending], PaymentStatus: []
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Proceeding with VNPay repayment logic.
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] New Expiry: [2025-11-11 04:44:35], New TxnRef: [ORDER_113_1762807475]
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Order record updated successfully.
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Generating VNPay URL...
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL potentially generated (check value): https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?vnp_Amount=21700000&vnp_Command=pay&vnp_CreateDate=20251111034435&vnp_CurrCode=VND&vnp_IpAddr=58.187.228.9&vnp_Locale=vn&vnp_OrderInfo=Thanh+toan+don+hang+%23113+-+Email%3A+tanle07112004%40gmail.com&vnp_OrderType=billpayment&vnp_ReturnUrl=https%3A%2F%2Ftanbadminton.id.vn%2Fapi%2Fpayments%2Fvnpay_return.php&vnp_TmnCode=BMH8VVU8&vnp_TxnRef=ORDER_113_1762807475&vnp_Version=2.1.0&vnp_SecureHash=fcdfcc228b93a8732c6ee3e52f7f2d06c9eec67b63ec5d5de5900cc83cd2a8482a89382a8e474b4c65ad346f12521deb028d53d306dfb633865c8b590c49d5a2
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] VNPay URL is valid.
+[11-Nov-2025 03:44:35 Asia/Ho_Chi_Minh] [REPAY_API] Transaction committed.

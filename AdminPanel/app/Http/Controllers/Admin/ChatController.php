@@ -72,7 +72,7 @@ class ChatController extends Controller
         $message->load('sender', 'receiver');
 
         // Broadcast CHỈ cho receiver
-        broadcast(new NewChatMessage($message))->toOthers();
+        broadcast(new NewChatMessage($message));
         
         \Log::info('✅ Message broadcasted');
 

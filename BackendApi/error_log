@@ -1,0 +1,1861 @@
+[04-Nov-2025 20:32:07 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[04-Nov-2025 20:32:07 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[04-Nov-2025 20:32:07 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin 1","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer_id: 1
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-QZeX7ZhX","message":"Vietj Nam"}
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 52
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 52
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering Laravel broadcast for message_id: 52
+[04-Nov-2025 20:32:26 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Command: cd '/home' && php artisan support:broadcast 52 2>&1
+[05-Nov-2025 20:40:28 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[05-Nov-2025 20:40:28 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[05-Nov-2025 20:40:28 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[05-Nov-2025 22:58:23 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[05-Nov-2025 22:58:23 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[05-Nov-2025 22:58:23 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 16:04:18 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 16:04:18 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 16:04:18 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer_id: 1
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-QZeX7ZhX","message":"gahaa"}
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 55
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 55
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering Laravel broadcast for message_id: 55
+[06-Nov-2025 16:04:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Command: cd '/home' && php artisan support:broadcast 55 2>&1
+[06-Nov-2025 18:20:47 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 18:20:47 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 18:20:47 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 18:32:13 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 18:32:13 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 18:32:13 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 18:59:15 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 18:59:15 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 18:59:15 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 18:59:21 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ Get employees error: Unknown column 'isActive' in 'where clause'
+[06-Nov-2025 18:59:23 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ Get employees error: Unknown column 'isActive' in 'where clause'
+[06-Nov-2025 19:05:24 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 19:05:24 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 19:05:24 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:05:31 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:05:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-QZeX7ZhX","new_employee_id":3}
+[06-Nov-2025 19:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Conversation updated
+[06-Nov-2025 19:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ System message inserted
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer_id: 1
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-QZeX7ZhX","message":"alo"}
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 57
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 57
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering Laravel broadcast for message_id: 57
+[06-Nov-2025 19:05:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Command: cd '/home' && php artisan support:broadcast 57 2>&1
+[06-Nov-2025 19:06:44 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:06:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:06:50 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-QZeX7ZhX","new_employee_id":1}
+[06-Nov-2025 19:06:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:06:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Conversation updated
+[06-Nov-2025 19:06:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ System message inserted
+[06-Nov-2025 19:07:10 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:07:10 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:07:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-QZeX7ZhX","new_employee_id":3}
+[06-Nov-2025 19:07:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:07:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Conversation updated
+[06-Nov-2025 19:07:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ System message inserted
+[06-Nov-2025 19:12:34 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 19:12:34 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 19:12:34 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-QZeX7ZhX","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:12:37 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:12:37 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:12:38 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-QZeX7ZhX","new_employee_id":3}
+[06-Nov-2025 19:12:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:12:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Closed old conversation: CONV-1-QZeX7ZhX
+[06-Nov-2025 19:12:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-690c90b6e507b
+[06-Nov-2025 19:12:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ System message inserted
+[06-Nov-2025 19:13:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:13:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:13:21 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90b6e507b","new_employee_id":1}
+[06-Nov-2025 19:13:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:13:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Closed old conversation: CONV-1-690c90b6e507b
+[06-Nov-2025 19:13:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:13:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ System message inserted
+[06-Nov-2025 19:13:28 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 19:13:28 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:13:28 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:13:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:13:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:13:42 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:13:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:18:59 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 19:18:59 Asia/Ho_Chi_Minh] [SUPPORT API] Requested employee_id: auto
+[06-Nov-2025 19:18:59 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing open conversation
+[06-Nov-2025 19:18:59 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:19:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:19:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:21:14 Asia/Ho_Chi_Minh] [SUPPORT API] Init conversation for customer_id: 1
+[06-Nov-2025 19:21:14 Asia/Ho_Chi_Minh] [SUPPORT API] Requested employee_id: auto
+[06-Nov-2025 19:21:14 Asia/Ho_Chi_Minh] [SUPPORT API] Found existing open conversation
+[06-Nov-2025 19:21:14 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:21:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list...
+[06-Nov-2025 19:21:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:21:35 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[06-Nov-2025 19:21:35 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:21:35 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:24:20 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:24:20 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:24:20 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:24:22 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:24:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:25:31 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:25:31 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:25:31 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:25:35 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:25:35 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:26:55 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:26:55 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:26:56 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[06-Nov-2025 19:26:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:26:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:26:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:26:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:26:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[06-Nov-2025 19:26:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:26:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:27:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:27:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"i"}
+[06-Nov-2025 19:27:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 63
+[06-Nov-2025 19:27:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:27:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 63
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"i"}
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 64
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 64
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"i"}
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 65
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 65
+[06-Nov-2025 19:28:06 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:06 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfru"}
+[06-Nov-2025 19:28:06 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 66
+[06-Nov-2025 19:28:06 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:06 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 66
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 68
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 68
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 69
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 69
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 70
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 70
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 71
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 71
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 72
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 72
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 73
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 73
+[06-Nov-2025 19:28:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"itgfruhsgs"}
+[06-Nov-2025 19:28:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 74
+[06-Nov-2025 19:28:14 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:14 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 74
+[06-Nov-2025 19:28:18 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:28:18 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:28:18 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690c94120570b","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:28:56 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:28:56 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:28:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 77
+[06-Nov-2025 19:28:56 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:28:56 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 77
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 78
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 78
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 79
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 79
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 80
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 80
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 81
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 81
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 82
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 82
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 83
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 83
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"cat"}
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 84
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:29:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 84
+[06-Nov-2025 19:29:05 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:29:05 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:29:05 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690c94120570b","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:36:42 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:36:42 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:36:42 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690c94120570b","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:36:43 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:36:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:36:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:36:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-690c94120570b","new_employee_id":1}
+[06-Nov-2025 19:36:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:36:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:36:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:36:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:36:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:36:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[06-Nov-2025 19:36:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:36:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:36:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:37:02 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:37:02 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:37:03 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-690c94120570b","new_employee_id":1}
+[06-Nov-2025 19:37:03 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:37:03 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:37:03 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:37:08 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send message from customer: 1
+[06-Nov-2025 19:37:08 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[06-Nov-2025 19:37:08 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 86
+[06-Nov-2025 19:37:08 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:37:08 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 86
+[06-Nov-2025 19:37:10 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:37:10 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:37:10 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:37:10 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:37:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:37:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:37:14 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[06-Nov-2025 19:37:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:37:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:37:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:37:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:37:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:37:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[06-Nov-2025 19:37:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:37:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:37:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:40:09 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 2 messages
+[06-Nov-2025 19:40:10 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:40:10 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:40:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 23 messages
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-3-690c94120570b","message":"alo"}
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-3-690c94120570b
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 3
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 87
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:40:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 87
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690c94120570b","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:42:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 24 messages
+[06-Nov-2025 19:42:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:42:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-690c94120570b","new_employee_id":1}
+[06-Nov-2025 19:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 2 messages
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 88
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:42:24 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 88
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 3 messages
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 89
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[06-Nov-2025 19:47:40 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 89
+[06-Nov-2025 19:47:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:47:51 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:47:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 4 messages
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690c94120570b
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690c94120570b
+[06-Nov-2025 19:47:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 24 messages
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:50:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 4 messages
+[06-Nov-2025 19:50:43 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[06-Nov-2025 19:50:43 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[06-Nov-2025 19:50:43 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"helo em"}
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Message: helo em
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 91
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[07-Nov-2025 15:32:36 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 91
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"helo em"}
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Message: helo em
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 92
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[07-Nov-2025 15:32:50 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 92
+[07-Nov-2025 15:32:55 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[07-Nov-2025 15:32:55 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[07-Nov-2025 15:32:55 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[07-Nov-2025 15:32:56 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:32:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 7 messages
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"llll"}
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Message: llll
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 93
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[07-Nov-2025 15:33:04 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 93
+[07-Nov-2025 15:33:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 9 messages
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"llll"}
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Message: llll
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 95
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[07-Nov-2025 15:33:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 95
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[07-Nov-2025 15:44:38 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[07-Nov-2025 15:44:44 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[07-Nov-2025 15:44:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[08-Nov-2025 23:43:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[08-Nov-2025 23:44:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:47:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[09-Nov-2025 01:48:03 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:48:03 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:25 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[09-Nov-2025 01:53:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[09-Nov-2025 01:53:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[09-Nov-2025 01:53:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[09-Nov-2025 01:53:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[09-Nov-2025 01:53:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[09-Nov-2025 01:53:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:34 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 01:53:45 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 01:53:46 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 01:53:46 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690f91adecf13","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 01:53:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 01:53:48 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:48 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-690f91adecf13","new_employee_id":1}
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 01:53:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[09-Nov-2025 01:53:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 01:53:51 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:52 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 01:53:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[09-Nov-2025 01:53:59 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[09-Nov-2025 01:53:59 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-3-690f91adecf13","message":"alo S"}
+[09-Nov-2025 01:53:59 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:53:59 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo S
+[09-Nov-2025 01:54:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[09-Nov-2025 01:54:00 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-3-690f91adecf13
+[09-Nov-2025 01:54:00 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 3
+[09-Nov-2025 01:54:01 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 97
+[09-Nov-2025 01:54:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[09-Nov-2025 01:54:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 97
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:08:30
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] PHP Warning:  require_once(/home/ipkfeohnhosting/public_html/api/../bootstrap.php): Failed to open stream: No such file or directory in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:08:30 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Failed opening required '/home/ipkfeohnhosting/public_html/api/../bootstrap.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/ipkfeohnhosting/public_html/api/support-simple.php:35
+Stack trace:
+#0 {main}
+  thrown in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:08:35
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=employees
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] PHP Warning:  require_once(/home/ipkfeohnhosting/public_html/api/../bootstrap.php): Failed to open stream: No such file or directory in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:08:35 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Failed opening required '/home/ipkfeohnhosting/public_html/api/../bootstrap.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/ipkfeohnhosting/public_html/api/support-simple.php:35
+Stack trace:
+#0 {main}
+  thrown in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:15:55
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=health
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] PHP Warning:  require_once(/home/ipkfeohnhosting/public_html/api/../bootstrap.php): Failed to open stream: No such file or directory in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:15:55 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Failed opening required '/home/ipkfeohnhosting/public_html/api/../bootstrap.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/ipkfeohnhosting/public_html/api/support-simple.php:35
+Stack trace:
+#0 {main}
+  thrown in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:18:15
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] PHP Warning:  require_once(/home/ipkfeohnhosting/public_html/api/../bootstrap.php): Failed to open stream: No such file or directory in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Failed opening required '/home/ipkfeohnhosting/public_html/api/../bootstrap.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/ipkfeohnhosting/public_html/api/support-simple.php:35
+Stack trace:
+#0 {main}
+  thrown in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:21:38
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 02:21:38 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:23:43
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 02:23:43 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:23:45
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=employees
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] Action requested: "employees"
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: employees
+[09-Nov-2025 02:23:45 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:28:04
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 02:28:04 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:32:10
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] PHP Warning:  require_once(/home/ipkfeohnhosting/public_html/api/../bootstrap.php): Failed to open stream: No such file or directory in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:32:10 Asia/Ho_Chi_Minh] PHP Fatal error:  Uncaught Error: Failed opening required '/home/ipkfeohnhosting/public_html/api/../bootstrap.php' (include_path='.:/opt/alt/php81/usr/share/pear:/opt/alt/php81/usr/share/php:/usr/share/pear:/usr/share/php') in /home/ipkfeohnhosting/public_html/api/support-simple.php:35
+Stack trace:
+#0 {main}
+  thrown in /home/ipkfeohnhosting/public_html/api/support-simple.php on line 35
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:53:45
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 02:53:45 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:53:49
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=employees
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] Action requested: "employees"
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: employees
+[09-Nov-2025 02:53:49 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Time: 2025-11-09 02:58:17
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init&debug_customer_id=12
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ⚠️ DEBUG MODE: Using customer ID from query param: 12
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] [SUPPORT-API] Action: init | Customer: 12 | Method: GET | IP: 113.190.100.31
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ========== HANDLE INIT START ==========
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Customer ID: 12
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Preparing SQL:  SELECT conversation_id, employee_id, status, created_at FROM support_conversations WHERE customer_id = ? AND status IN ('active', 'waiting') ORDER BY created_at DESC LIMIT 1 
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] ❌ Init Error: Unknown column 'employee_id' in 'field list'
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] File: /home/ipkfeohnhosting/public_html/api/support-simple.php:302
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Stack: #0 /home/ipkfeohnhosting/public_html/api/support-simple.php(302): mysqli->prepare()
+#1 /home/ipkfeohnhosting/public_html/api/support-simple.php(216): handleInit()
+#2 {main}
+[09-Nov-2025 02:58:17 Asia/Ho_Chi_Minh] Response (500): {
+    "success": false,
+    "message": "Failed to init conversation",
+    "error": "Unknown column 'employee_id' in 'field list'"
+}
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:01:12
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init&debug_customer_id=12
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ⚠️ DEBUG MODE: Using customer ID from query param: 12
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] [SUPPORT-API] Action: init | Customer: 12 | Method: GET | IP: 113.190.100.31
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ========== HANDLE INIT START ==========
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Customer ID: 12
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Preparing SQL:  SELECT conversation_id, assigned_employee_id, status, created_at FROM support_conversations WHERE customer_id = ? AND status IN ('open', 'pending') ORDER BY created_at DESC LIMIT 1 
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Statement prepared
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Parameters bound
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Query executed
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Rows found: 0
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Creating new conversation for customer: 12
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Generated conversation ID: CONV-12-690fa18820d09
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Searching for available employee...
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Assigned employee: John Admin (ID: 1)
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Inserting new conversation...
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] ✅ Conversation created successfully (ID: 0)
+[09-Nov-2025 03:01:12 Asia/Ho_Chi_Minh] Response (201): {
+    "success": true,
+    "message": "Conversation created",
+    "conversation_id": "CONV-12-690fa18820d09",
+    "customer_id": 12,
+    "assigned_employee": {
+        "employeeID": 1,
+        "fullName": "John Admin",
+        "email": "admin@shop.com",
+        "img_url": "admin_avatar.png",
+        "role": "admin"
+    }
+}
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:01:24
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 03:01:24 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:02:26
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 03:02:26 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:02:28
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=employees
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] Action requested: "employees"
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: employees
+[09-Nov-2025 03:02:28 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:07:33
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 03:07:33 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:10:56
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 03:10:56 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:12:18
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] Method: POST
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=init
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] IP: 113.190.100.31
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded from: /home/ipkfeohnhosting/public_html/api/bootstrap.php
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] Action requested: "init"
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ✅ Database connection OK
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: init
+[09-Nov-2025 03:12:18 Asia/Ho_Chi_Minh] Response (401): {
+    "success": false,
+    "message": "Unauthorized - Invalid or missing token"
+}
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ================== NEW REQUEST ==================
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] Time: 2025-11-09 03:24:24
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] Method: GET
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] URI: /api/support-simple.php?action=history&customer_id=12&conversation_id=CONV-12-abc
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ✅ AdminPanelService loaded
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] Action requested: "history"
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] Auth Header Present: NO
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ❌ No Authorization header
+[09-Nov-2025 03:24:24 Asia/Ho_Chi_Minh] ❌ Authentication failed for action: history
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 03:44:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[09-Nov-2025 03:44:21 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 03:44:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 03:44:24 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 03:44:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690faba97e600
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 03:44:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690faba97e600","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690faba97e600
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 14:45:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-3-690faba97e600","message":"alo"}
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-3-690faba97e600
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 3
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 92
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[09-Nov-2025 14:46:30 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 92
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-3-690faba97e600","message":"alo"}
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-3-690faba97e600
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 3
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 93
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[09-Nov-2025 14:48:59 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 93
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-690faba97e600","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-690faba97e600
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-690faba97e600
+[09-Nov-2025 14:49:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 3 messages
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[09-Nov-2025 16:45:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:21 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:21 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:24 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":1}
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[09-Nov-2025 16:45:27 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Created new conversation: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 16:45:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-691062b82ed12","new_employee_id":1}
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[09-Nov-2025 16:45:30 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[09-Nov-2025 16:45:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[09-Nov-2025 16:45:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-690c90e1708c2","new_employee_id":3}
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: Bob Staff
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 1 messages
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-3-691062b82ed12","message":"alo"}
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-3-691062b82ed12
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 3
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 92
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[09-Nov-2025 16:45:37 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 92
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-3-691062b82ed12","customer_id":1,"status":"open","assigned_employee":{"employeeID":3,"fullName":"Bob Staff","email":"bob@shop.com","img_url":"staff.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-3-691062b82ed12
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-3-691062b82ed12
+[10-Nov-2025 00:32:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 2 messages
+[10-Nov-2025 00:32:23 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees list
+[10-Nov-2025 00:32:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer request: {"conversation_id":"CONV-1-3-691062b82ed12","new_employee_id":1}
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found employee: John Admin
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found existing conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:24 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 5 messages
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"lo"}
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Message: lo
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 93
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast
+[10-Nov-2025 00:32:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 93
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:32:49 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 6 messages
+[10-Nov-2025 00:34:04 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 00:34:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:34:04 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 7 messages
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 7 messages
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 95
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 95
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Laravel path: /home/AdminPanel
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ Artisan file not found at: /home/AdminPanel/artisan
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: ERROR: Artisan not found
+[10-Nov-2025 00:49:41 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 96
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 96
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Laravel path: /home/AdminPanel
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ Artisan file not found at: /home/AdminPanel/artisan
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: ERROR: Artisan not found
+[10-Nov-2025 00:49:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 00:50:09 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 00:50:09 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:50:09 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 10 messages
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"yangseoooo"}
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Message: yangseoooo
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 98
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 98
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Laravel path: /home/AdminPanel
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ Artisan file not found at: /home/AdminPanel/artisan
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: ERROR: Artisan not found
+[10-Nov-2025 00:50:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:40 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 11 messages
+[10-Nov-2025 02:05:44 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 12 messages
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 100
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 100
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 100
+[10-Nov-2025 02:05:47 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":100}
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":100,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 13 messages
+[10-Nov-2025 02:23:20 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 14 messages
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 102
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 102
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 102
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":102}
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":102,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:23:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"hello"}
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Message: hello
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 103
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 103
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 103
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":103}
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":103,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:23:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:36 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 16 messages
+[10-Nov-2025 02:33:42 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 17 messages
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 105
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 105
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 105
+[10-Nov-2025 02:33:45 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":105}
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":105,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:33:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 106
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 106
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 106
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":106}
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":106,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:38:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 19 messages
+[10-Nov-2025 02:41:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 20 messages
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 108
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 108
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 108
+[10-Nov-2025 02:41:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":108}
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":108,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:41:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"hey"}
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Message: hey
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 109
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 109
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 109
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":109}
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":109,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:42:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:47:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 22 messages
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 110
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 110
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 110
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":110}
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":110,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 02:47:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 111
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 111
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 111
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":111}
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":111,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:11:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:16:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:16:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:16:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 25 messages
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"hello"}
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Message: hello
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 113
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 113
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 113
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":113}
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":113,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer"}}
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:16:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:18:06 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 03:18:06 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 03:18:06 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 03:18:07 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 26 messages
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"heloo"}
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Message: heloo
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 114
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 114
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 114
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":114}
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":114,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:18:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:18:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 28 messages
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"hello"}
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Message: hello
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 116
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 116
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 116
+[10-Nov-2025 03:18:31 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":116}
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":116,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:18:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"hello"}
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Message: hello
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 117
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 117
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 117
+[10-Nov-2025 03:18:33 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":117}
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":117,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:18:34 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:18:37 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:37 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:37 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 31 messages
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"haizzz"}
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Message: haizzz
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 119
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 119
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 119
+[10-Nov-2025 03:18:43 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":119}
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":119,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 03:18:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 03:18:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:18:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 33 messages
+[10-Nov-2025 03:21:17 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:21:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:21:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 34 messages
+[10-Nov-2025 03:21:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 03:21:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 03:21:29 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 35 messages
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 16:42:11 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 35 messages
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo test"}
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo test
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 123
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 123
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 123
+[10-Nov-2025 16:42:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":123}
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":123,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 16:42:20 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:24:10 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 36 messages
+[10-Nov-2025 17:24:42 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 17:24:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:24:42 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 37 messages
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"aloalo"}
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Message: aloalo
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 125
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 125
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 125
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":125}
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":125,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 17:25:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 17:30:47 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 17:30:47 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 17:30:47 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 17:30:48 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:48 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:48 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 38 messages
+[10-Nov-2025 17:30:53 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 39 messages
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"loa"}
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Message: loa
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 127
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Calling triggerLaravelBroadcast...
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 127
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":127}
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":127,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"private-admin.support.notifications"}
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 127
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 127
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 17:30:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":127}
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":127,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"private-admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"private-admin.support.notifications"}
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 17:30:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:17:02 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 18:17:02 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 18:17:02 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 18:17:03 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:03 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:03 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 40 messages
+[10-Nov-2025 18:17:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:12 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 41 messages
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"loalolao"}
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Message: loalolao
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 129
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Calling triggerLaravelBroadcast...
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 129
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:17:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":129}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":129,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 129
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 129
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":129}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":129,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 18:17:19 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"loa"}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Message: loa
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 130
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Calling triggerLaravelBroadcast...
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 130
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":130}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":130,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Triggering broadcast for message_id: 130
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 130
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":130}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":130,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast output: SUCCESS
+[10-Nov-2025 18:17:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 131
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === TRIGGERING BROADCAST ===
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 131
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 131
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:20:22 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":131}
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":131,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === BROADCAST COMPLETE ===
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:20:23 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"alo"}
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Message: alo
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 132
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === TRIGGERING BROADCAST ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 132
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 132
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":132}
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":132,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === BROADCAST COMPLETE ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:20:28 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:32 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 45 messages
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:51 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 45 messages
+[10-Nov-2025 18:20:56 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:20:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 46 messages
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"est1123"}
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Message: est1123
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 134
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === TRIGGERING BROADCAST ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 134
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 134
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":134}
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":134,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === BROADCAST COMPLETE ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:21:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] Init for customer: 1, employee: auto
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] Found open conversation
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] Response: {"success":true,"conversation_id":"CONV-1-690c90e1708c2","customer_id":1,"status":"open","assigned_employee":{"employeeID":1,"fullName":"John Admin","email":"admin@shop.com","img_url":"admin_avatar.png"},"message":"K\u1ebft n\u1ed1i th\u00e0nh c\u00f4ng"}
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 47 messages
+[10-Nov-2025 18:27:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 48 messages
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 === SEND MESSAGE DEBUG ===
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Customer ID: 1
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Input: {"conversation_id":"CONV-1-690c90e1708c2","message":"loa"}
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Conversation ID: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Message: loa
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation, status: open
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Using conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] Assigned employee: 1
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Message inserted with ID: 136
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === TRIGGERING BROADCAST ===
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 136
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST START ===
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 URL: https://tanbadminton.id.vn/admin/public/api/bridge/support/trigger-broadcast
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Message ID: 136
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 API Key: BadmintonShop2025Sec...
+[10-Nov-2025 18:27:53 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Request body: {"message_id":136}
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 HTTP Code: 200
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Response: {"success":true,"message":"Broadcast sent successfully","data":{"message_id":136,"conversation_id":"CONV-1-690c90e1708c2","sender_type":"customer","channels":{"customer":"customer-support-1","admin":"admin.support.notifications"},"results":{"customer":{},"admin":{}}}}
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ ✅ ✅ BROADCAST SUCCESS! ✅ ✅ ✅
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Channels: {"customer":"customer-support-1","admin":"admin.support.notifications"}
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === HTTP BROADCAST END ===
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcast result: SUCCESS
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 === BROADCAST COMPLETE ===
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:27:54 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ === SEND COMPLETED ===
+[10-Nov-2025 18:28:07 Asia/Ho_Chi_Minh] [SUPPORT API] 📥 Get history for customer: 1, conv: CONV-1-690c90e1708c2
+[10-Nov-2025 18:28:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found conversation: CONV-1-690c90e1708c2
+[10-Nov-2025 18:28:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Returning 50 messages
+[10-Nov-2025 18:36:32 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 138
+[10-Nov-2025 18:36:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[10-Nov-2025 18:36:55 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 140
+[10-Nov-2025 18:36:56 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 01:56:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 142
+[11-Nov-2025 01:56:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 01:56:25 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 143
+[11-Nov-2025 01:56:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 01:57:56 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 144
+[11-Nov-2025 01:57:57 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 01:59:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 146
+[11-Nov-2025 01:59:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 02:14:00 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting available employees...
+[11-Nov-2025 02:14:00 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[11-Nov-2025 02:14:45 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting available employees...
+[11-Nov-2025 02:14:45 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 2 employees
+[11-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 02:18:15 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 02:21:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 02:21:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 02:21:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 148
+[11-Nov-2025 02:21:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 04:10:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:10:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:10:49 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:10:49 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:10:53 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:10:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:11:09 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:11:09 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:11:25 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:11:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:11:27 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:11:27 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:11:55 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:11:55 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:12:25 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:12:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:12:44 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:12:44 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:13:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:13:13 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:13:26 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 150
+[11-Nov-2025 04:13:26 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 04:46:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 12
+[11-Nov-2025 04:46:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 12
+[11-Nov-2025 04:46:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 04:46:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 04:46:43 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:46:43 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:46:45 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 04:46:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 12
+[11-Nov-2025 04:46:52 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 12
+[11-Nov-2025 04:46:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 04:46:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 04:46:53 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:46:53 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:46:54 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 04:46:55 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:46:55 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:46:56 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 04:47:01 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 04:47:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 1
+[11-Nov-2025 04:47:29 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 1
+[11-Nov-2025 04:47:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 04:47:29 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 04:47:33 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 04:47:33 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 04:47:34 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 04:48:02 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 04:48:02 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 04:48:05 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 04:48:05 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 1
+[11-Nov-2025 04:48:05 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 152
+[11-Nov-2025 04:48:05 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 05:00:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 1
+[11-Nov-2025 05:00:30 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 1
+[11-Nov-2025 05:00:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:00:30 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:00:39 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:00:39 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:00:39 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:00:40 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:01:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:01:13 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 1
+[11-Nov-2025 05:01:13 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 153
+[11-Nov-2025 05:01:13 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 05:01:25 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:01:25 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:01:25 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:01:26 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 1
+[11-Nov-2025 05:05:12 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 1
+[11-Nov-2025 05:05:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:05:12 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:05:14 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:14 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:14 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:05:15 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 1
+[11-Nov-2025 05:05:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:05:15 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:05:16 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:16 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 1
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:18 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:05:19 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 1
+[11-Nov-2025 05:05:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:05:19 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 12
+[11-Nov-2025 05:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 12
+[11-Nov-2025 05:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 05:05:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 05:05:46 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:46 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:46 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 12
+[11-Nov-2025 05:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 12
+[11-Nov-2025 05:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 05:05:48 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 05:05:49 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:49 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:49 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 12
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 12
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:05:50 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:05:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 12
+[11-Nov-2025 05:05:51 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 12
+[11-Nov-2025 05:05:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 05:05:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 05:06:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 12
+[11-Nov-2025 05:06:01 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 12
+[11-Nov-2025 05:06:01 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 154
+[11-Nov-2025 05:06:07 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 05:06:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 12
+[11-Nov-2025 05:06:16 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 12
+[11-Nov-2025 05:06:16 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 155
+[11-Nov-2025 05:06:17 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 05:06:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 12
+[11-Nov-2025 05:06:41 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 12
+[11-Nov-2025 05:06:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from POST form: 1
+[11-Nov-2025 05:06:57 Asia/Ho_Chi_Minh] [SUPPORT API] 🔐 Init for customer_id: 1
+[11-Nov-2025 05:06:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:06:57 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:07:02 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:07:02 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 1
+[11-Nov-2025 05:07:02 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 157
+[11-Nov-2025 05:07:02 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success
+[11-Nov-2025 05:07:51 Asia/Ho_Chi_Minh] [SUPPORT API] ❌ No customer_id found in request!
+[11-Nov-2025 05:07:51 Asia/Ho_Chi_Minh] [SUPPORT API] 📋 Getting employees...
+[11-Nov-2025 05:07:51 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Found 3 employees
+[11-Nov-2025 05:07:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:07:52 Asia/Ho_Chi_Minh] [SUPPORT API] 🔄 Transfer for customer_id: 1
+[11-Nov-2025 05:07:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from GET query: 1
+[11-Nov-2025 05:07:52 Asia/Ho_Chi_Minh] [SUPPORT API] 📜 History for customer_id: 1
+[11-Nov-2025 05:07:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📱 Customer ID from JSON body: 1
+[11-Nov-2025 05:07:58 Asia/Ho_Chi_Minh] [SUPPORT API] 📤 Send from customer_id: 1
+[11-Nov-2025 05:07:58 Asia/Ho_Chi_Minh] [SUPPORT API] 🔔 Broadcasting message_id: 158
+[11-Nov-2025 05:07:58 Asia/Ho_Chi_Minh] [SUPPORT API] ✅ Broadcast success

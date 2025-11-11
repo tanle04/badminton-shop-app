@@ -22,7 +22,7 @@ public class CheckoutProductAdapter extends RecyclerView.Adapter<CheckoutProduct
     private final List<CartItem> productList;
     private final Context context;
     // Khuyến nghị: Thay thế URL cứng bằng hằng số từ ApiClient/Constants
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
+//    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     public CheckoutProductAdapter(Context context, List<CartItem> productList) {
         this.context = context;
@@ -57,7 +57,7 @@ public class CheckoutProductAdapter extends RecyclerView.Adapter<CheckoutProduct
         holder.quantity.setText("x" + item.getQuantity());
 
         // --- LOAD IMAGE ---
-        String imageUrl = BASE_IMAGE_URL + item.getImageUrl();
+        String imageUrl =   item.getImageUrl();
         Glide.with(context)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_badminton_logo)

@@ -41,7 +41,7 @@ class LoginController extends Controller
         if (Auth::guard('admin')->attempt($credentials, $request->filled('remember'))) {
             $request->session()->regenerate();
 
-            // Chuyển hướng đến Dashboard Admin (admin.dashboard)
+            // Chuyển hướng đến Dashboard Admin (dashboard)
             return redirect()->intended(route('admin.dashboard')); 
         }
 
@@ -54,15 +54,14 @@ class LoginController extends Controller
     /**
      * Xử lý logic đăng xuất.
      */
-    public function logout(Request $request)
+   public function logout(Request $request)
     {
-        // Logout guard 'admin'
         Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Chuyển hướng đến trang đăng nhập Admin (đã fix lỗi 404 /home)
-        return redirect()->route('admin.login');
+        return redirect()->route('admin.login')
+            ->with('success', 'Đã đăng xuất thành công');
     }
 }

@@ -149,7 +149,7 @@ class CustomerSupportController {
                                 e.fullName as employee_name,
                                 e.img_url as employee_img,
                                 e.role as employee_role
-                         FROM customer_support_messages m
+                         FROM support_messages m
                          LEFT JOIN customers c ON m.sender_id = c.customerID AND m.sender_type = 'customer'
                          LEFT JOIN employees e ON m.sender_id = e.employeeID AND m.sender_type = 'employee'
                          WHERE m.conversation_id = ?
@@ -190,7 +190,7 @@ class CustomerSupportController {
             }
             
             // Đánh dấu đã đọc
-            $update_query = "UPDATE customer_support_messages 
+            $update_query = "UPDATE support_messages 
                             SET is_read = 1, read_at = NOW() 
                             WHERE conversation_id = ? 
                             AND sender_type = 'employee' 
@@ -255,7 +255,7 @@ class CustomerSupportController {
             $conv_data = $result->fetch_assoc();
             
             // Insert message
-            $insert_query = "INSERT INTO customer_support_messages 
+           $insert_query = "INSERT INTO support_messages 
                             (conversation_id, sender_type, sender_id, message, assigned_employee_id, created_at, updated_at) 
                             VALUES (?, 'customer', ?, ?, ?, NOW(), NOW())";
             
@@ -313,7 +313,7 @@ class CustomerSupportController {
             }
             
             $query = "SELECT COUNT(*) as count 
-                     FROM customer_support_messages m
+                     FROM support_messages m
                      INNER JOIN support_conversations c ON m.conversation_id = c.conversation_id
                      WHERE c.customer_id = ? 
                      AND m.sender_type = 'employee' 

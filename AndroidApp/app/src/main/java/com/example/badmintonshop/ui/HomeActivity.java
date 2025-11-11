@@ -22,6 +22,9 @@ import com.example.badmintonshop.adapter.ProductAdapter;
 import com.example.badmintonshop.network.ApiClient;
 import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.ApiResponse;
+import com.example.badmintonshop.network.dto.CategoryDto; // ⭐ IMPORT MỚI
+import com.example.badmintonshop.network.dto.CategoryListResponse;
+import com.example.badmintonshop.network.dto.CategoryListResponse; // ⭐ IMPORT MỚI
 import com.example.badmintonshop.network.dto.ProductDto;
 import com.example.badmintonshop.network.dto.ProductListResponse;
 import com.example.badmintonshop.network.dto.SliderDto;
@@ -107,11 +110,15 @@ public class HomeActivity extends AppCompatActivity {
 
         recyclerMainGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
-        setupTabs();
+        // ⭐ THAY ĐỔI: Tải tab động thay vì setup tĩnh
+        // setupTabs(); // Cũ
+        loadDynamicTabs(); // Mới
+
         loadBanners();
         updateBottomNavLabel();
-        // Lần tải đầu tiên
-        loadFavoriteIdsAndProducts();
+
+        // ⭐ THAY ĐỔI: Xóa lệnh gọi loadFavoriteIdsAndProducts() ở đây
+        // Nó sẽ được gọi sau khi tabs được tải xong (trong loadDynamicTabs hoặc setupStaticFallbackTabs)
 
         tvSearchBar.setOnClickListener(v -> startActivity(new Intent(HomeActivity.this, SearchActivity.class)));
 
@@ -231,8 +238,14 @@ public class HomeActivity extends AppCompatActivity {
                     favoriteProductIds.clear();
                 }
                 // Sau khi tải xong IDs (dù thành công hay thất bại), tải sản phẩm
+                // Lấy tab đang được chọn (mặc định là "All" khi mới mở)
                 int selectedTabPosition = tabLayout.getSelectedTabPosition();
-                String category = tabLayout.getTabAt(selectedTabPosition).getText().toString();
+                if (selectedTabPosition == -1) selectedTabPosition = 0; // Đảm bảo an toàn
+
+                TabLayout.Tab selectedTab = tabLayout.getTabAt(selectedTabPosition);
+                String category = (selectedTab != null && selectedTab.getText() != null) ?
+                        selectedTab.getText().toString() : "All";
+
                 Log.d(TAG, "Calling loadProducts after wishlist check for category: " + category);
                 loadProducts(category);
             }
@@ -245,24 +258,87 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    private void setupTabs() {
+    /**
+     * ⭐ HÀM MỚI: Tải danh mục từ API
+     */
+    private void loadDynamicTabs() {
+        Log.d(TAG, "loadDynamicTabs: Fetching categories from API...");
+        api.getCategories().enqueue(new Callback<CategoryListResponse>() {
+            @Override
+            public void onResponse(Call<CategoryListResponse> call, Response<CategoryListResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    Log.i(TAG, "Categories loaded successfully.");
+                    List<CategoryDto> categories = response.body().getItems();
+
+                    tabLayout.removeAllTabs(); // Xóa tab cũ (nếu có)
+
+                    // Luôn thêm tab "All" đầu tiên
+                    tabLayout.addTab(tabLayout.newTab().setText("All"));
+
+                    // Thêm các tab động từ API
+                    if (categories != null) {
+                        for (CategoryDto category : categories) {
+                            tabLayout.addTab(tabLayout.newTab().setText(category.getCategoryName()));
+                        }
+                    }
+
+                    setupTabListener(); // Gắn listener cho các tab mới
+
+                    // Sau khi tab đã sẵn sàng, tải sản phẩm cho tab "All"
+                    loadFavoriteIdsAndProducts();
+
+                } else {
+                    String msg = response.body() != null ? response.body().getMessage() : "HTTP " + response.code();
+                    Log.e(TAG, "Failed to load categories: " + msg + ". Using fallback.");
+                    setupStaticFallbackTabs(); // Dùng tab tĩnh nếu API lỗi
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CategoryListResponse> call, Throwable t) {
+                Log.e(TAG, "Network error loading categories. Using fallback.", t);
+                setupStaticFallbackTabs(); // Dùng tab tĩnh nếu mạng lỗi
+            }
+        });
+    }
+
+    /**
+     * ⭐ HÀM MỚI: Phương án dự phòng nếu không tải được category từ API
+     */
+    private void setupStaticFallbackTabs() {
+        Log.w(TAG, "setupStaticFallbackTabs: Using hardcoded fallback tabs.");
+        tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText("All"));
         tabLayout.addTab(tabLayout.newTab().setText("Vợt cầu lông"));
         tabLayout.addTab(tabLayout.newTab().setText("Giày cầu lông"));
         tabLayout.addTab(tabLayout.newTab().setText("Quần áo cầu lông"));
         tabLayout.addTab(tabLayout.newTab().setText("Phụ kiện"));
-        Log.d(TAG, "setupTabs: Tabs initialized.");
+
+        setupTabListener(); // Gắn listener
+
+        // Tải sản phẩm
+        loadFavoriteIdsAndProducts();
+    }
+
+    /**
+     * ⭐ HÀM MỚI: Tách listener ra riêng để tái sử dụng
+     */
+    private void setupTabListener() {
+        // Xóa listener cũ đi để tránh bị gọi nhiều lần
+        tabLayout.clearOnTabSelectedListeners();
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Log.d(TAG, "onTabSelected: Loading products for category: " + tab.getText());
+                if (tab == null || tab.getText() == null) return;
+                Log.d(TAG, "onTabSelected: Loading products for category: " + tab.getText().toString());
                 loadProducts(tab.getText().toString());
             }
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
+
 
     private void loadProducts(String category) {
         Call<ProductListResponse> call;

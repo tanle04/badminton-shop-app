@@ -48,9 +48,10 @@
         </div>
     @endif
 
-    <form action="/admin/product-discounts/{{ $discount->discountID }}" 
-          method="POST" 
-          id="discountForm">
+{{-- ĐÂY LÀ CODE ĐÚNG --}}
+<form action="{{ route('admin.product-discounts.update', $discount->discountID) }}" 
+      method="POST" 
+      id="discountForm">
         @csrf
         @method('PUT')
         
@@ -80,9 +81,6 @@
                             @error('discountName')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
-                            <small class="form-text text-muted">
-                                <i class="fas fa-lightbulb"></i> Tên ngắn gọn, dễ hiểu để phân biệt với các chương trình khác
-                            </small>
                         </div>
 
                         <hr>
@@ -133,6 +131,9 @@
                                     @error('discountValue')
                                         <span class="invalid-feedback">{{ $message }}</span>
                                     @enderror
+                                    <small class="form-text text-muted" id="price-hint">
+                                        <i class="fas fa-info-circle"></i> Đang load thông tin giá...
+                                    </small>
                                 </div>
                             </div>
 
@@ -164,7 +165,7 @@
 
                         <hr>
 
-                        {{-- ⭐ SỬA PHẦN THỜI GIAN - Định dạng đúng múi giờ --}}
+                        {{-- Thời gian --}}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -177,7 +178,6 @@
                                                 <i class="fas fa-calendar-alt"></i>
                                             </span>
                                         </div>
-                                        {{-- ⭐ QUAN TRỌNG: Sử dụng Carbon với timezone Asia/Ho_Chi_Minh --}}
                                         @php
                                             $startDateFormatted = '';
                                             if ($discount->startDate) {
@@ -256,72 +256,102 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle"></i>
-                            <strong>Hướng dẫn:</strong> Chọn loại đối tượng và nhập ID tương ứng. 
-                            Ví dụ: Chọn "Product" và nhập ID sản phẩm cần giảm giá.
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Lưu ý:</strong> Thay đổi đối tượng sẽ ảnh hưởng đến toàn bộ chiến dịch đang chạy.
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="appliedToType">
-                                        Áp dụng cho <span class="text-danger">*</span>
-                                    </label>
-                                    <select name="appliedToType" 
-                                            id="appliedToType" 
-                                            class="form-control @error('appliedToType') is-invalid @enderror" 
-                                            required>
-                                        <option value="">-- Chọn loại --</option>
-                                        @php
-                                            $types = [
-                                                'category' => ['icon' => 'fa-folder', 'label' => 'Danh mục'],
-                                                'brand' => ['icon' => 'fa-copyright', 'label' => 'Thương hiệu'],
-                                                'product' => ['icon' => 'fa-box', 'label' => 'Sản phẩm'],
-                                                'variant' => ['icon' => 'fa-boxes', 'label' => 'Biến thể']
-                                            ];
-                                        @endphp
-                                        @foreach($types as $type => $info)
-                                            <option value="{{ $type }}" 
-                                                    {{ old('appliedToType', $discount->appliedToType) == $type ? 'selected' : '' }}>
-                                                {{ $info['label'] }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('appliedToType')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="appliedToID">
-                                        ID Đối tượng <span class="text-danger">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-hashtag"></i>
-                                            </span>
-                                        </div>
-                                        <input type="number" 
-                                               name="appliedToID" 
-                                               id="appliedToID" 
-                                               class="form-control @error('appliedToID') is-invalid @enderror" 
-                                               value="{{ old('appliedToID', $discount->appliedToID) }}" 
-                                               required 
-                                               placeholder="Nhập ID">
-                                    </div>
-                                    @error('appliedToID')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <small class="form-text text-muted" id="applied-to-hint">
-                                        Nhập ID của đối tượng được chọn ở trên
-                                    </small>
-                                </div>
-                            </div>
+                        {{-- Chọn loại --}}
+                        <div class="form-group">
+                            <label for="appliedToType">
+                                Loại đối tượng <span class="text-danger">*</span>
+                            </label>
+                            <select name="appliedToType" 
+                                    id="appliedToType" 
+                                    class="form-control @error('appliedToType') is-invalid @enderror" 
+                                    required>
+                                <option value="">-- Chọn loại đối tượng --</option>
+                                <option value="category" {{ old('appliedToType', $discount->appliedToType) == 'category' ? 'selected' : '' }}>
+                                    Danh mục
+                                </option>
+                                <option value="brand" {{ old('appliedToType', $discount->appliedToType) == 'brand' ? 'selected' : '' }}>
+                                    Thương hiệu
+                                </option>
+                                <option value="product" {{ old('appliedToType', $discount->appliedToType) == 'product' ? 'selected' : '' }}>
+                                    Sản phẩm
+                                </option>
+                                <option value="variant" {{ old('appliedToType', $discount->appliedToType) == 'variant' ? 'selected' : '' }}>
+                                    Biến thể cụ thể
+                                </option>
+                            </select>
+                            @error('appliedToType')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </div>
+
+                        <hr>
+
+                        {{-- Chọn Category/Brand --}}
+                        <div id="select-category" class="form-group" style="display: none;">
+                            <label for="categorySelect">Chọn Danh mục <span class="text-danger">*</span></label>
+                            <select id="categorySelect" class="form-control">
+                                <option value="">-- Chọn danh mục --</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->categoryID }}" 
+                                            {{ old('appliedToID', $discount->appliedToType == 'category' ? $discount->appliedToID : '') == $category->categoryID ? 'selected' : '' }}>
+                                        {{ $category->categoryName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div id="select-brand" class="form-group" style="display: none;">
+                            <label for="brandSelect">Chọn Thương hiệu <span class="text-danger">*</span></label>
+                            <select id="brandSelect" class="form-control">
+                                <option value="">-- Chọn thương hiệu --</option>
+                                @foreach($brands as $brand)
+                                    <option value="{{ $brand->brandID }}"
+                                            {{ old('appliedToID', $discount->appliedToType == 'brand' ? $discount->appliedToID : '') == $brand->brandID ? 'selected' : '' }}>
+                                        {{ $brand->brandName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Chọn Product --}}
+                        <div id="select-product" class="form-group" style="display: none;">
+                            <label for="productSelect">
+                                <span id="product-label">Chọn Sản phẩm</span> <span class="text-danger">*</span>
+                            </label>
+                            <select id="productSelect" class="form-control">
+                                <option value="">-- Chọn sản phẩm --</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->productID }}"
+                                            {{ old('appliedToID', $selectedProductID ?? ($discount->appliedToType == 'product' ? $discount->appliedToID : '')) == $product->productID ? 'selected' : '' }}>
+                                        {{ $product->productName }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Chọn Variant --}}
+                        <div id="select-variant" class="form-group" style="display: none;">
+                            <label for="variantSelect">Chọn Biến thể cụ thể <span class="text-danger">*</span></label>
+                            <select id="variantSelect" class="form-control">
+                                <option value="">-- Chọn sản phẩm trước --</option>
+                                @if(isset($variantsForProduct))
+                                    @foreach($variantsForProduct as $variant)
+                                        <option value="{{ $variant->variantID }}"
+                                                {{ old('appliedToID', $discount->appliedToType == 'variant' ? $discount->appliedToID : '') == $variant->variantID ? 'selected' : '' }}>
+                                            {{ $variant->sku }} - {{ number_format($variant->price) }}đ
+                                        </option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+
+                        {{-- Hidden input --}}
+                        <input type="hidden" name="appliedToID" id="appliedToID" value="{{ old('appliedToID', $discount->appliedToID) }}">
                     </div>
                 </div>
             </div>
@@ -345,10 +375,6 @@
                                    {{ old('isActive', $discount->isActive) ? 'checked' : '' }}>
                             <label class="custom-control-label" for="isActive">
                                 <strong>Kích hoạt chương trình</strong>
-                                <br>
-                                <small class="text-muted">
-                                    Bật để chương trình có hiệu lực ngay lập tức
-                                </small>
                             </label>
                         </div>
                     </div>
@@ -367,36 +393,21 @@
                             <dd class="col-sm-6">
                                 <span class="badge badge-primary">#{{ $discount->discountID }}</span>
                             </dd>
-
-                            <dt class="col-sm-6">Ngày tạo:</dt>
-                            <dd class="col-sm-6">
-                                <small>{{ \Carbon\Carbon::parse($discount->created_at)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</small>
-                            </dd>
-
-                            <dt class="col-sm-6">Cập nhật:</dt>
-                            <dd class="col-sm-6">
-                                <small>{{ \Carbon\Carbon::parse($discount->updated_at)->setTimezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i') }}</small>
-                            </dd>
-
-                            @php
-                                $today = now()->setTimezone('Asia/Ho_Chi_Minh');
-                                $start = \Carbon\Carbon::parse($discount->startDate)->setTimezone('Asia/Ho_Chi_Minh');
-                                $end = \Carbon\Carbon::parse($discount->endDate)->setTimezone('Asia/Ho_Chi_Minh');
-                            @endphp
-
-                            <dt class="col-sm-6">Trạng thái:</dt>
-                            <dd class="col-sm-6">
-                                @if(!$discount->isActive)
-                                    <span class="badge badge-danger">Tạm ngưng</span>
-                                @elseif($end < $today)
-                                    <span class="badge badge-warning">Hết hạn</span>
-                                @elseif($start > $today)
-                                    <span class="badge badge-info">Chưa bắt đầu</span>
-                                @else
-                                    <span class="badge badge-success">Đang hoạt động</span>
-                                @endif
-                            </dd>
                         </dl>
+                    </div>
+                </div>
+
+                {{-- Card 5: Thông tin giá --}}
+                <div class="card card-info card-outline" id="price-info-card" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-dollar-sign"></i> Thông tin giá
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="price-info-content">
+                            <p class="text-muted">Đang tải...</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -446,26 +457,35 @@
         min-width: 45px;
         justify-content: center;
     }
+    
+    .price-badge {
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
+    }
 </style>
 @stop
 
 @section('js')
 <script>
 $(document).ready(function() {
-    console.log('✅ Form ready with timezone: Asia/Ho_Chi_Minh');
+    console.log('✅ Form edit ready');
     
-    const $maxDiscountField = $('#maxDiscountAmountField');
-    const $discountType = $('#discountType');
-    const $valueUnit = $('#value-unit');
     const $appliedToType = $('#appliedToType');
-    const $appliedToHint = $('#applied-to-hint');
+    const $categorySelect = $('#select-category');
+    const $brandSelect = $('#select-brand');
+    const $productSelect = $('#select-product');
+    const $variantSelect = $('#select-variant');
+    const $appliedToID = $('#appliedToID');
+    const $discountType = $('#discountType');
+    const $maxDiscountField = $('#maxDiscountAmountField');
+    const $valueUnit = $('#value-unit');
+    const $priceInfoCard = $('#price-info-card');
+    const $priceInfoContent = $('#price-info-content');
+    const $priceHint = $('#price-hint');
 
-    // ============================================================================
-    // Toggle Max Discount Amount field
-    // ============================================================================
+    // Toggle Max Discount
     function toggleMaxDiscount() {
         const type = $discountType.val();
-        
         if (type === 'percentage') {
             $maxDiscountField.show();
             $('#maxDiscountAmount').prop('disabled', false);
@@ -480,52 +500,181 @@ $(document).ready(function() {
     toggleMaxDiscount();
     $discountType.on('change', toggleMaxDiscount);
 
-    // ============================================================================
-    // Update hint based on applied type
-    // ============================================================================
-    function updateAppliedToHint() {
+    // Xử lý khi đổi loại đối tượng (tương tự create.blade.php)
+    $appliedToType.on('change', function() {
+        const type = $(this).val();
+        
+        $categorySelect.hide();
+        $brandSelect.hide();
+        $productSelect.hide();
+        $variantSelect.hide();
+        $priceInfoCard.hide();
+        
+        switch(type) {
+            case 'category':
+                $categorySelect.show();
+                break;
+            case 'brand':
+                $brandSelect.show();
+                break;
+            case 'product':
+                $('#product-label').text('Chọn Sản phẩm (Sale tất cả variants)');
+                $productSelect.show();
+                break;
+            case 'variant':
+                $('#product-label').text('Chọn Sản phẩm');
+                $productSelect.show();
+                $variantSelect.show();
+                break;
+        }
+    });
+
+    // Category change
+    $('#categorySelect').on('change', function() {
+        const categoryID = $(this).val();
+        if (categoryID) {
+            $appliedToID.val(categoryID);
+            fetchMinPrice('category', categoryID);
+        }
+    });
+
+    // Brand change
+    $('#brandSelect').on('change', function() {
+        const brandID = $(this).val();
+        if (brandID) {
+            $appliedToID.val(brandID);
+            fetchMinPrice('brand', brandID);
+        }
+    });
+
+    // Product change
+    $('#productSelect').on('change', function() {
+        const productID = $(this).val();
         const type = $appliedToType.val();
-        const hints = {
-            'category': 'Nhập ID danh mục (ví dụ: 1 = Vợt cầu lông)',
-            'brand': 'Nhập ID thương hiệu (ví dụ: 2 = Victor)',
-            'product': 'Nhập ID sản phẩm (ví dụ: 15 = Vợt Victor TK9900)',
-            'variant': 'Nhập ID biến thể (ví dụ: 45 = Size L của sản phẩm X)'
+        
+        if (!productID) {
+            $appliedToID.val('');
+            $priceInfoCard.hide();
+            return;
+        }
+        
+        if (type === 'product') {
+            $appliedToID.val(productID);
+            fetchMinPrice('product', productID);
+        } else if (type === 'variant') {
+            loadVariants(productID);
+        }
+    });
+
+    // Variant change
+    $('#variantSelect').on('change', function() {
+        const variantID = $(this).val();
+        if (variantID) {
+            $appliedToID.val(variantID);
+            fetchMinPrice('variant', variantID);
+        }
+    });
+
+    // Load variants
+    function loadVariants(productID) {
+        $('#variantSelect').html('<option value="">Đang tải...</option>');
+        
+        $.ajax({
+            url: '{{ route("admin.product-discounts.get-product-variants", ["id" => ":id"]) }}'.replace(':id', productID),
+            method: 'GET',
+            success: function(variants) {
+                let options = '<option value="">-- Chọn biến thể --</option>';
+                
+                variants.forEach(v => {
+                    const priceFormatted = new Intl.NumberFormat('vi-VN').format(v.price);
+                    options += `<option value="${v.variantID}">
+                        ${v.sku} - ${priceFormatted}đ (Tồn: ${v.stock})
+                    </option>`;
+                });
+                
+                $('#variantSelect').html(options);
+                
+                // Restore old value if exists
+                const oldVariantID = '{{ old("appliedToID", $discount->appliedToType == "variant" ? $discount->appliedToID : "") }}';
+                if (oldVariantID) {
+                    $('#variantSelect').val(oldVariantID).trigger('change');
+                }
+            },
+            error: function(xhr) {
+                console.error('Lỗi load variants:', xhr);
+                $('#variantSelect').html('<option value="">Lỗi tải dữ liệu</option>');
+            }
+        });
+    }
+
+    // Fetch min price
+    function fetchMinPrice(type, id) {
+        $.ajax({
+            url: '{{ route("admin.product-discounts.get-min-price") }}',
+            method: 'GET',
+            data: { type: type, id: id },
+            success: function(response) {
+                displayPriceInfo(type, response.minPrice);
+            },
+            error: function(xhr) {
+                console.error('Lỗi fetch price:', xhr);
+            }
+        });
+    }
+
+    // Display price info
+    function displayPriceInfo(type, minPrice) {
+        const priceFormatted = new Intl.NumberFormat('vi-VN').format(minPrice);
+        
+        const typeLabels = {
+            'category': 'Danh mục',
+            'brand': 'Thương hiệu',
+            'product': 'Sản phẩm',
+            'variant': 'Biến thể'
         };
         
-        $appliedToHint.html(`
-            <i class="fas fa-lightbulb"></i> ${hints[type] || 'Chọn loại trước'}
+        let html = `
+            <dl class="row mb-0">
+                <dt class="col-sm-6">Loại:</dt>
+                <dd class="col-sm-6">${typeLabels[type]}</dd>
+                
+                <dt class="col-sm-6">Giá thấp nhất:</dt>
+                <dd class="col-sm-6">
+                    <span class="badge badge-success price-badge">
+                        ${priceFormatted}đ
+                    </span>
+                </dd>
+            </dl>
+        `;
+        
+        $priceInfoContent.html(html);
+        $priceInfoCard.fadeIn();
+        
+        $priceHint.html(`
+            <i class="fas fa-check-circle text-success"></i> 
+            Giá thấp nhất: <strong>${priceFormatted}đ</strong>
         `);
     }
-    
-    updateAppliedToHint();
-    $appliedToType.on('change', updateAppliedToHint);
 
-    // ============================================================================
-    // Form validation với timezone
-    // ============================================================================
+    // Form validation
     $('#discountForm').on('submit', function(e) {
-        const startDate = new Date($('#startDate').val());
-        const endDate = new Date($('#endDate').val());
-        
-        if (endDate <= startDate) {
+        if (!$appliedToID.val()) {
             e.preventDefault();
-            alert('Ngày kết thúc phải sau ngày bắt đầu!');
+            alert('⚠️ Vui lòng chọn đầy đủ đối tượng áp dụng!');
             return false;
         }
-        
-        const discountValue = parseFloat($('#discountValue').val());
-        const discountType = $('#discountType').val();
-        
-        if (discountType === 'percentage' && discountValue > 100) {
-            e.preventDefault();
-            alert('Giá trị giảm % không được vượt quá 100!');
-            return false;
-        }
-        
-        console.log('✅ Form validation passed with timezone Asia/Ho_Chi_Minh');
-        console.log('Start:', startDate, 'End:', endDate);
         return true;
     });
+
+    // Trigger initial state
+    $appliedToType.trigger('change');
+    
+    // Fetch initial price info
+    const initialType = '{{ $discount->appliedToType }}';
+    const initialID = '{{ $discount->appliedToID }}';
+    if (initialType && initialID) {
+        fetchMinPrice(initialType, initialID);
+    }
 });
 </script>
 @stop

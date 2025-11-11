@@ -1,0 +1,67 @@
+[09-Nov-2025 02:18:11 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:18:11 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:18:11 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:21:36 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:21:36 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:21:36 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:23:23 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:23:23 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:23:23 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:27:58 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:27:58 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:27:58 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:32:07 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:32:07 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:32:07 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:32:37 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:32:37 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:32:37 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:43:50 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:43:50 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:43:50 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:51:03 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:51:03 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:51:03 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:53:42 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:53:42 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:53:42 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 02:58:33 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 02:58:33 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 02:58:33 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:01:21 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:01:21 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:01:21 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:02:23 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:02:23 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:02:23 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:07:07 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:07:07 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:07:07 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:10:51 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:10:51 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:10:51 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:11:10 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:11:10 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:11:10 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:11:45 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:11:45 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:11:45 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:12:02 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:12:02 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:12:02 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[09-Nov-2025 03:18:39 Asia/Ho_Chi_Minh] ✅ Bootstrap loaded - Database connected
+[09-Nov-2025 03:18:39 Asia/Ho_Chi_Minh] ✅ Environment variables loaded
+[09-Nov-2025 03:18:39 Asia/Ho_Chi_Minh] ✅ Composer autoloader loaded
+[11-Nov-2025 04:37:28 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:37:31 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:37:37 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:38:08 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:38:57 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:38:58 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:39:01 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:46:25 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 04:47:27 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 05:00:25 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 05:05:10 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 05:05:39 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'
+[11-Nov-2025 05:06:55 Asia/Ho_Chi_Minh] Category List API Error: Unknown column 'is_actived' in 'where clause'

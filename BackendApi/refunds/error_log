@@ -1,0 +1,82 @@
+[06-Nov-2025 02:08:55 Asia/Ho_Chi_Minh] Refund Request API Error: mysqli_stmt::bind_param(): Argument #3 cannot be passed by reference
+[06-Nov-2025 03:33:59 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] === Refund API: Script started ===
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: OrderID=106, CustomerID=12
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Processing 4 photos
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_106_690bb63c71bda.jpg
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_106_690bb63ca191f.jpeg
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_106_690bb63ca5f54.jpeg
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_106_690bb63cad847.jpeg
+[06-Nov-2025 03:40:28 Asia/Ho_Chi_Minh] Refund API: Processing 1 videos
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Uploaded video: refund_106_690bb63cb2674.mp4
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Total media uploaded: 5
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Starting transaction
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Order verified. Customer: LeTrong Tan
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Created refund_requests ID: 4
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Inserted 1 items
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Inserted 5 media
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Updated order status
+[06-Nov-2025 03:40:30 Asia/Ho_Chi_Minh] Refund API: Transaction committed
+[06-Nov-2025 03:40:34 Asia/Ho_Chi_Minh] Refund API: Email sent
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] === Refund API: Script started ===
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: OrderID=107, CustomerID=12
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: Processing 2 photos
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_107_690c6306f0961.jpeg
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_107_690c6306f0b61.jpeg
+[06-Nov-2025 15:57:42 Asia/Ho_Chi_Minh] Refund API: Processing 1 videos
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Uploaded video: refund_107_690c6306f0be7.mp4
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Total media uploaded: 3
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Starting transaction
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Order verified. Customer: LeTrong Tan
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Created refund_requests ID: 5
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Inserted 2 items
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Inserted 3 media
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Updated order status
+[06-Nov-2025 15:57:43 Asia/Ho_Chi_Minh] Refund API: Transaction committed
+[06-Nov-2025 15:57:47 Asia/Ho_Chi_Minh] Refund API: Email sent
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] === Refund API: Script started ===
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: OrderID=111, CustomerID=12
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Processing 1 photos
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_111_691252a0cb6a6.jpg
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Processing 1 videos
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Uploaded video: refund_111_691252a0cb9a9.mp4
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Total media uploaded: 2
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Starting transaction
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Order verified. Customer: LeTrong Tan
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Created refund_requests ID: 6
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Inserted 1 items
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Inserted 2 media
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Updated order status
+[11-Nov-2025 04:01:20 Asia/Ho_Chi_Minh] Refund API: Transaction committed
+[11-Nov-2025 04:01:24 Asia/Ho_Chi_Minh] Refund API: Email sent
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] === Refund API: Script started ===
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: OrderID=67, CustomerID=12
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Processing 1 photos
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_67_691253251857b.webp
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Total media uploaded: 1
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Starting transaction
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Order verified. Customer: LeTrong Tan
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Created refund_requests ID: 7
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Inserted 1 items
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Inserted 1 media
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Updated order status
+[11-Nov-2025 04:03:33 Asia/Ho_Chi_Minh] Refund API: Transaction committed
+[11-Nov-2025 04:03:36 Asia/Ho_Chi_Minh] Refund API: Email sent
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Loaded autoload from: /home/ipkfeohnhosting/public_html/api/refunds/../vendor/autoload.php
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] === Refund API: Script started ===
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: OrderID=67, CustomerID=12
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Processing 1 photos
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Uploaded photo: refund_67_69125388b7f5b.webp
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Total media uploaded: 1
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Starting transaction
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Order verified. Customer: LeTrong Tan
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Created refund_requests ID: 8
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Inserted 1 items
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Inserted 1 media
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Updated order status
+[11-Nov-2025 04:05:12 Asia/Ho_Chi_Minh] Refund API: Transaction committed
+[11-Nov-2025 04:05:15 Asia/Ho_Chi_Minh] Refund API: Email sent

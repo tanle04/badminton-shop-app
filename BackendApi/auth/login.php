@@ -5,7 +5,6 @@ require_once __DIR__ . '/../bootstrap.php'; // Giả định chứa hàm respond
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
         respond(['isSuccess' => false, 'message' => 'Phương thức không được phép.'], 405);
     }
 
@@ -14,13 +13,12 @@ try {
     $password = isset($input['password']) ? (string)$input['password'] : '';
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
-        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
         respond(['isSuccess' => false, 'message' => 'Email hoặc mật khẩu không hợp lệ.'], 400);
     }
 
-    // ⭐ THAY ĐỔI 1: THÊM CỘT `isEmailVerified` VÀO CÂU LỆNH SELECT
+    // ⭐ THAY ĐỔI 1: THÊM CỘT `is_active` VÀO CÂU LỆNH SELECT
     $stmt = $mysqli->prepare(
-        "SELECT customerID, fullName, email, password_hash, phone, createdDate, isEmailVerified
+        "SELECT customerID, fullName, email, password_hash, phone, createdDate, isEmailVerified, is_active
          FROM customers WHERE email = ? LIMIT 1"
     );
     
@@ -33,18 +31,25 @@ try {
     $user = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
-    // 1. Kiểm tra tồn tại user và mật khẩu
+    // 1. Kiểm tra tồn tại user và mật khẩu (Bao gồm test case: Sai mật khẩu, Email không tồn tại)
     if (!$user || !password_verify($password, $user['password_hash'])) {
-        // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
         respond(['isSuccess' => false, 'message' => 'Sai email hoặc mật khẩu.'], 401);
     }
     
-    // ⭐ THAY ĐỔI 2: KIỂM TRA TRẠNG THÁI XÁC NHẬN EMAIL
-    if ($user['isEmailVerified'] == 0) {
-        // Trả về lỗi nếu tài khoản chưa được xác nhận
+    // ⭐ THAY ĐỔI 2: KIỂM TRA TÀI KHOẢN BỊ KHÓA (Test case: Tài khoản bị khóa)
+    if ($user['is_active'] == 0) {
+        // Trả về lỗi nếu tài khoản bị khóa
         respond([
             'isSuccess' => false,
-            // Sử dụng một message cụ thể để client (Android) có thể hiển thị
+            'message' => 'account_locked', // Message cho client
+            'error' => 'Tài khoản này đã bị khóa. Vui lòng liên hệ hỗ trợ.'
+        ], 403); // HTTP 403 Forbidden
+    }
+
+    // 3. KIỂM TRA TRẠNG THÁI XÁC NHẬN EMAIL (Giữ nguyên logic của bạn)
+    if ($user['isEmailVerified'] == 0) {
+        respond([
+            'isSuccess' => false,
             'message' => 'unverified_email', 
             'error' => 'Tài khoản chưa được xác nhận email. Vui lòng kiểm tra hộp thư của bạn.'
         ], 403); // HTTP 403 Forbidden
@@ -64,16 +69,14 @@ try {
     // Không bao giờ gửi password_hash về cho client
     unset($user['password_hash']);
     
-    // ⭐ PHẢN HỒI THÀNH CÔNG: Sử dụng cấu trúc DTO nhất quán (isSuccess)
+    // 4. ĐĂNG NHẬP THÀNH CÔNG (Test case: Đăng nhập thành công)
     respond([
         'isSuccess' => true,
         'message' => 'ok', 
-        'user' => $user // Bây giờ user cũng bao gồm isEmailVerified = 1
+        'user' => $user 
     ]);
 
 } catch (Throwable $e) {
     error_log("Login API Error: " . $e->getMessage());
-    // ⭐ SỬA: Dùng isSuccess trong phản hồi lỗi
     respond(['isSuccess' => false, 'message' => 'Có lỗi xảy ra phía server: ' . $e->getMessage()], 500);
 }
-// Lưu ý: Thẻ đóng ?> bị loại bỏ.

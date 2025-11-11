@@ -25,7 +25,7 @@ class AuthServiceProvider extends ServiceProvider
         
         // 3. Gate kiểm tra quyền Marketing (bao gồm Admin)
         Gate::define('marketing', function ($employee) {
-            return $employee->role === 'marketing' || $employee->role === 'admin';
+            return $employee->role === 'marketer' || $employee->role === 'admin';
         });
     }
 }

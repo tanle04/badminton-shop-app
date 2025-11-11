@@ -52,3 +52,15 @@ Broadcast::channel('admin.support.notifications', function ($user) {
     // Allow all authenticated admin users
     return $user !== null;
 }, ['guards' => ['admin']]);
+
+// ✅ Admin channel authentication
+Broadcast::channel('admin.support.notifications', function ($employee) {
+    // Kiểm tra xem có phải employee đang đăng nhập không
+    return auth()->guard('admin')->check();
+});
+
+// ✅ Private customer channel (nếu cần)
+Broadcast::channel('customer-support-{customerId}', function ($user, $customerId) {
+    // Trong trường hợp customer cần private channel
+    return (int) $user->customerID === (int) $customerId;
+});

@@ -171,23 +171,27 @@ function debugLog(message, data) {
 debugLog('🔧 Initializing Pusher...');
 window.Pusher = Pusher;
 
+{{-- ĐÂY LÀ CODE ĐÚNG CHO HOSTING --}}
 debugLog('🔧 Initializing Echo...');
 window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: '{{ env('PUSHER_APP_KEY', 'badminton-key') }}',
-    cluster: '{{ env('PUSHER_APP_CLUSTER', 'mt1') }}', // <-- ✅ THÊM DÒNG NÀY
-    wsHost: '127.0.0.1',
-    wsPort: 6001,
-    wssPort: 6001,
-    forceTLS: false,
-    enabledTransports: ['ws', 'wss'],
-    disableStats: true,
-    authEndpoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    }
+    broadcaster: 'pusher',
+    key: '{{ env('PUSHER_APP_KEY') }}',
+    cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+    
+    // ✅ SỬA LỖI:
+    // Xóa các dòng 'wsHost' và 'wsPort'
+    // Đặt 'forceTLS' thành true để kết nối an toàn (https)
+    forceTLS: true,
+
+    // Các dòng còn lại giữ nguyên
+    enabledTransports: ['ws', 'wss'],
+    disableStats: true,
+    authEndpoint: '/admin/public/broadcasting/auth', // ⚠️ Đảm bảo có /public/ nếu cần
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    }
 });
 
 debugLog('✅ Echo initialized', window.Echo);
@@ -247,7 +251,8 @@ function loadEmployees() {
     debugLog('📥 Loading employees...');
     
     $.ajax({
-        url: '/admin/chat/employees',
+        // Thay thế dòng URL cũ
+url: '{{ route("admin.chat.employees") }}',
         method: 'GET',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         success: function(employees) {
@@ -257,7 +262,7 @@ function loadEmployees() {
             $list.empty();
             
             employees.forEach(function(emp) {
-                const avatar = emp.img_url ? '/storage/' + emp.img_url : '/images/default-avatar.png';
+                const avatar = emp.img_url ? '/storage/' + emp.img_url : '{{ asset('images/default-avatar.png') }}';
                 
                 const html = '<div class="employee-item" data-id="' + emp.employeeID + '" data-name="' + emp.fullName + '">' +
                     '<img src="' + avatar + '" class="avatar" onerror="this.src=\'/images/default-avatar.png\'">' +
@@ -306,7 +311,8 @@ function loadChatHistory(receiverId) {
     debugLog('📜 Loading history for: ' + receiverId);
     
     $.ajax({
-        url: '/admin/chat/history/' + receiverId,
+        // Thay thế dòng URL cũ
+url: '{{ route("admin.chat.history", ["receiverId" => ":id"]) }}'.replace(':id', receiverId),
         method: 'GET',
         headers: { 'X-CSRF-TOKEN': CSRF_TOKEN },
         success: function(messages) {
@@ -354,7 +360,8 @@ function appendMessage(msg, shouldScroll) {
     $container.find('.text-center').remove();
     
     // ✅ QUAN TRỌNG: So sánh sender_id với currentUserId
-    const isMine = (msg.sender_id === currentUserId);
+   
+  const isMine = (Number(msg.sender_id) === Number(currentUserId));
     const align = isMine ? 'right' : 'left';
     const bg = isMine ? 'bg-primary' : 'bg-secondary';
     const name = (msg.sender && msg.sender.fullName) ? msg.sender.fullName : 'Unknown';
@@ -414,7 +421,8 @@ function sendMessage() {
     $button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
     
     $.ajax({
-        url: '/admin/chat/send',
+        // Thay thế dòng URL cũ
+url: '{{ route("admin.chat.send") }}',
         method: 'POST',
         headers: { 
             'X-CSRF-TOKEN': CSRF_TOKEN
@@ -516,26 +524,28 @@ function connectWebSocket() {
         
         window.Echo.private(channelName)
     .listen('.message.sent', function(event) {
-        debugLog('📩 WebSocket message received!', event);
-        
-        // ✅ Lấy data từ event.message (không phải event trực tiếp)
-        const msg = event.message || event;
-        
-        debugLog('  Sender ID: ' + msg.sender_id);
-        debugLog('  Receiver ID: ' + msg.receiver_id);
-        debugLog('  Selected ID: ' + selectedReceiverId);
-        
-        const relevant = (msg.sender_id === selectedReceiverId) || 
-                        (msg.receiver_id === selectedReceiverId);
-        debugLog('  Is relevant: ' + relevant);
-        
-        if (relevant) {
-            debugLog('✅ Relevant! Appending...');
-            appendMessage(msg, true);
-            messageHistory.push(msg);
-        } else {
-            debugLog('ℹ️ Not relevant to current conversation');
-        }
+ debugLog('📩 WebSocket message received!', event);
+
+ const msg = event.message || event;
+ 
+ // ✅ SỬA LỖI: Nếu tin nhắn này là của chính mình,
+ // thì không cần làm gì cả (vì hàm sendMessage đã hiển thị rồi)
+ if (Number(msg.sender_id) === Number(currentUserId)) {
+debugLog('ℹ️ WebSocket received my own message, ignoring.');
+ return;
+}
+
+// Chỉ hiển thị nếu tin nhắn này là của người mình đang chat
+const relevant = (Number(msg.sender_id) === Number(selectedReceiverId));
+debugLog(' Is relevant (from selected receiver): ' + relevant);
+
+if (relevant) {
+debugLog('✅ Relevant! Appending...');
+appendMessage(msg, true);
+messageHistory.push(msg);
+ } else {
+ debugLog('ℹ️ Not relevant to current conversation (e.g., from another user)');
+}
     }).error(function(err) {
             debugLog('❌ WebSocket error', err);
             $('#debug-ws').removeClass('badge-secondary').addClass('badge-danger').text('ERROR');

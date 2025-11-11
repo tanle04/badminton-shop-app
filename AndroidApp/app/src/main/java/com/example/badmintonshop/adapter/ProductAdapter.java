@@ -40,7 +40,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     private static final int COLOR_DEFAULT = R.color.default_text; // Bạn cần định nghĩa màu này
     private static final int COLOR_ORIGINAL = R.color.gray_strikethrough; // Màu xám cho giá bị gạch
 
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/BadmintonShop/images/";
 
     // Constructor CŨ (Giữ lại để tương thích)
     public ProductAdapter(Context ctx, List<ProductDto> items) {
@@ -98,7 +97,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         String imgUrl = p.getImageUrl();
         if (imgUrl != null && !imgUrl.isEmpty()) {
             Glide.with(ctx)
-                    .load(BASE_IMAGE_URL + imgUrl)
+                    .load( imgUrl)
                     .placeholder(R.drawable.ic_badminton_logo)
                     .error(R.drawable.ic_badminton_logo)
                     .transition(DrawableTransitionOptions.withCrossFade())
@@ -130,7 +129,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             // ⚠️ Cần truyền giá sale vào intent
             i.putExtra("productPrice", p.getPrice());
             i.putExtra("productBrand", p.getBrandName());
-            i.putExtra("productImage", BASE_IMAGE_URL + p.getImageUrl());
+            i.putExtra("productImage",  p.getImageUrl());
             i.putExtra("productDesc", p.getDescription());
             ctx.startActivity(i);
         });

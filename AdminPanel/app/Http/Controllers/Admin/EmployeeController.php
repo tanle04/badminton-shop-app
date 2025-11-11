@@ -5,20 +5,49 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash; // Đảm bảo đã import
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule; // Thêm thư viện Rule để fix lỗi unique
-
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log; // ⭐ Thêm Log
+ 
 class EmployeeController extends Controller
 {
     /**
      * Hiển thị danh sách các tài khoản nhân viên.
+     * ⭐ Cập nhật để hỗ trợ lọc và thống kê
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::orderBy('role')->paginate(10);
-        
-        return view('admin.employees.index', compact('employees'));
+        try {
+            $status = $request->query('status', 'active');
+
+            $query = Employee::query();
+
+            // Lọc theo trạng thái
+            if ($status == 'active') {
+                $query->where('is_active', 1);
+            } elseif ($status == 'inactive') {
+                $query->where('is_active', 0);
+            }
+            
+            $employees = $query->orderBy('role')->paginate(10);
+
+            // Lấy số liệu thống kê
+            $totalEmployeeCount = Employee::count();
+            $activeEmployeeCount = Employee::where('is_active', 1)->count();
+            $inactiveEmployeeCount = Employee::where('is_active', 0)->count();
+
+            return view('admin.employees.index', compact(
+                'employees', 
+                'status',
+                'totalEmployeeCount',
+                'activeEmployeeCount',
+                'inactiveEmployeeCount'
+            ));
+        } catch (\Exception $e) {
+            Log::error('Error in EmployeeController@index: ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi xảy ra khi tải danh sách nhân viên.');
+        }
     }
 
     /**
@@ -36,21 +65,26 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:employees',
+            'email' => 'required|string|email|max:255|unique:employees,email',
             'password' => 'required|string|min:8|confirmed', 
             'role' => 'required|in:admin,staff,marketing',
         ]);
 
-        Employee::create([
-            'fullName' => $request->name, // Sửa: Dùng fullName để khớp CSDL
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // SỬA: Quay lại hash thủ công
-            'role' => $request->role,
-            // 'img_url' => 'default.png', // Có thể thêm giá trị mặc định nếu cần
-        ]);
+        try {
+            Employee::create([
+                'fullName' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password), 
+                'role' => $request->role,
+                'is_active' => 1, // ⭐ Mặc định là active khi tạo mới
+            ]);
 
-        return redirect()->route('admin.employees.index')
-                            ->with('success', 'Tạo tài khoản nhân viên thành công.');
+            return redirect()->route('admin.employees.index')
+                             ->with('success', 'Tạo tài khoản nhân viên thành công.');
+        } catch (\Exception $e) {
+            Log::error('Error in EmployeeController@store: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Có lỗi xảy ra khi tạo tài khoản.');
+        }
     }
 
     /**
@@ -58,7 +92,7 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        // Sửa: Dùng employeeID thay cho id và đảm bảo so sánh với khóa chính
+        // Logic kiểm tra (đã có)
         if ($employee->employeeID === auth('admin')->id() && $employee->role !== 'admin') {
              return redirect()->route('admin.employees.index')
                              ->with('error', 'Bạn không thể chỉnh sửa role của tài khoản Admin đang đăng nhập.');
@@ -69,59 +103,88 @@ class EmployeeController extends Controller
 
     /**
      * Cập nhật thông tin tài khoản nhân viên.
+     * ⭐ Cập nhật để hỗ trợ MỞ KHÓA (re-activate)
      */
     public function update(Request $request, Employee $employee)
     {
+        // --- TRƯỜNG HỢP 1: MỞ KHÓA TÀI KHOẢN (từ trang index) ---
+        if ($request->has('action_reactivate')) {
+            try {
+                $employee->update(['is_active' => 1]); // Đặt lại is_active = 1
+                return redirect()->route('admin.employees.index', ['status' => 'inactive'])
+                                 ->with('success', 'Đã MỞ KHÓA tài khoản ' . $employee->fullName . ' thành công.');
+            } catch (\Exception $e) {
+                Log::error('Error in EmployeeController@update (reactivate): ' . $e->getMessage());
+                return redirect()->route('admin.employees.index')
+                                 ->with('error', 'Lỗi khi mở khóa tài khoản: ' . $e->getMessage());
+            }
+        }
+
+        // --- TRƯỜNG HỢP 2: CẬP NHẬT THÔNG TIN (từ trang edit) ---
         $request->validate([
             'name' => 'required|string|max:255',
-            // Sửa lỗi: Sử dụng Rule::unique để loại trừ theo khóa chính employeeID
             'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
+                'required', 'string', 'email', 'max:255',
                 Rule::unique('employees', 'email')->ignore($employee->employeeID, 'employeeID'),
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,staff,marketing',
+            'is_active' => 'required|boolean', // ⭐ Thêm validation cho trường is_active
         ]);
         
         // Ngăn Admin tự đổi role của chính mình
-        // Sửa: Dùng employeeID thay cho id
         if ($employee->employeeID === auth('admin')->id() && $request->role !== 'admin') {
              return back()->with('error', 'Bạn không được phép thay đổi vai trò của tài khoản Admin đang đăng nhập.');
         }
-
-        $employee->fullName = $request->name; // Sửa: Dùng fullName để khớp CSDL
-        $employee->email = $request->email;
-        $employee->role = $request->role;
-
-        if ($request->filled('password')) {
-            // SỬA: Quay lại Hash::make() vì tính năng 'hashed' trong Model không hoạt động
-            $employee->password = Hash::make($request->password);
-        }
         
-        $employee->save();
+        // ⭐ Ngăn Admin tự KHÓA chính mình
+        if ($employee->employeeID === auth('admin')->id() && $request->is_active == 0) {
+            return back()->with('error', 'Bạn không thể tự khóa tài khoản của chính mình.');
+       }
 
-        return redirect()->route('admin.employees.index')
-                            ->with('success', 'Cập nhật tài khoản nhân viên thành công.');
+        try {
+            $employee->fullName = $request->name;
+            $employee->email = $request->email;
+            $employee->role = $request->role;
+            $employee->is_active = $request->is_active; // ⭐ Cập nhật trường is_active
+
+            if ($request->filled('password')) {
+                $employee->password = Hash::make($request->password);
+            }
+            
+            $employee->save();
+
+            return redirect()->route('admin.employees.index')
+                             ->with('success', 'Cập nhật tài khoản nhân viên thành công.');
+        } catch (\Exception $e) {
+            Log::error('Error in EmployeeController@update (edit): ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Có lỗi khi cập nhật tài khoản.');
+        }
     }
 
     /**
      * Xóa tài khoản nhân viên khỏi CSDL.
+     * ⭐ Cập nhật để "KHÓA" (Soft Delete)
      */
     public function destroy(Employee $employee)
     {
-        // Ngăn Admin tự xóa tài khoản của mình
-        // Sửa: Dùng employeeID thay cho id
+        // Ngăn Admin tự xóa/khóa tài khoản của mình
         if ($employee->employeeID === auth('admin')->id()) {
              return redirect()->route('admin.employees.index')
-                             ->with('error', 'Bạn không thể tự xóa tài khoản của mình.');
+                             ->with('error', 'Bạn không thể tự khóa tài khoản của mình.');
         }
         
-        $employee->delete();
+        try {
+            // $employee->delete(); // <-- XÓA CỨNG (Không dùng nữa)
+            
+            // ⭐ THAY BẰNG "XÓA MỀM"
+            $employee->update(['is_active' => 0]); 
 
-        return redirect()->route('admin.employees.index')
-                            ->with('success', 'Xóa tài khoản nhân viên thành công.');
+            return redirect()->route('admin.employees.index')
+                             ->with('success', 'Đã KHÓA tài khoản ' . $employee->fullName . ' thành công.');
+        } catch (\Exception $e) {
+            Log::error('Error in EmployeeController@destroy (soft delete): ' . $e->getMessage());
+            return back()->with('error', 'Có lỗi xảy ra khi khóa tài khoản: ' . $e->getMessage());
+        }
     }
 }

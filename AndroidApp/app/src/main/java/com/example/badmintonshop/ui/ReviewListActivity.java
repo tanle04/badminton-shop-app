@@ -1,7 +1,7 @@
 package com.example.badmintonshop.ui;
 
 import android.content.Intent;
-import android.net.Uri; // Import Uri
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.badmintonshop.R;
 import com.example.badmintonshop.adapter.DisplayReviewAdapter;
 import com.example.badmintonshop.adapter.DisplayReviewAdapter.ReviewMediaClickListener;
-import com.example.badmintonshop.network.ApiClient;
+import com.example.badmintonshop.network.ApiClient; // ⭐ BƯỚC 1: Import ApiClient
 import com.example.badmintonshop.network.ApiService;
 import com.example.badmintonshop.network.dto.ReviewListResponse;
 import com.example.badmintonshop.network.dto.ReviewDto;
@@ -48,14 +48,15 @@ public class ReviewListActivity extends AppCompatActivity {
     private String currentProductName;
     private int currentRatingFilter = 0;
 
-    // ⭐ BASE URL CẦN THIẾT CHO VIỆC HIỂN THỊ MEDIA
-    private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/uploads/";
+    // ⭐ BƯỚC 2: Xóa BASE_IMAGE_URL bị sai
+    // private static final String BASE_IMAGE_URL = "http://10.0.2.2/api/uploads/"; // ❌ XÓA DÒNG NÀY
 
     // ⭐ Tạo Listener để truyền vào Adapter
     private final ReviewMediaClickListener mediaClickListener = new ReviewMediaClickListener() {
         @Override
         public void onMediaClick(String mediaUrl) {
-            showMediaPreview(mediaUrl); // Gọi hàm xử lý preview/phát video
+            // mediaUrl ở đây là đường dẫn tương đối, ví dụ: "reviews/image.jpg"
+            showMediaPreview(mediaUrl);
         }
     };
 
@@ -63,6 +64,8 @@ public class ReviewListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_list);
+
+        // ... (Code onCreate, setupFilters, getRatingFromChipId giữ nguyên) ...
 
         // 1. Nhận dữ liệu từ Intent
         Intent intent = getIntent();
@@ -108,9 +111,6 @@ public class ReviewListActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Hàm phụ trợ để map ID tài nguyên Chip với giá trị số sao thực tế (1-5).
-     */
     private int getRatingFromChipId(int chipId) {
         if (chipId == R.id.chip_all) return 0;
         if (chipId == R.id.chip_with_media) return -1;
@@ -129,6 +129,7 @@ public class ReviewListActivity extends AppCompatActivity {
         apiService.getReviewsByProduct(productId, apiRating).enqueue(new Callback<ReviewListResponse>() {
             @Override
             public void onResponse(Call<ReviewListResponse> call, Response<ReviewListResponse> response) {
+                // ... (Code onResponse giữ nguyên) ...
                 Log.d(TAG, "Reviews API Response Code: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
@@ -170,20 +171,53 @@ public class ReviewListActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ReviewListResponse> call, Throwable t) {
+                // ... (Code onFailure giữ nguyên) ...
                 Log.e(TAG, "Network error loading reviews: " + t.getMessage(), t);
                 Toast.makeText(ReviewListActivity.this, "Lỗi kết nối mạng khi tải đánh giá", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    // ⭐ HÀM MỚI: XỬ LÝ SỰ KIỆN CLICK MEDIA
-    private void showMediaPreview(String mediaUrl) {
+    // ⭐ BƯỚC 3: THÊM HÀM NORMALIZE NÀY (Giống hệt hàm của GalleryAdapter)
+    /**
+     * Chuẩn hóa đường dẫn tương đối (ví dụ: "reviews/img.jpg")
+     * thành một URL đầy đủ (ví dụ: "https://domain.com/storage/reviews/img.jpg")
+     */
+    private String normalizeMediaUrl(String raw) {
+        if (raw == null || raw.trim().isEmpty()) {
+            return null;
+        }
+        raw = raw.trim();
+
+        // Nếu API đã trả về URL đầy đủ
+        if (raw.startsWith("http")) {
+            return raw;
+        }
+
+        // Nếu API trả về đường dẫn tương đối
+        if (raw.startsWith("/")) {
+            raw = raw.substring(1);
+        }
+
+        // Nối với hằng số BASE_STORAGE_URL từ ApiClient
+        return ApiClient.BASE_STORAGE_URL + raw;
+    }
+
+
+    // ⭐ BƯỚC 4: SỬA LẠI HÀM SHOWMEDIAPREVIEW
+    private void showMediaPreview(String mediaUrl) { // mediaUrl là đường dẫn tương đối
         if (mediaUrl == null || mediaUrl.isEmpty()) return;
 
-        // ⭐ 1. TẠO FULL URL
-        String fullUrl = BASE_IMAGE_URL + mediaUrl;
+        // 1. TẠO FULL URL bằng hàm normalize mới
+        String fullUrl = normalizeMediaUrl(mediaUrl);
 
-        // ⭐ 2. XÁC ĐỊNH LOẠI MEDIA
+        if (fullUrl == null) {
+            Toast.makeText(this, "Đường dẫn media không hợp lệ.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Log.d(TAG, "Opening media: " + fullUrl);
+
+        // 2. XÁC ĐỊNH LOẠI MEDIA
         String urlLower = mediaUrl.toLowerCase(Locale.US);
         boolean isVideo = urlLower.endsWith(".mp4") || urlLower.endsWith(".mov") || urlLower.endsWith(".webm") || urlLower.endsWith(".avi");
 
@@ -201,27 +235,9 @@ public class ReviewListActivity extends AppCompatActivity {
 
         } else {
             // HIỂN THỊ ẢNH PREVIEW
-
-            // ⭐ LƯU Ý: Bạn cần tạo FullScreenImageActivity để hiển thị ảnh lớn
-            // Sử dụng Dialog hoặc Activity riêng để hiển thị ảnh full screen
             Intent intent = new Intent(this, FullScreenImageActivity.class);
-            intent.putExtra("IMAGE_URL", fullUrl);
+            intent.putExtra("IMAGE_URL", fullUrl); // Gửi URL đầy đủ
             startActivity(intent);
-
-            // Nếu bạn không có FullScreenImageActivity, bạn có thể dùng Dialog đơn giản:
-            // showSimpleImageDialog(fullUrl);
         }
     }
-
-    // Tùy chọn: Hàm đơn giản để hiển thị Dialog ảnh (Chỉ để gỡ lỗi nhanh)
-    /*
-    private void showSimpleImageDialog(String imageUrl) {
-        Dialog dialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        dialog.setContentView(R.layout.dialog_image_preview_simple); // Cần tạo layout này
-        ImageView img = dialog.findViewById(R.id.img_full_screen);
-        Glide.with(this).load(imageUrl).into(img);
-        img.setOnClickListener(v -> dialog.dismiss());
-        dialog.show();
-    }
-    */
 }

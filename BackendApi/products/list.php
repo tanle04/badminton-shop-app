@@ -75,31 +75,41 @@ try {
     
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $productID = (int)$row['productID'];
-        
-        // Tính giá sale
-        $price_details = get_best_sale_price_for_product_list($mysqli, $productID);
+$productID = (int)$row['productID'];
 
-        $row['priceMin'] = $price_details['salePrice'];
-        $row['originalPriceMin'] = $price_details['originalPrice']; 
-        $row['isDiscounted'] = $price_details['isDiscounted'];
-        
-        // Xử lý stock
-        $totalStock = (int)$row['totalAvailableStock'];
-        $row['totalAvailableStock'] = $totalStock;
-        $row['isInStock'] = $totalStock > 0;
-        $row['stockStatus'] = $totalStock > 10 ? 'in_stock' : ($totalStock > 0 ? 'low_stock' : 'out_of_stock');
-        
-        // Xử lý rating
-        $row['averageRating'] = round((float)$row['averageRating'], 1);
-        $row['reviewCount'] = (int)$row['reviewCount'];
-        
-        // Loại bỏ trường không cần thiết
-        unset($row['basePrice']);
-        unset($row['stock']);
-        
-        $data[] = $row;
-    }
+// Tính giá sale
+$price_details = get_best_sale_price_for_product_list($mysqli, $productID);
+
+$row['priceMin'] = $price_details['salePrice'];
+$row['originalPriceMin'] = $price_details['originalPrice']; 
+$row['isDiscounted'] = $price_details['isDiscounted'];
+
+// Xử lý stock
+$totalStock = (int)$row['totalAvailableStock'];
+$row['totalAvailableStock'] = $totalStock;
+$row['isInStock'] = $totalStock > 0;
+$row['stockStatus'] = $totalStock > 10 ? 'in_stock' : ($totalStock > 0 ? 'low_stock' : 'out_of_stock');
+
+// Xử lý rating
+$row['averageRating'] = round((float)$row['averageRating'], 1);
+$row['reviewCount'] = (int)$row['reviewCount'];
+
+// ✅ SỬA LỖI URL ẢNH
+if (!empty($row['imageUrl'])) {
+// Dùng https và trỏ đến thư mục storage public của AdminPanel
+$base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+
+// $row['imageUrl'] từ DB đã có dạng: "products/ten_file.jpg"
+$row['imageUrl'] = $base_url . $row['imageUrl'];
+}
+
+// Loại bỏ trường không cần thiết
+unset($row['basePrice']);
+unset($row['stock']);
+
+// ✅ SỬA LỖI LOGIC: Chỉ giữ 1 dòng $data[]
+$data[] = $row;
+}
     
     $stmt->close();
 

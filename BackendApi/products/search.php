@@ -67,12 +67,14 @@ try {
         // Loại bỏ trường basePrice không cần thiết trên Android
         unset($row['basePrice']); 
 
-        // Xử lý tên file ảnh (giữ nguyên logic)
-        $img = $row['imageUrl'] ?? "";
-        if ($img && preg_match('/^http/', $img)) {
-            $img = basename($img);
+        // ✅ SỬA LỖI URL ẢNH: Tạo URL ảnh đầy đủ
+        if (!empty($row['imageUrl'])) {
+            // Dùng https và trỏ đến thư mục storage public của AdminPanel
+            $base_url = 'https://' . $_SERVER['HTTP_HOST'] . '/admin/public/storage/';
+            
+            // $row['imageUrl'] từ DB đã có dạng: "products/ten_file.jpg"
+            $row['imageUrl'] = $base_url . $row['imageUrl'];
         }
-        $row['imageUrl'] = $img ?: "no_image.png";
         
         // Xử lý stockTotal
         $row['stockTotal'] = (int)$row['stockTotal'];

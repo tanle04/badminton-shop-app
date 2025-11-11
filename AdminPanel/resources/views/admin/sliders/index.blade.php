@@ -463,10 +463,11 @@
 // CONSTANTS
 // ============================================================================
 const CSRF_TOKEN = $('meta[name="csrf-token"]').attr('content');
+{{-- ĐÂY LÀ CODE ĐÚNG --}}
 const ROUTES = {
-    destroy: '/admin/sliders/:id',
-    toggle: '/admin/sliders/:id/toggle-status',
-    updateOrder: '/admin/sliders/update-order'
+    destroy: '{{ route("admin.sliders.destroy", ["slider" => ":id"]) }}',
+    toggle: '{{ route("admin.sliders.toggleStatus", ["slider" => ":id"]) }}',
+    updateOrder: '{{ route("admin.sliders.updateOrder") }}'
 };
 
 console.log('🎯 Slider management initialized');
